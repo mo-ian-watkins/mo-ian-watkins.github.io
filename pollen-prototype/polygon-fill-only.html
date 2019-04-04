@@ -62,26 +62,26 @@
                     fillColor: "#000",
                     fillOpacity: 1,
                     color: "#000",
-                    weight: 0.75,
-                    opacity: 1
+                    weight: 1.5,
+                    opacity: 0.4
                 };
 
-                feature.properties.pollenLevel = Math.floor(Math.random() * Math.floor(5));
+                feature.properties.pollenLevel = Math.floor(Math.random() * Math.floor(4));
 
                 switch (feature.properties.pollenLevel) {
-                    case 1:
+                    case 0:
                         feature.properties.pollenColour = "#FFFF54";
                         feature.properties.pollenLabel = "Low Pollen";
                         break;
-                    case 2:
+                    case 1:
                         feature.properties.pollenColour = "#F5CD47";
                         feature.properties.pollenLabel = "Medium Pollen";
                         break;
-                    case 3:
+                    case 2:
                         feature.properties.pollenColour = "#FD950C";
                         feature.properties.pollenLabel = "High Pollen";
                         break;
-                    case 4:
+                    case 3:
                         feature.properties.pollenColour = "#D72A21";
                         feature.properties.pollenLabel = "Very High Pollen";
                         break;
@@ -93,10 +93,6 @@
                 if (feature.geometry.type === "Polygon") {
 
                     style.fillColor = feature.properties.pollenColour;
-
-                    if (feature.properties.pollenLevel < 1) {
-                        style.fillOpacity = 0;
-                    }
 
                 }
 
