@@ -3,7 +3,7 @@
 
 <head>
 
-    <title>Pollen - Polygon Fill Only</title>
+    <title>Pollen - Polygon Fill And Markers</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <!-- Leaflet -->
@@ -53,20 +53,18 @@
         var mapCenter = new L.LatLng(0, 0),
             pwsRegionsLayer;
 
-        // GeoJSON Layer
+        // PWS Regions GeoJSON (Polygon) Layer
         pwsRegionsLayer = L.geoJSON(pwsRegionsFC, {
 
             style: function (feature) {
 
                 var style = {
-                    fillColor: "#000",
+                    fillColor: "#fcc",
                     fillOpacity: 1,
                     color: "#000",
                     weight: 1.5,
                     opacity: 0.4
                 };
-
-                feature.properties.pollenLevel = Math.floor(Math.random() * Math.floor(4));
 
                 switch (feature.properties.pollenLevel) {
                     case 0:
@@ -86,7 +84,7 @@
                         feature.properties.pollenLabel = "Very High Pollen";
                         break;
                     default:
-                        feature.properties.pollenColour = "#FFF";
+                        feature.properties.pollenColour = "#cfc";
                         feature.properties.pollenLabel = "No Pollen";
                 }
 
@@ -122,7 +120,7 @@
         // Zoom to GeoJSON Bounds
         map.fitBounds(pwsRegionsLayer.getBounds());
 
-        // Add GeoJSON Layer to map
+        // Add Regions GeoJSON Layer to map
         pwsRegionsLayer.addTo(map);
 
     </script>

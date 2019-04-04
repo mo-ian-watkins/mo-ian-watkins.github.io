@@ -1,4 +1,4 @@
-var pwsRegions = {
+var pwsRegionsFC = {
 	"type": "FeatureCollection",
 	"features": [{
 			"type": "Feature",
