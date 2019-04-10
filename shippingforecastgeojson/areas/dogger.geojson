@@ -1,0 +1,35 @@
+{
+    "type": "Feature",
+    "properties": {
+        "name": "Dogger",
+        "transmitter": ["Cullercoats"],
+        "id": 8
+    },
+    "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+            [
+                [
+                    -1,
+                    56
+                ],
+                [
+                    0.75,
+                    54.25
+                ],
+                [
+                    4,
+                    54.25
+                ],
+                [
+                    4,
+                    56
+                ],
+                [
+                    -1,
+                    56
+                ]
+            ]
+        ]
+    }
+}
