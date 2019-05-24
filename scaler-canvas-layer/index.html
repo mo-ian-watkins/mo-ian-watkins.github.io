@@ -25,7 +25,7 @@
     <script>
         let map = L.map("map");
 
-        map.setView([50, -20], 4);
+        map.setView([55, -20], 5);
 
         // Basemap
         let url = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_nolabels/{z}/{x}/{y}.png';
@@ -53,7 +53,8 @@
                 //     opacity: 0.2
                 // });
 
-                var scale = chroma.scale(['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026']).domain(vf.range);
+                //var scale = chroma.scale(['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026']).domain(vf.range);
+                var scale = chroma.scale(['#000000','#ccff33','#ffffff']).domain(vf.range);
 
                 // b) Second derived field: DirectionFrom (º): (0 to 360º) | N is 0º and E is 90º
                 // const direction = L.canvasLayer.scalarField(
@@ -72,23 +73,23 @@
                         "coordinates": [
                             [
                                 [
-                                    -90,
+                                    -70,
                                     70
                                 ],
                                 [
-                                    -90,
-                                    10
+                                    -70,
+                                    30
                                 ],
                                 [
                                     40,
-                                    10
+                                    30
                                 ],
                                 [
                                     40,
                                     70
                                 ],
                                 [
-                                    -90,
+                                    -70,
                                     70
                                 ]
                             ]
@@ -99,10 +100,10 @@
                 vf.setSpatialMask(mask);
 
                 const animation = L.canvasLayer.vectorFieldAnim(vf, {
-                    paths: 4000,
-                    fade: 0.97,
+                    paths: 5000,
+                    fade: 0.98,
                     maxAge: 100,
-                    velocityScale: 1 / 4,
+                    velocityScale: 0.5,
                     color: scale,
                     width: 2
                 }).addTo(map);
@@ -133,6 +134,11 @@
                 //         let popup = L.popup().setLatLng(e.latlng).setContent(html).openOn(map);
                 //     }
                 // });
+
+                setTimeout(function() {
+                    animation.options.velocityScale = 0.1;
+                }, 3000);
+
             });
         });
     </script>
