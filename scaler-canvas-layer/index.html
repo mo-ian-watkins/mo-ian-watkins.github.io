@@ -141,6 +141,13 @@
 
             });
         });
+
+        let url2 = 'http://donotbeonfire.co.uk:8080/styles/simple-map-light/{z}/{x}/{y}.png';
+        L.tileLayer(url2, {
+            attribution: 'OSM',
+            maxZoom: 19
+        }).addTo(map);
+
     </script>
 </body>
 
