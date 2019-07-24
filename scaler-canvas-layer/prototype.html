@@ -85,7 +85,11 @@
 
     <script>
 
-        let map = L.map("map");
+        let map = L.map("map", {    
+            zoomDelta: 1,
+            wheelPxPerZoomLevel: 240 
+        });        
+
         map.setView([49.43, -13.17], 4);
 
         // Basemap
@@ -97,6 +101,9 @@
 
         // Position Zoom Control
         map.zoomControl.setPosition('topright');
+
+        // But hide it for prototype
+        map.zoomControl.remove();
 
         // ScalarField derived from a Vectorfield
         d3.text('docs/data/u_noaa.asc', function (u) {
@@ -205,11 +212,17 @@
             });
         });
 
-        let url2 = 'http://donotbeonfire.co.uk:8080/styles/simple-map-light/{z}/{x}/{y}{r}.png';
+/*         let url2 = 'http://donotbeonfire.co.uk:8080/styles/simple-map-light-graticule/{z}/{x}/{y}{r}.png';
         L.tileLayer(url2, {
             attribution: 'OSM',
             maxZoom: 19
-        }).addTo(map);
+        }).addTo(map); */
+
+        let url3 = 'http://donotbeonfire.co.uk:8080/styles/simple-map-light-coast/{z}/{x}/{y}{r}.png';
+        L.tileLayer(url3, {
+            attribution: 'OSM',
+            maxZoom: 19
+        }).addTo(map);        
 
     </script>
 </body>
