@@ -65,8 +65,8 @@
             'uppercase': true
         },
         [
-            //{ header: 'x-api-key', value: '29095ff2ff043405adb7913eba4844e536a54136f7dd70fa50cc613c94dfe93c' }
-        ]).addTo(_map); */
+            { header: 'x-api-key', value: '29095ff2ff043405adb7913eba4844e536a54136f7dd70fa50cc613c94dfe93c' }
+        ]); */
 
         var mapCenter = new L.LatLng(0, 0);
 
@@ -75,7 +75,7 @@
             zoom: 3,
             maxZoom: 10,
             crs: L.CRS.EPSG3857,
-            layers: [baseLayer, wmsLayer]
+            layers: [baseLayer, wmsLayer/* , wmsLayer2 */]
         });
 
 
