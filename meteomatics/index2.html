@@ -21,9 +21,12 @@
         //xhr.setRequestHeader("Content-Type", "application/json");
 
         xhr.onload = function() {
+
+            console.log(xhr);
+
             var responseText = xhr.responseText;
                 console.log(responseText);
-                // process the response.
+                // process   the response.
         };
 
         xhr.send("");
