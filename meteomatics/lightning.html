@@ -8,7 +8,6 @@
     <link rel="shortcut icon" type="image/x-icon" href="/resources/images/favicon.png" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
-    <script src="lightning.js"></script>
 
     <style>
             html,
@@ -49,63 +48,86 @@
 
         let map = L.map("map");
 
-        map.setView([59, 5], 4);
+        map.setView([50, 5], 5);
 
         // Basemap
         let url = 'http://donotbeonfire.co.uk:8080/styles/mountain-theme-scratch/{z}/{x}/{y}.png';
         L.tileLayer(url, {
             attribution: 'OSM',
-            maxZoom: 19
+            maxZoom: 14
         }).addTo(map);
 
         var negativeIcon = L.icon({
             iconUrl: 'black_cross.svg',
-            iconSize:     [40, 40], // size of the icon
-            iconAnchor:   [20, 20], // point of the icon which will correspond to marker's location
-            popupAnchor:  [20, 0] // point from which the popup should open relative to the iconAnchor
+            iconSize:     [20, 20], // size of the icon
+            iconAnchor:   [10, 10], // point of the icon which will correspond to marker's location
+            popupAnchor:  [10, 20] // point from which the popup should open relative to the iconAnchor
         });
 
         var positiveIcon = L.icon({
-            iconUrl: 'black_cross.svg',
-            iconSize:     [40, 40], // size of the icon
-            iconAnchor:   [20, 20], // point of the icon which will correspond to marker's location
-            popupAnchor:  [20, 0] // point from which the popup should open relative to the iconAnchor
+            iconUrl: 'red_cross.svg',
+            iconSize:     [20, 20], // size of the icon
+            iconAnchor:   [10, 10], // point of the icon which will correspond to marker's location
+            popupAnchor:  [10, 20] // point from which the popup should open relative to the iconAnchor
         });
 
-        var negativeChargeCount = 0,
-            positiveChargeCount = 0,
-            maximumCurrent = 0,
-            maximumCurrentCharge = 0,
-            marker;
+        // Get data from API via proxy
+        var xhr = new XMLHttpRequest(),
+            meteomaticsProxy = "https://betatest.metoffice.gov.uk/enthusiast/api/proxy";
 
-        lightning.lightning_list.forEach(function(element) {
+        xhr.open("GET", meteomaticsProxy + "/get_lightning_list?time_range=now-1H--now&bounding_box=60,-10_40,20&format=json", true);
+        xhr.onload = function() {
+            var data = JSON.parse(xhr.responseText);
+            handleData(data);
+        };
+        xhr.send("");
 
-            marker = L.marker([element["stroke_lat:d"], element["stroke_lon:d"]]);
+        // On success, do something useful with the data
+        function handleData (values) {
 
-            marker.addTo(map);
+            var negativeChargeCount = 0,
+                positiveChargeCount = 0,
+                maximumCurrent = 0,
+                maximumCurrentCharge = 0,
+                marker;
 
-            if (Number(element["stroke_current:kA"]) < 0) {
-                negativeChargeCount = negativeChargeCount + 1;
-            } else {
-                positiveChargeCount = positiveChargeCount + 1;
-            }
-
-            if (Math.abs(Number(element["stroke_current:kA"])) > maximumCurrent) {
-
-                maximumCurrent = Math.abs(Number(element["stroke_current:kA"]));
+            values.lightning_list.forEach(function(element) {
 
                 if (Number(element["stroke_current:kA"]) < 0) {
-                    maximumCurrentCharge = "-ve";
+                    marker = L.marker([element["stroke_lat:d"], element["stroke_lon:d"]], {icon: negativeIcon});
+                    marker.bindTooltip("Negative Strike<br>Current: " + (Math.abs(Number(element["stroke_current:kA"])) * 1000) + " Amps<br>Time: " + element["stroke_time:sql"], {
+                        direction: "top",
+                        offset: L.point(0, -21)
+                    });
+                    negativeChargeCount = negativeChargeCount + 1;
                 } else {
-                    maximumCurrentCharge = "+ve";
+                    marker = L.marker([element["stroke_lat:d"], element["stroke_lon:d"]], {icon: positiveIcon});
+                    marker.bindTooltip("Positive Strike<br>Current: " + (Math.abs(Number(element["stroke_current:kA"])) * 1000) + " Amps<br>Time: " + element["stroke_time:sql"], {
+                        direction: "top",
+                        offset: L.point(0, -21)
+                    });
+                    positiveChargeCount = positiveChargeCount + 1;
                 }
 
-            }
+                marker.addTo(map);
 
-        });
+                if (Math.abs(Number(element["stroke_current:kA"])) > maximumCurrent) {
 
-        console.log("-ve count :          ", negativeChargeCount, "\n+ve count :          ", positiveChargeCount, "\nMax current :        ", maximumCurrent * 1000 + " Amps", "\nMax current charge : ", maximumCurrentCharge)
+                    maximumCurrent = Math.abs(Number(element["stroke_current:kA"]));
 
+                    if (Number(element["stroke_current:kA"]) < 0) {
+                        maximumCurrentCharge = "-ve";
+                    } else {
+                        maximumCurrentCharge = "+ve";
+                    }
+
+                }
+
+            });
+
+            console.log("Total count :        ", negativeChargeCount + positiveChargeCount, "\n-ve count :          ", negativeChargeCount, "\n+ve count :          ", positiveChargeCount, "\nMax current :        ", maximumCurrent * 1000 + " Amps", "\nMax current charge : ", maximumCurrentCharge)
+
+        }
 
     </script>
 
