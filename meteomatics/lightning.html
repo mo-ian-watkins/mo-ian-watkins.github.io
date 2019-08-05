@@ -2,60 +2,110 @@
 <html>
 
 <head>
+    <title>Lightning Map</title>
     <meta charset="utf-8">
-    <title>Data to Map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="shortcut icon" type="image/x-icon" href="/resources/images/favicon.png" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
+    <script src="lightning.js"></script>
 
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+    <style>
+            html,
+            body,
+            #map {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                background-color: #A0C7E0;
+            }
+
+            .leaflet-tooltip {
+                background: rgba(42, 42, 42, 0.95);
+                border-radius: 0;
+                border: 0;
+                color: #fff;
+                font-weight: bold;
+                font-size: 1.2em;
+                padding: 10px;
+                white-space: nowrap;
+            }
+
+            .leaflet-tooltip-top:before {
+                border-top-color: rgba(42, 42, 42, 0.95);
+                bottom: 0;
+                margin-bottom: -12px;
+            }
+    </style>
 
 </head>
 
 <body>
 
+    <div id="map"></div>
+
     <script>
 
-        $.ajax({
-            type: "GET",
-            url: 'lightning.json',
-            success: function(data) {
+        let map = L.map("map");
 
-                console.log(data);
+        map.setView([59, 5], 4);
 
-                var negativeChargeCount = 0,
-                    positiveChargeCount = 0,
-                    maximumCurrent = 0,
-                    maximumCurrentCharge = 0;
+        // Basemap
+        let url = 'http://donotbeonfire.co.uk:8080/styles/mountain-theme-scratch/{z}/{x}/{y}.png';
+        L.tileLayer(url, {
+            attribution: 'OSM',
+            maxZoom: 19
+        }).addTo(map);
 
-                data.lightning_list.forEach(function(element) {
+        var negativeIcon = L.icon({
+            iconUrl: 'black_cross.svg',
+            iconSize:     [40, 40], // size of the icon
+            iconAnchor:   [20, 20], // point of the icon which will correspond to marker's location
+            popupAnchor:  [20, 0] // point from which the popup should open relative to the iconAnchor
+        });
 
-                    if (Number(element["stroke_current:kA"]) < 0) {
-                        negativeChargeCount = negativeChargeCount + 1;
-                    } else {
-                        positiveChargeCount = positiveChargeCount + 1;
-                    }
+        var negativeIcon = L.icon({
+            iconUrl: 'black_cross.svg',
+            iconSize:     [40, 40], // size of the icon
+            iconAnchor:   [20, 20], // point of the icon which will correspond to marker's location
+            popupAnchor:  [20, 0] // point from which the popup should open relative to the iconAnchor
+        });
 
-                    if (Math.abs(Number(element["stroke_current:kA"])) > maximumCurrent) {
+        var negativeChargeCount = 0,
+            positiveChargeCount = 0,
+            maximumCurrent = 0,
+            maximumCurrentCharge = 0,
+            marker;
 
-                        maximumCurrent = Math.abs(Number(element["stroke_current:kA"]));
+        lightning.lightning_list.forEach(function(element) {
 
-                        if (Number(element["stroke_current:kA"]) < 0) {
-                            maximumCurrentCharge = "-ve";
-                        } else {
-                            maximumCurrentCharge = "+ve";
-                        }
+            marker = L.marker([element["stroke_lat:d"], element["stroke_lon:d"]]);
 
-                    }
+            marker.addTo(map);
 
-                });
+            if (Number(element["stroke_current:kA"]) < 0) {
+                negativeChargeCount = negativeChargeCount + 1;
+            } else {
+                positiveChargeCount = positiveChargeCount + 1;
+            }
 
-                console.log("-ve count :          ", negativeChargeCount, "\n+ve count :          ", positiveChargeCount, "\nMax current :        ", maximumCurrent * 1000 + " Amps", "\nMax current charge : ", maximumCurrentCharge)
+            if (Math.abs(Number(element["stroke_current:kA"])) > maximumCurrent) {
 
-            },
-            error: function() {
+                maximumCurrent = Math.abs(Number(element["stroke_current:kA"]));
 
-                console.log('Unable to load data');
+                if (Number(element["stroke_current:kA"]) < 0) {
+                    maximumCurrentCharge = "-ve";
+                } else {
+                    maximumCurrentCharge = "+ve";
+                }
 
             }
+
         });
+
+        console.log("-ve count :          ", negativeChargeCount, "\n+ve count :          ", positiveChargeCount, "\nMax current :        ", maximumCurrent * 1000 + " Amps", "\nMax current charge : ", maximumCurrentCharge)
+
 
     </script>
 

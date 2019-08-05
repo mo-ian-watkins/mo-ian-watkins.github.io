@@ -14,23 +14,17 @@
 
         var xhr = new XMLHttpRequest();
 
-        //xhr.withCredentials = true;
-
-        xhr.open("GET", "http://www.donotbeonfire.co.uk:8888/api/now/t_2m:C/45.842875,6.863229/json", true);
-        //xhr.setRequestHeader("Authorization", "Basic aW5kaXZpZHVhbF93YXRraW5zOmRtNVp3UzkzbEppRlY=");
-        //xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.open("GET", "https://betatest.metoffice.gov.uk/enthusiast/api/proxy/now/t_2m:C/45.842875,6.863229/json", true);
 
         xhr.onload = function() {
 
-            console.log(xhr);
-
             var responseText = xhr.responseText;
-                console.log(responseText);
-                // process   the response.
+
+            console.log(JSON.parse(responseText));
+
         };
 
         xhr.send("");
-
 
     </script>
 
