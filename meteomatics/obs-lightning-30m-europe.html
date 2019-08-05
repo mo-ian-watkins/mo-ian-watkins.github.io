@@ -46,12 +46,15 @@
 
     <script>
 
+        let numberOfMinutes = 30;
         let map = L.map("map");
 
         map.setView([50, 5], 5);
 
+        document.title = numberOfMinutes + " minutes of European lightning strikes";
+
         // Basemap
-        let url = 'http://donotbeonfire.co.uk:8080/styles/mountain-theme-scratch/{z}/{x}/{y}.jpeg';
+        let url = 'http://donotbeonfire.co.uk:8080/styles/klokantech-terrain/{z}/{x}/{y}.jpeg';
         L.tileLayer(url, {
             attribution: 'OSM',
             maxZoom: 14
@@ -75,7 +78,7 @@
         var xhr = new XMLHttpRequest(),
             meteomaticsProxy = "https://betatest.metoffice.gov.uk/enthusiast/api/proxy";
 
-        xhr.open("GET", meteomaticsProxy + "/get_lightning_list?time_range=now-30M--now&bounding_box=60,-10_40,20&format=json", true);
+        xhr.open("GET", meteomaticsProxy + "/get_lightning_list?time_range=now-" + numberOfMinutes + "M--now&bounding_box=60,-10_40,20&format=json", true);
         xhr.onload = function() {
             var data = JSON.parse(xhr.responseText);
             handleData(data);
@@ -89,19 +92,29 @@
                 positiveChargeCount = 0,
                 maximumCurrent = 0,
                 maximumCurrentCharge = 0,
-                marker;
+                marker,
+                factor = numberOfMinutes * 60 * 1000,
+                nowDate = new Date(values.dateGenerated),
+                nowEpoch = nowDate.getTime(),
+                strikeDate,
+                strikeEpoch,
+                ageOpacity;
 
             values.lightning_list.forEach(function(element) {
 
+                strikeDate = new Date(element["stroke_time:sql"]),
+                strikeEpoch = strikeDate.getTime();
+                ageOpacity = (100/factor * (nowEpoch - strikeEpoch)) / 100;
+
                 if (Number(element["stroke_current:kA"]) < 0) {
-                    marker = L.marker([element["stroke_lat:d"], element["stroke_lon:d"]], {icon: negativeIcon});
+                    marker = L.marker([element["stroke_lat:d"], element["stroke_lon:d"]], {icon: negativeIcon, opacity: ageOpacity});
                     marker.bindTooltip("Negative Strike<br>Current: " + (Math.abs(Number(element["stroke_current:kA"])) * 1000) + " Amps<br>Time: " + element["stroke_time:sql"], {
                         direction: "top",
                         offset: L.point(0, -21)
                     });
                     negativeChargeCount = negativeChargeCount + 1;
                 } else {
-                    marker = L.marker([element["stroke_lat:d"], element["stroke_lon:d"]], {icon: positiveIcon});
+                    marker = L.marker([element["stroke_lat:d"], element["stroke_lon:d"]], {icon: positiveIcon, opacity: ageOpacity});
                     marker.bindTooltip("Positive Strike<br>Current: " + (Math.abs(Number(element["stroke_current:kA"])) * 1000) + " Amps<br>Time: " + element["stroke_time:sql"], {
                         direction: "top",
                         offset: L.point(0, -21)
