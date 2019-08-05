@@ -75,7 +75,7 @@
         var xhr = new XMLHttpRequest(),
             meteomaticsProxy = "https://betatest.metoffice.gov.uk/enthusiast/api/proxy";
 
-        xhr.open("GET", meteomaticsProxy + "/get_lightning_list?time_range=now-1H--now&bounding_box=60,-10_40,20&format=json", true);
+        xhr.open("GET", meteomaticsProxy + "/get_lightning_list?time_range=now-30M--now&bounding_box=60,-10_40,20&format=json", true);
         xhr.onload = function() {
             var data = JSON.parse(xhr.responseText);
             handleData(data);
