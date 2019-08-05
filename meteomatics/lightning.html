@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Data to Map</title>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+
+</head>
+
+<body>
+
+    <script>
+
+        $.ajax({
+            type: "GET",
+            url: 'lightning.json',
+            success: function(data) {
+
+                console.log(data);
+
+                var negativeChargeCount = 0,
+                    positiveChargeCount = 0,
+                    maximumCurrent = 0,
+                    maximumCurrentCharge = 0;
+
+                data.lightning_list.forEach(function(element) {
+
+                    if (Number(element["stroke_current:kA"]) < 0) {
+                        negativeChargeCount = negativeChargeCount + 1;
+                    } else {
+                        positiveChargeCount = positiveChargeCount + 1;
+                    }
+
+                    if (Math.abs(Number(element["stroke_current:kA"])) > maximumCurrent) {
+
+                        maximumCurrent = Math.abs(Number(element["stroke_current:kA"]));
+
+                        if (Number(element["stroke_current:kA"]) < 0) {
+                            maximumCurrentCharge = "-ve";
+                        } else {
+                            maximumCurrentCharge = "+ve";
+                        }
+
+                    }
+
+                });
+
+                console.log("-ve count :          ", negativeChargeCount, "\n+ve count :          ", positiveChargeCount, "\nMax current :        ", maximumCurrent * 1000 + " Amps", "\nMax current charge : ", maximumCurrentCharge)
+
+            },
+            error: function() {
+
+                console.log('Unable to load data');
+
+            }
+        });
+
+    </script>
+
+</body>
+
+</html>
