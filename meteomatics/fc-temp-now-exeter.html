@@ -70,8 +70,12 @@
 
         xhr.open("GET", meteomaticsProxy + "/now/t_2m:C/50.7268877,-3.4755385/json?model=ukmo-euro4", true);
         xhr.onload = function() {
-            var data = JSON.parse(xhr.responseText);
-            handleData(data);
+            if (xhr.status !== 200) {
+                alert(xhr.responseText);
+            } else {
+                var data = JSON.parse(xhr.responseText);
+                handleData(data);
+            }
         };
         xhr.send("");
 

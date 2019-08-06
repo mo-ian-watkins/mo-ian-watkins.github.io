@@ -15,14 +15,17 @@
 
     <style>
             html,
-            body,
-            #map {
-                margin: 0;
-                padding: 0;
-                width: 100%;
-                height: 100%;
+            body {
                 background-color: #fff;
                 font-family: Inter, Arial, Helvetica, sans-serif;
+            }
+
+            #map {
+                margin: 20px;
+                padding: 0;
+                width: 800px;
+                height: 600px;
+                background-color: #fff;
             }
         </style>
 
@@ -34,30 +37,36 @@
 
     <script>
 
+        var baseLayer,
+            wmsLayer,
+            mapCenter,
+            _map
+
         // Base map layer
-        var baseLayer = new L.tileLayer('http://donotbeonfire.co.uk:8080/styles/simple-map-dark/{z}/{x}/{y}{r}.png');
+        baseLayer = new L.tileLayer('http://donotbeonfire.co.uk:8080/styles/simple-map-dark/{z}/{x}/{y}{r}.png');
 
         // Single Layer
-        var wmsLayer = L.WMS.overlay('https://betatest.metoffice.gov.uk/enthusiast/api/proxy/wms?', {
+        wmsLayer = L.WMS.overlay('https://betatest.metoffice.gov.uk/enthusiast/api/proxy/wms?', {
             'service': 'WMS',
             'version': '1.3.0',
             'request': 'GetMap',
-            'layers': 'mix:t_2m:C',
-            'styles': 'JET​',
+            'layers': 't_2m:C',
+            'styles': 'JET',
             'format': 'image/png',
             'transparent': 'TRUE',
-            'uppercase': true,
-            opacity: 0.75
+            'model': 'mix',
+            'uppercase': true
         });
 
-        var mapCenter = new L.LatLng(0, 0);
+        mapCenter = new L.LatLng(36.5,-112.5);
 
-        var _map = new L.Map("map", {
+        _map = new L.Map("map", {
             center: mapCenter,
-            zoom: 3,
+            zoom: 8,
             maxZoom: 10,
             crs: L.CRS.EPSG3857,
-            layers: [baseLayer, wmsLayer]
+            layers: [baseLayer, wmsLayer],
+            attributionControl: false
         });
 
 
