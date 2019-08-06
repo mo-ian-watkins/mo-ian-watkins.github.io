@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <title>Lightning Map</title>
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <link rel="shortcut icon" type="image/x-icon" href="/resources/images/favicon.png" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
@@ -46,28 +47,34 @@
 
     <script>
 
-        let numberOfMinutes = 30;
-        let map = L.map("map");
+        var numberOfMinutes = 30,
+            map = L.map("map"),
+            url,
+            negativeIcon,
+            positiveIcon,
+            xhr;
+
 
         map.setView([50, 5], 5);
 
         document.title = numberOfMinutes + " minutes of European lightning strikes";
 
         // Basemap
-        let url = 'http://donotbeonfire.co.uk:8080/styles/klokantech-terrain/{z}/{x}/{y}.jpeg';
+        url = 'http://donotbeonfire.co.uk:8080/styles/klokantech-terrain/{z}/{x}/{y}.jpeg';
         L.tileLayer(url, {
             attribution: 'OSM',
-            maxZoom: 14
+            maxZoom: 18,
+            opacity: 1
         }).addTo(map);
 
-        var negativeIcon = L.icon({
+        negativeIcon = L.icon({
             iconUrl: 'black_cross.svg',
             iconSize:     [20, 20], // size of the icon
             iconAnchor:   [10, 10], // point of the icon which will correspond to marker's location
             popupAnchor:  [10, 20] // point from which the popup should open relative to the iconAnchor
         });
 
-        var positiveIcon = L.icon({
+        positiveIcon = L.icon({
             iconUrl: 'red_cross.svg',
             iconSize:     [20, 20], // size of the icon
             iconAnchor:   [10, 10], // point of the icon which will correspond to marker's location
@@ -75,7 +82,7 @@
         });
 
         // Get data from API via proxy
-        var xhr = new XMLHttpRequest(),
+        xhr = new XMLHttpRequest(),
             meteomaticsProxy = "https://betatest.metoffice.gov.uk/enthusiast/api/proxy";
 
         xhr.open("GET", meteomaticsProxy + "/get_lightning_list?time_range=now-" + numberOfMinutes + "M--now&bounding_box=60,-10_40,20&format=json", true);
@@ -104,18 +111,18 @@
 
                 strikeDate = new Date(element["stroke_time:sql"]),
                 strikeEpoch = strikeDate.getTime();
-                ageOpacity = (100/factor * (nowEpoch - strikeEpoch)) / 100;
+                ageOpacity = 1 - ((100/factor * (nowEpoch - strikeEpoch)) / 100);
 
                 if (Number(element["stroke_current:kA"]) < 0) {
                     marker = L.marker([element["stroke_lat:d"], element["stroke_lon:d"]], {icon: negativeIcon, opacity: ageOpacity});
-                    marker.bindTooltip("Negative Strike<br>Current: " + (Math.abs(Number(element["stroke_current:kA"])) * 1000) + " Amps<br>Time: " + element["stroke_time:sql"], {
+                    marker.bindTooltip("-ve Strike<br>Current: " + (Math.abs(Number(element["stroke_current:kA"])) * 1000) + " Amps<br>Time: " + element["stroke_time:sql"], {
                         direction: "top",
                         offset: L.point(0, -21)
                     });
                     negativeChargeCount = negativeChargeCount + 1;
                 } else {
                     marker = L.marker([element["stroke_lat:d"], element["stroke_lon:d"]], {icon: positiveIcon, opacity: ageOpacity});
-                    marker.bindTooltip("Positive Strike<br>Current: " + (Math.abs(Number(element["stroke_current:kA"])) * 1000) + " Amps<br>Time: " + element["stroke_time:sql"], {
+                    marker.bindTooltip("+ve Strike<br>Current: " + (Math.abs(Number(element["stroke_current:kA"])) * 1000) + " Amps<br>Time: " + element["stroke_time:sql"], {
                         direction: "top",
                         offset: L.point(0, -21)
                     });
@@ -137,6 +144,11 @@
                 }
 
             });
+
+            map.fitBounds([
+                [40, -10],
+                [60, 20]
+            ]);
 
             console.log("Total count :        ", negativeChargeCount + positiveChargeCount, "\n-ve count :          ", negativeChargeCount, "\n+ve count :          ", positiveChargeCount, "\nMax current :        ", maximumCurrent * 1000 + " Amps", "\nMax current charge : ", maximumCurrentCharge)
 
