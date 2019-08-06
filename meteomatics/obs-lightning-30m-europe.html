@@ -90,8 +90,12 @@
 
         xhr.open("GET", meteomaticsProxy + "/get_lightning_list?time_range=now-" + numberOfMinutes + "M--now&bounding_box=60,-10_40,20&format=json", true);
         xhr.onload = function() {
-            var data = JSON.parse(xhr.responseText);
-            handleData(data);
+            if (xhr.status !== 200) {
+                alert(xhr.responseText);
+            } else {
+                var data = JSON.parse(xhr.responseText);
+                handleData(data);
+            }
         };
         xhr.send("");
 
