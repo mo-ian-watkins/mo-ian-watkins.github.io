@@ -23,7 +23,7 @@
             margin: 20px;
             padding: 0;
             width: 800px;
-            height: 600px;
+            height: 1000px;
             background-color: #fff;
         }
     </style>
@@ -36,38 +36,48 @@
 
     <script>
 
-        var wmtsLayer,
+        var baseLayer,
+            wmtsLayer,
             overlayLayer,
             mapCenter,
-            _map
+            _map,
+            bounds;
+
+        bounds = L.latLngBounds(L.latLng(47.5, -12.5), L.latLng(60.5, 4.5));
+
+        // Base map layer
+        baseLayer = new L.tileLayer('http://donotbeonfire.co.uk:8080/styles/klokantech-terrain-base/{z}/{x}/{y}{r}.jpg');
 
         // Tiled Layer
         wmtsLayer = L.tileLayer.wms('https://betatest.metoffice.gov.uk/enthusiast/api/proxy/wms?', {
             'service': 'WMS',
             'version': '1.3.0',
             'request': 'GetMap',
-            'layers': 't_2m:C',
-            'styles': 'JET',
+            'layers': 'ukmo-500m-radar:precip_raw_5min:mm',
+            //'styles': 'VIRIDIS',
             'format': 'image/png',
             'uppercase': true,
-            'model': 'mix',
-            tileSize: 512
+            //'model': 'mix',
+            //'time': '2019-08-07T14:00:00Z',
+            tileSize: 512,
+            bounds: bounds
         });
 
         // Overlay map layer
-        overlayLayer = new L.tileLayer('http://donotbeonfire.co.uk:8080/styles/simple-map-dark/{z}/{x}/{y}{r}.png');
+        overlayLayer = new L.tileLayer('http://donotbeonfire.co.uk:8080/styles/klokantech-terrain-overlay/{z}/{x}/{y}{r}.png');
 
-        mapCenter = new L.LatLng(55, -4);
+        mapCenter = new L.LatLng(54, -4);
 
         _map = new L.Map("map", {
             center: mapCenter,
-            zoom: 5,
-            maxZoom: 10,
+            zoom: 6,
+            maxZoom: 12,
             crs: L.CRS.EPSG3857,
-            layers: [wmtsLayer, overlayLayer],
+            layers: [baseLayer, wmtsLayer, overlayLayer],
             attributionControl: false
         });
 
+        console.log(wmtsLayer);
 
     </script>
 

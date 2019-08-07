@@ -58,17 +58,27 @@
             'uppercase': true
         });
 
-        mapCenter = new L.LatLng(36.5,-112.5);
+        // Overlay map layer
+        overlayLayer = new L.tileLayer('http://donotbeonfire.co.uk:8080/styles/klokantech-terrain-overlay/{z}/{x}/{y}{r}.png', {
+            pane: "labels"
+        });
+
+        mapCenter = new L.LatLng(54,-4);
 
         _map = new L.Map("map", {
             center: mapCenter,
-            zoom: 8,
+            zoom: 5,
             maxZoom: 10,
             crs: L.CRS.EPSG3857,
-            layers: [baseLayer, wmsLayer],
             attributionControl: false
         });
 
+        _map.createPane('labels');
+        _map.getPane('labels').style.zIndex = 650;
+        _map.getPane('labels').style.pointerEvents = 'none';
+
+        wmsLayer.addTo(_map);
+        overlayLayer.addTo(_map);
 
     </script>
 
