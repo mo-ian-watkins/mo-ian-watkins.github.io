@@ -55,7 +55,8 @@
             url,
             negativeIcon,
             positiveIcon,
-            xhr;
+            xhr = new XMLHttpRequest(),
+            meteomaticsProxy = "https://betatest.metoffice.gov.uk/enthusiast/api/proxy";
 
 
         map.setView([50, 5], 5);
@@ -85,9 +86,6 @@
         });
 
         // Get data from API via proxy
-        xhr = new XMLHttpRequest(),
-            meteomaticsProxy = "https://betatest.metoffice.gov.uk/enthusiast/api/proxy";
-
         xhr.open("GET", meteomaticsProxy + "/get_lightning_list?time_range=now-" + numberOfMinutes + "M--now&bounding_box=60,-10_40,20&format=json", true);
         xhr.onload = function() {
             if (xhr.status !== 200) {

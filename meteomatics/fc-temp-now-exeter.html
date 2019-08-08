@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Exeter - Forecast Temperature Now - from Meteomatics API</title>
+    <title>Exeter - Forecast Temperature Now</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -60,14 +60,12 @@
 
     <script>
 
-        var xhr,
-            map,
+        var xhr = new XMLHttpRequest(),
+            meteomaticsProxy = "https://betatest.metoffice.gov.uk/enthusiast/api/proxy",
+            _map,
             url;
 
         // Get data from API via proxy
-        xhr = new XMLHttpRequest(),
-            meteomaticsProxy = "https://betatest.metoffice.gov.uk/enthusiast/api/proxy";
-
         xhr.open("GET", meteomaticsProxy + "/now/t_2m:C/50.7268877,-3.4755385/json?model=ukmo-euro4", true);
         xhr.onload = function() {
             if (xhr.status !== 200) {
@@ -89,7 +87,7 @@
         }
 
         // Show a map
-        map = L.map("map", {
+        _map = L.map("map", {
 
             // Controls
             zoomControl: false,
@@ -105,14 +103,14 @@
 
         });
 
-        map.setView([50.7268877,-3.4755385], 17);
+        _map.setView([50.7268877,-3.4755385], 17);
 
         // Basemap
         url = 'http://donotbeonfire.co.uk:8080/styles/klokantech-terrain/{z}/{x}/{y}.jpeg';
         L.tileLayer(url, {
             attribution: 'OSM',
             maxZoom: 18
-        }).addTo(map);
+        }).addTo(_map);
 
 </script>
 
