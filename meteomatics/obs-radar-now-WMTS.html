@@ -66,11 +66,11 @@
         // Overlay map layer
         overlayLayer = new L.tileLayer('http://donotbeonfire.co.uk:8080/styles/klokantech-terrain-overlay/{z}/{x}/{y}{r}.png');
 
-        mapCenter = new L.LatLng(54, -4);
+        mapCenter = new L.LatLng(52, -3);
 
         _map = new L.Map("map", {
             center: mapCenter,
-            zoom: 6,
+            zoom: 7,
             maxZoom: 12,
             crs: L.CRS.EPSG3857,
             layers: [baseLayer, wmtsLayer, overlayLayer],

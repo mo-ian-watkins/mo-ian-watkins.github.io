@@ -37,6 +37,7 @@
         // ScalarField derived from a Vectorfield
         d3.text('docs/data/u_noaa.asc', function (u) {
             d3.text('docs/data/v_noaa.asc', function (v) {
+
                 const toMetersPerSecond = 0.1;
                 const vf = L.VectorField.fromASCIIGrids(u, v, toMetersPerSecond);
 
