@@ -163,7 +163,7 @@
                     }
 
                     marker = L.marker([element["stroke_lat:d"], element["stroke_lon:d"]], {icon: negativeIcon, opacity: ageOpacity});
-                    marker.bindTooltip("-ve Strike<br>Current: " + (Math.abs(Number(element["stroke_current:kA"])) * 1000) + " Amps<br>Time: " + element["stroke_time:sql"], {
+                    marker.bindTooltip("-ve Strike<br>Current: " + Math.round((Math.abs(Number(element["stroke_current:kA"])) * 1000)) + " Amps<br>Time: " + element["stroke_time:sql"], {
                         direction: "top",
                         offset: L.point(0, -21)
                     });
@@ -180,7 +180,7 @@
                     }
 
                     marker = L.marker([element["stroke_lat:d"], element["stroke_lon:d"]], {icon: positiveIcon, opacity: ageOpacity});
-                    marker.bindTooltip("+ve Strike<br>Current: " + (Math.abs(Number(element["stroke_current:kA"])) * 1000) + " Amps<br>Time: " + element["stroke_time:sql"], {
+                    marker.bindTooltip("+ve Strike<br>Current: " + Math.round((Math.abs(Number(element["stroke_current:kA"])) * 1000)) + " Amps<br>Time: " + element["stroke_time:sql"], {
                         direction: "top",
                         offset: L.point(0, -21)
                     });
