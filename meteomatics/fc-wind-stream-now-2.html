@@ -19,19 +19,16 @@
 
     <style>
             html,
-            body {
-                background-color: #000;
+            body,
+            #map {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                background-color: #000000;
                 font-family: Inter, Arial, Helvetica, sans-serif;
             }
-
-            #map {
-                margin: 20px;
-                padding: 0;
-                width: 1200px;
-                height: 800px;
-                background-color: #000;
-            }
-        </style>
+    </style>
 
 </head>
 
@@ -45,79 +42,86 @@
             meteomaticsProxy = "https://betatest.metoffice.gov.uk/enthusiast/api/proxy",
             layer = "300hPa",
             params = {
-                resolution: 0.25,
-                maxLat: 70,
-                minLat: 20,
-                minLon: -90,
-                maxLon: 40
+                maxLat: 90,
+                minLat: -90,
+                maxLon: 180,
+                minLon: -180,
+                resolution: 5,
+                uWindParams: "",
+                vWindParams: ""
             },
-            uWindParams = "/now/wind_speed_u_" + layer + ":ms/" + params.maxLat + "," + params.minLon + "_" + params.minLat + "," + params.maxLon + ":" + params.resolution + "," + params.resolution + "/json",
-            vWindParams = "/now/wind_speed_v_" + layer + ":ms/" + params.maxLat + "," + params.minLon + "_" + params.minLat + "," + params.maxLon + ":" + params.resolution + "," + params.resolution + "/json",
             uWind,
-            vWind;
+            vWind,
+            baseLayer,
+            magnitudeLayer,
+            animationLayer;
 
         // Set document title
         document.title = layer + " Forecast Vector Winds for Now - Streamline Map";
 
         // Create the bare map
-        map = createMap();
+        map = createMap(baseLayer);
 
-        // Get U Wind
-        uWind = getWindVectorData(meteomaticsProxy, uWindParams);
+        // Set layer params
+        params = setLayerParams(map, params);
 
-        // Get V Wind
-        vWind = getWindVectorData(meteomaticsProxy, vWindParams);
+        // Create animation
+        createAnimation();
 
-        // Sort U Wind
-        uWind = sortDataNS(uWind);
+        // Clear layers on move start
+        map.on("movestart", function (e) {
 
-        // Sort V Wind
-        vWind = sortDataNS(vWind);
+            // Flush clear non-base layers
+            map.eachLayer(function (layer) {
 
-        // ASCIIGrid U Wind
-        uWind = asciiGridWind(uWind, params);
+                if (!layer.options.id) {
+                    layer.remove();
+                }
 
-        // ASCIIGrid V Wind
-        vWind = asciiGridWind(vWind, params);
+            });
 
-        // Display the vector animation
-        displayAnimation(map);
+        });
+
+        // Recreate animation when move end
+        map.on("moveend", function (e) {
+
+            params = setLayerParams(map, params);
+
+            createAnimation();
+
+        });
 
         // ##########################################################################################################
 
-        function createMap () {
+        function createMap (baseLayer) {
 
-            var baseLayer,
-                dataLayer,
+            var dataLayer,
                 mapCenter,
-                _map
+                _map,
+                bounds;
+
+            // Bounds
+            bounds = L.latLngBounds(L.latLng(-70, -180), L.latLng(70, 180));
 
             // Base map layer
-            baseLayer = new L.tileLayer('http://donotbeonfire.co.uk:8080/styles/ultra-dark-theme/{z}/{x}/{y}{r}.png');
+            baseLayer = new L.tileLayer('http://donotbeonfire.co.uk:8080/styles/ultra-dark-theme/{z}/{x}/{y}{r}.png', {
+                id: "baseLayer"
+            });
 
-            mapCenter = new L.LatLng(52, -25);
+            mapCenter = new L.LatLng(60, -25);
 
             _map = new L.Map("map", {
 
                 // Config
                 center: mapCenter,
                 zoom: 4,
-                maxZoom: 10,
+                maxZoom: 6,
+                minZoom: 3,
                 crs: L.CRS.EPSG3857,
                 attributionControl: false,
                 layers: [baseLayer],
-
-                // Controls
-                zoomControl: false,
-
-                // Interactions
-                boxZoom: false,
-                doubleClickZoom: false,
-                dragging: false,
-                keyboard: false,
-                scrollWheelZoom: false,
-                tap: false,
-                touchZoom: false
+                maxBounds: bounds,
+                maxBoundsViscosity: 1
 
             });
 
@@ -133,6 +137,67 @@
             return _map;
 
         }
+
+        function createAnimation () {
+
+            // Get U Wind
+            uWind = getWindVectorData(meteomaticsProxy, params.uWindParams);
+
+            // Get V Wind
+            vWind = getWindVectorData(meteomaticsProxy, params.vWindParams);
+
+            // Sort U Wind
+            uWind = sortDataNS(uWind);
+
+            // Sort V Wind
+            vWind = sortDataNS(vWind);
+
+             // ASCIIGrid U Wind
+            uWind = asciiGridWind(uWind, params);
+
+            // ASCIIGrid V Wind
+            vWind = asciiGridWind(vWind, params);
+
+            // Display the vector animation
+            displayAnimation(map);
+
+        }
+
+        function setLayerParams(map, params) {
+
+            var bounds = map.getBounds();
+                zoom = map.getZoom();
+
+            params.resolution = 5 / (zoom * zoom);
+
+            // Clamp bounds
+            if (bounds._southWest.lat < -80) {
+                bounds._southWest.lat = -80
+            }
+            params.minLat = bounds._southWest.lat;
+
+            if (bounds._southWest.lng < -180) {
+                bounds._southWest.lng = -180
+            }
+            params.minLon = bounds._southWest.lng;
+
+            if (bounds._northEast.lat > 80) {
+                bounds._northEast.lat = 80
+            }
+            params.maxLat = bounds._northEast.lat;
+
+            if (bounds._northEast.lng > 180) {
+                bounds._northEast.lng = 180
+            }
+            params.maxLon = bounds._northEast.lng;
+
+            // Build up params
+            params.uWindParams = "/now/wind_speed_u_" + layer + ":ms/" + params.maxLat + "," + params.minLon + "_" + params.minLat + "," + params.maxLon + ":" + params.resolution + "," + params.resolution + "/json";
+            params.vWindParams = "/now/wind_speed_v_" + layer + ":ms/" + params.maxLat + "," + params.minLon + "_" + params.minLat + "," + params.maxLon + ":" + params.resolution + "," + params.resolution + "/json";
+
+            return params
+
+            }
 
         function getWindVectorData (url, parameters) {
 
@@ -227,18 +292,18 @@
 
             // Magnitude Layer
             const s = vf.getScalarField('magnitude'); // << derived ScalarField
-            const magnitude = L.canvasLayer.scalarField(s, {
+            var magnitude = L.canvasLayer.scalarField(s, {
                 interpolate: true,
                 opacity: 0
             }).addTo(surface);
 
-            const animation = L.canvasLayer.vectorFieldAnim(vf, {
-                paths: 4000,
+            var animation = L.canvasLayer.vectorFieldAnim(vf, {
+                paths: 3000,
                 fade: 0.985,
-                maxAge: 50,
+                maxAge: 100,
                 velocityScale: 0.02,
                 color: scale,
-                width: 1.5,
+                width: 1,
                 opacity: 0.85
             }).addTo(surface);
 
