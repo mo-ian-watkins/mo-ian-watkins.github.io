@@ -37,16 +37,39 @@
             </div>
         </div>
         <hr>
-        <div class="row" style="margin-top: 50px;">
+        <div class="row"><h5>Account statistics</h5>
             <ul>
                 <li><a href="https://betatest.metoffice.gov.uk/enthusiast/api/proxy/user_stats">Meteomatics Weather API - Trial Account Statistics</a></li>
-                <li><a href="fc-temp-now-exeter.html">Forecast temperature at Met Office HQ for right now</a> - (Data - model=ukmo-euro4)</li>
-                <li><a href="fc-temp-now-WMS.html">Forecast temperature for right now as a map layer</a> - (WMS - model=mix)</li>
-                <li><a href="fc-temp-now-WMS-STYLES.html">Forecast temperature for right now as a global thumbnail (styles)</a> - (WMS - model=mix)</li>
-                <li><a href="fc-temp-now-WMTS.html">Forecast temperature for right now as a map layer</a> - (Pseudo WMTS - model=mix)</li>
-                <li><a href="fc-wind-stream-now.html">Forecast wind vectors for right now as an animated layer</a> - (model=ncep-gfs)</li>
-                <li><a href="obs-radar-now-WMTS.html">Observation radar rainfall for right now as a map layer</a> - (Pseudo WMTS - model=ukmo-500m-radar)</a></li>
-                <li><a href="obs-lightning-recent-europe.html">Observation lightning for past 5 minutes for NW Europe</a> - (Data/get_lightning_list)</a></li>
+            </ul>
+        </div>
+        <div class="row"><h5>Forecast</h5>
+            <ul>
+                <li><a href="fc-temp-now-exeter.html">Temperature at Met Office HQ for now</a> - (Data - model=ukmo-euro4)</li>
+                <li><a href="fc-temp-now-WMS-STYLES.html">Temperature for now as a global thumbnail (styles)</a> - (WMS - model=mix)</li>
+                <li><a href="fc-temp-now-WMS.html">Temperature for now as a map layer</a> - (WMS - model=mix)</li>
+                <li><a href="fc-temp-now-WMTS.html">Temperature for now as a map layer</a> - (Pseudo WMTS - model=mix)</li>
+                <li><a href="fc-wind-stream-now.html">300 hPa wind vectors for now as an animated map layer</a> - (model=ncep-gfs)</li>
+                <li><a href="https://betatest.metoffice.gov.uk/enthusiast/api/proxy/todayT00:00ZP2D:PT1H/kp:idx/50.7268877,-3.4755385/html?model=noaa-swpc">Hourly space weather KP index at Met Office HQ for next two days</a> - (model=noaa-swpc)</li>
+            </ul>
+        </div>
+        <div class="row"><h5>Observation</h5>
+            <ul>
+                <li><a href="obs-radar-now-WMTS.html">Radar rainfall for now as a map layer</a> - (Pseudo WMTS - model=ukmo-500m-radar)</a></li>
+                <li><a href="obs-lightning-recent-europe.html">Lightning for last 5 minutes for NW Europe</a> - (Data/get_lightning_list)</a></li>
+            </ul>
+        </div>
+        <div class="row"><h5>Ensemble Forecast</h5>
+            <ul>
+                <li><a href="https://betatest.metoffice.gov.uk/enthusiast/api/proxy/nowP7D:PT1H/t_2m:C/50.7268877,-3.4755385/html?model=ecmwf-ens&ens_select=member:0-50">Hourly temperature at Met Office HQ for next 7 days, all members including control run</a> - (model=ecmwf-ens)</a></li>
+                <li><a href="https://betatest.metoffice.gov.uk/enthusiast/api/proxy/nowP7D:PT1H/t_2m:C/50.7268877,-3.4755385/html?model=ecmwf-ens&ens_select=mean">Hourly temperature at Met Office HQ for next 7 days, mean</a> - (model=ecmwf-ens)</a></li>
+                <li><a href="https://betatest.metoffice.gov.uk/enthusiast/api/proxy/nowP7D:PT1H/t_2m:C/50.7268877,-3.4755385/html?model=ecmwf-ens&ens_select=median">Hourly temperature at Met Office HQ for next 7 days, median</a> - (model=ecmwf-ens)</a></li>
+                <li><a href="https://betatest.metoffice.gov.uk/enthusiast/api/proxy/nowP7D:PT1H/t_2m:C/50.7268877,-3.4755385/html?model=ecmwf-ens&ens_select=quantile0.25">Hourly temperature at Met Office HQ for next 7 days, 1st quantile</a> - (model=ecmwf-ens)</a></li>
+                <li><a href="https://betatest.metoffice.gov.uk/enthusiast/api/proxy/nowP7D:PT1H/t_2m:C/50.7268877,-3.4755385/html?model=ecmwf-ens&ens_select=quantile0.75">Hourly temperature at Met Office HQ for next 7 days, 3rd quantile</a> - (model=ecmwf-ens)</a></li>
+            </ul>
+        </div>
+        <div class="row"><h5>Cluster Ensemble Forecast</h5>
+            <ul>
+                <li><a href="https://betatest.metoffice.gov.uk/enthusiast/api/proxy/nowP7D:PT1H/gh_500hPa:m/50.7268877,-3.4755385/html?model=ecmwf-ens-cluster&cluster_select=cluster:1-6">Hourly geopotential height 500hPa at Met Office HQ for next 7 days, all clusters</a> - (model=ecmwf-ens-cluster)</a></li>
             </ul>
         </div>
         <hr>

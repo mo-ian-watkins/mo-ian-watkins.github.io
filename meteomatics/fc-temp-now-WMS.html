@@ -23,8 +23,8 @@
             #map {
                 margin: 20px;
                 padding: 0;
-                width: 800px;
-                height: 600px;
+                width: 1200px;
+                height: 800px;
                 background-color: #fff;
             }
         </style>
@@ -37,13 +37,10 @@
 
     <script>
 
-        var baseLayer,
-            wmsLayer,
+        var wmsLayer,
+            overlayLayer,
             mapCenter,
             _map
-
-        // Base map layer
-        baseLayer = new L.tileLayer('http://donotbeonfire.co.uk:8080/styles/simple-map-dark/{z}/{x}/{y}{r}.png');
 
         // Single Layer
         wmsLayer = L.WMS.overlay('https://betatest.metoffice.gov.uk/enthusiast/api/proxy/wms?', {
@@ -63,12 +60,13 @@
             pane: "labels"
         });
 
-        mapCenter = new L.LatLng(54,-4);
+        mapCenter = new L.LatLng(50, 0);
 
         _map = new L.Map("map", {
             center: mapCenter,
-            zoom: 5,
+            zoom: 3,
             maxZoom: 10,
+            minZoom: 3,
             crs: L.CRS.EPSG3857,
             attributionControl: false
         });

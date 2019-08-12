@@ -22,8 +22,8 @@
         #map {
             margin: 20px;
             padding: 0;
-            width: 800px;
-            height: 600px;
+            width: 1200px;
+            height: 800px;
             background-color: #fff;
         }
     </style>
@@ -51,18 +51,19 @@
             'format': 'image/png',
             'uppercase': true,
             'model': 'mix',
-            tileSize: 512
+            tileSize: 256
         });
 
         // Overlay map layer
-        overlayLayer = new L.tileLayer('http://donotbeonfire.co.uk:8080/styles/simple-map-dark/{z}/{x}/{y}{r}.png');
+        overlayLayer = new L.tileLayer('http://donotbeonfire.co.uk:8080/styles/klokantech-terrain-overlay/{z}/{x}/{y}{r}.png');
 
-        mapCenter = new L.LatLng(55, -4);
+        mapCenter = new L.LatLng(50, 0);
 
         _map = new L.Map("map", {
             center: mapCenter,
-            zoom: 5,
+            zoom: 3,
             maxZoom: 10,
+            minZoom: 3,
             crs: L.CRS.EPSG3857,
             layers: [wmtsLayer, overlayLayer],
             attributionControl: false

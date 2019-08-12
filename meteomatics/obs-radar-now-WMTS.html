@@ -59,14 +59,14 @@
             'uppercase': true,
             //'model': 'mix',
             //'time': '2019-08-07T14:00:00Z',
-            tileSize: 512,
+            tileSize: 256,
             bounds: bounds
         });
 
         // Overlay map layer
         overlayLayer = new L.tileLayer('http://donotbeonfire.co.uk:8080/styles/klokantech-terrain-overlay/{z}/{x}/{y}{r}.png');
 
-        mapCenter = new L.LatLng(52, -3);
+        mapCenter = new L.LatLng(51, -3);
 
         _map = new L.Map("map", {
             center: mapCenter,
