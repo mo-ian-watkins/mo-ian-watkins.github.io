@@ -45,14 +45,14 @@
             meteomaticsProxy = "https://betatest.metoffice.gov.uk/enthusiast/api/proxy",
             layer = "300hPa",
             params = {
-                resolution: 0.25,
+                resolution: 0.5,
                 maxLat: 70,
                 minLat: 20,
                 minLon: -90,
                 maxLon: 40
             },
-            uWindParams = "/now/wind_speed_u_" + layer + ":ms/" + params.maxLat + "," + params.minLon + "_" + params.minLat + "," + params.maxLon + ":" + params.resolution + "," + params.resolution + "/json",
-            vWindParams = "/now/wind_speed_v_" + layer + ":ms/" + params.maxLat + "," + params.minLon + "_" + params.minLat + "," + params.maxLon + ":" + params.resolution + "," + params.resolution + "/json",
+            uWindParams = "/todayT12Z/wind_speed_u_" + layer + ":ms/" + params.maxLat + "," + params.minLon + "_" + params.minLat + "," + params.maxLon + ":" + params.resolution + "," + params.resolution + "/json?model=ncep-gfs",
+            vWindParams = "/todayT12Z/wind_speed_v_" + layer + ":ms/" + params.maxLat + "," + params.minLon + "_" + params.minLat + "," + params.maxLon + ":" + params.resolution + "," + params.resolution + "/json?model=ncep-gfs",
             uWind,
             vWind;
 

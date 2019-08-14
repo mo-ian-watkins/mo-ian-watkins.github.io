@@ -25,21 +25,112 @@
                 padding: 0;
                 width: 100%;
                 height: 100%;
-                background-color: #000000;
+                background-color: #000;
                 font-family: Inter, Arial, Helvetica, sans-serif;
             }
 
-            span.popupText {
-                font-size: 18px;
-                letter-spacing: -0.25px;
-                line-height: 20px;
-                word-spacing: 0;
+            #mapTitle {
+                padding: 16px;
+                z-index: 999;
+                position: absolute;
+                top: -10px;
+                left: 10px;
+                background-color: #2a2a2a !important;
+                border-color: #2a2a2a !important;
+                color: #fff !important;
             }
+
+            /* Zoom Control Styling */
+
+            .leaflet-bar,
+            .leaflet-touch .leaflet-bar {
+                border: none;
+                box-shadow: none;
+            }
+
+            .leaflet-bar a:first-child,
+            .leaflet-touch .leaflet-bar a:first-child {
+                border-top-left-radius: 0;
+                border-top-right-radius: 0;
+                background-clip: padding-box;
+                background-color: #2a2a2a;
+                border-color: #2a2a2a;
+                border-style: solid;
+                border-width: 5px;
+                color: #fff;
+            }
+
+            .leaflet-bar a:last-child,
+            .leaflet-touch .leaflet-bar a:last-child {
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+                background-clip: padding-box;
+                background-color: #2a2a2a;
+                border-color: #2a2a2a;
+                border-style: solid;
+                border-width: 5px;
+                color: #fff;
+                margin-top: 16px;
+            }
+
+            .leaflet-bar a:first-child:hover,
+            .leaflet-bar a:last-child:hover,
+            .leaflet-touch .leaflet-bar a:first-child:hover,
+            .leaflet-touch .leaflet-bar a:last-child:hover {
+                background-color: #676869 !important;
+                border-color: #676869 !important;
+                color: #fff !important;
+            }
+
+            .leaflet-bar a:first-child:active,
+            .leaflet-bar a:last-child:active,
+            .leaflet-touch .leaflet-bar a:first-child:active,
+            .leaflet-touch .leaflet-bar a:last-child:active {
+                background-color: #2a2a2a !important;
+                border-color: #2a2a2a !important;
+                color: #b9dc0c !important;
+            }
+
+            .leaflet-bar a:first-child.leaflet-disabled,
+            .leaflet-bar a:last-child.leaflet-disabled,
+            .leaflet-touch .leaflet-bar a:first-child.leaflet-disabled,
+            .leaflet-touch .leaflet-bar a:last-child.leaflet-disabled {
+                background-color: #2a2a2a !important;
+                border-color: #2a2a2a !important;
+                color: #969696 !important;
+            }
+
+            /* Layer Control Styling */
+
+            .leaflet-control-layers {
+                border-radius: 0;
+                background-color: #2a2a2a !important;
+                border-color: #2a2a2a !important;
+                color: #fff !important;
+            }
+
+            /* Leaflet Popup */
+
+            .leaflet-popup-content-wrapper {
+                background: #2a2a2a;
+                border-radius: 0;
+                color: #fff;
+                font-size: 1.2em;
+                padding: 2px;
+                white-space: nowrap;
+            }
+
+            .leaflet-popup-tip {
+                background: #2a2a2a;
+            }
+
         </style>
 
 </head>
 
 <body>
+
+    <h3 id="mapTitle" class="mapTitle"></h3>
 
     <div id="map"></div>
 
@@ -55,15 +146,18 @@
                 minLon: -180,
                 maxLon: 180
             },
-            uWindParams = "/now/wind_speed_u_" + layer + ":ms/" + params.maxLat + "," + params.minLon + "_" + params.minLat + "," + params.maxLon + ":" + params.resolution + "," + params.resolution + "/json",
-            vWindParams = "/now/wind_speed_v_" + layer + ":ms/" + params.maxLat + "," + params.minLon + "_" + params.minLat + "," + params.maxLon + ":" + params.resolution + "," + params.resolution + "/json",
+            uWindParams = "/todayT12Z/wind_speed_u_" + layer + ":ms/" + params.maxLat + "," + params.minLon + "_" + params.minLat + "," + params.maxLon + ":" + params.resolution + "," + params.resolution + "/json?model=ncep-gfs",
+            vWindParams = "/todayT12Z/wind_speed_v_" + layer + ":ms/" + params.maxLat + "," + params.minLon + "_" + params.minLat + "," + params.maxLon + ":" + params.resolution + "," + params.resolution + "/json?model=ncep-gfs",
             uWind,
             vWind,
             vectorField,
             bounds;
 
         // Set document title
-        document.title = layer + " Forecast Vector Winds for Now - Streamline Map";
+        document.title = layer + " forecast winds for midday today";
+
+        // Set page header
+        document.getElementById("mapTitle").innerHTML = layer + " forecast winds for midday today";
 
         // Create the bare map
         map = createMap();
@@ -120,7 +214,7 @@
             // Base map layer
             baseLayer = new L.tileLayer('http://donotbeonfire.co.uk:8080/styles/ultra-dark-theme/{z}/{x}/{y}{r}.png');
 
-            mapCenter = new L.LatLng(52, -25);
+            mapCenter = new L.LatLng(20, -25);
 
             _map = new L.Map("map", {
 
@@ -129,10 +223,17 @@
                 zoom: 3,
                 maxZoom: 5,
                 crs: L.CRS.EPSG3857,
+                layers: [baseLayer],
                 attributionControl: false,
-                layers: [baseLayer]
+                zoomControl: false
 
             });
+
+            L.control.zoom({
+
+                position: 'bottomright'
+
+            }).addTo(_map);
 
             _map.setMaxBounds([
                 [90, -180],
@@ -236,13 +337,13 @@
             const toMetersPerSecond = 1;
             var vf = L.VectorField.fromASCIIGrids(uWind, vWind, toMetersPerSecond);
 
-            var scale = chroma.scale(['#000000','#ccff33','#ffffff']).domain(vf.range);
+            var scaleVIRIDIS = chroma.scale(['#440154', '#482777', '#3F4A8A', '#31678E', '#26838F', '#1F9D8A', '#6CCE5A', '#B6DE2B', '#FEE825']).domain(vf.range);
 
             // Magnitude Layer
             const s = vf.getScalarField('magnitude'); // << derived ScalarField
             const magnitude = L.canvasLayer.scalarField(s, {
                 interpolate: true,
-                color: chroma.scale(['#000000','#ccff33','#ffffff']).domain(vf.range),
+                color: scaleVIRIDIS,
                 opacity: 0.6
             });
 
@@ -250,7 +351,7 @@
             const direction = L.canvasLayer.scalarField (
                 vf.getScalarField('directionFrom'), {
                     type: 'vector',
-                    color: '#ccc',
+                    color: '#aaa',
                     vectorSize: 20,
                     arrowDirection: 'from'
                 }
@@ -261,26 +362,44 @@
                 paths: 4000,
                 fade: 0.98,
                 maxAge: 100,
-                velocityScale: 0.05,
-                color: scale,
+                velocityScale: 0.02,
+                color: scaleVIRIDIS,
                 width: 1.2,
                 opacity: 0.9
             }).addTo(surface);
 
-            L.control.layers({},
-            {
-                "Vector animation": animation,
-                "Derived magnitude": magnitude,
-                "Derived direction": direction,
-            }, {
-                position: 'bottomleft',
-                collapsed: false
-            }).addTo(surface);
+            L.control.layers(
+                {},
+                {
+                    "Vector animation": animation,
+                    "Derived magnitude": magnitude,
+                    "Derived direction": direction,
+                }, {
+                    position: 'bottomleft',
+                    collapsed: false
+                }
+            ).addTo(surface);
+
+            // Simple colorbar
+            var bar = L.control.colorBar(scaleVIRIDIS, vf.range, {
+                title: 'Wind velocity (m/s)',
+                units: 'm/s',
+                steps: 100,
+                decimals: 0,
+                width: 270,
+                height: 20,
+                position: 'topright',
+                background: '#2a2a2a',
+                textColor: 'white',
+                labels: [0, 25, 50, 75, 100],
+                textLabels: [],
+                labelTextPosition: 'end'
+            }).addTo(map);
 
             magnitude.on('click', function (e) {
                 if (e.value !== null) {
-                    var v = (e.value * 2.23694).toFixed(1);
-                    var html = '<span class="popupText">Wind speed: ' + v + ' mph</span>';
+                    var v = (e.value).toFixed(1);
+                    var html = 'Wind speed: ' + v + ' m/s';
                     var popup = L.popup().setLatLng(e.latlng).setContent(html).openOn(map);
                 }
             });
@@ -288,7 +407,7 @@
             direction.on('click', function (e) {
                 if (e.value !== null) {
                     let v = e.value.toFixed(0);
-                    let html = (`<span class="popupText">direction: ${v} degrees</span>`);
+                    let html = 'Wind direction: ' + v + ' degrees';
                     let popup = L.popup().setLatLng(e.latlng).setContent(html).openOn(map);
                 }
             });
