@@ -59,6 +59,7 @@
             baseLayer,
             wmsEndpoint,
             wmsLayer,
+            overlayLayer,
             wmsTimeLayer,
             wmsLegend;
 
@@ -115,6 +116,14 @@
 
         wmsTimeLayer = L.timeDimension.layer.wms(wmsLayer);
         wmsTimeLayer.addTo(map);
+
+        map.createPane('labels');
+        map.getPane('labels').style.zIndex = 650;
+        map.getPane('labels').style.pointerEvents = 'none';
+
+        overlayLayer = new L.tileLayer('http://donotbeonfire.co.uk:8080/styles/klokantech-terrain-overlay/{z}/{x}/{y}{r}.png', {
+            pane: "labels"
+        }).addTo(map);
 
         // Legend
         wmsLegend = L.control({
