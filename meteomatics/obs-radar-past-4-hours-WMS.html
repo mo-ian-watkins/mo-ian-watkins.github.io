@@ -52,7 +52,9 @@
 
     <script>
 
-        var endDate,
+        var dateNow,
+            dateRadar,
+            timeRoundDown = 1000 * 60 * 5,
             map,
             baseLayer,
             wmsEndpoint,
@@ -60,9 +62,11 @@
             wmsTimeLayer,
             wmsLegend;
 
-        // Set end date to today
-        endDate = new Date();
-        endDate.setUTCMinutes(0, 0, 0);
+        // Set end date to now but rounded down to last whole five minutes
+        dateNow = new Date();
+        dateRadar = new Date(dateNow.getTime() - (dateNow.getTime() % timeRoundDown));
+
+        console.log(dateRadar);
 
         // Map
         map = L.map('map', {
@@ -75,7 +79,7 @@
             timeDimension: true,
             timeDimensionControl: true,
             timeDimensionOptions: {
-                timeInterval: "PT4H/" + endDate.toISOString(),
+                timeInterval: "PT4H/" + dateRadar.toISOString(),
                 period: "PT5M"
             },
             timeDimensionControlOptions: {
@@ -104,7 +108,6 @@
             transparent: true,
             attribution: 'Meteomatics',
             version: "1.3.0",
-            uppercase: true,
             styles: "RADAR_LOG",
             opacity: 0.9,
             bounds: L.latLngBounds(L.latLng(47.5, -12.5), L.latLng(60.5, 4.5))
@@ -128,8 +131,6 @@
         };
 
         wmsLegend.addTo(map);
-
-        console.log(wmsTimeLayer);
 
     </script>
 
