@@ -148,6 +148,7 @@
             },
             uWindParams = "/todayT12Z/wind_speed_u_" + layer + ":ms/" + params.maxLat + "," + params.minLon + "_" + params.minLat + "," + params.maxLon + ":" + params.resolution + "," + params.resolution + "/json", //?model=ncep-gfs",
             vWindParams = "/todayT12Z/wind_speed_v_" + layer + ":ms/" + params.maxLat + "," + params.minLon + "_" + params.minLat + "," + params.maxLon + ":" + params.resolution + "," + params.resolution + "/json", //?model=ncep-gfs",
+            urls,
             uWind,
             vWind,
             vectorField,
@@ -162,36 +163,32 @@
         // Create the bare map
         map = createMap();
 
-        // Get U Wind
-        uWind = getWindVectorData(meteomaticsProxy, uWindParams);
+        // Store urls to fetch in an array
+        urls = [
+            meteomaticsProxy + uWindParams,
+            meteomaticsProxy + vWindParams
+        ];
 
-        // Get V Wind
-        vWind = getWindVectorData(meteomaticsProxy, vWindParams);
+        // Use map() to perform a fetch and handle the response for each url
+        Promise.all(urls.map(url =>
+            fetch(url).then(resp => resp.json())
+        ))
+        .then(data => {
 
-        // Sort U Wind
-        uWind = sortDataNS(uWind);
+            // Sort U Wind
+            uWind = sortDataNS(data[0]);
 
-        // Sort V Wind
-        vWind = sortDataNS(vWind);
+            // Sort V Wind
+            vWind = sortDataNS(data[1]);
 
-        // ASCIIGrid U Wind
-        uWind = asciiGridWind(uWind, params);
+            // ASCIIGrid U Wind
+            uWind = asciiGridWind(uWind, params);
 
-        // ASCIIGrid V Wind
-        vWind = asciiGridWind(vWind, params);
+            // ASCIIGrid V Wind
+            vWind = asciiGridWind(vWind, params);
 
-        // Display the vector animation
-        vectorField = displayAnimation(map);
-
-        if (vectorField) {
-
-            // Update bounds
-            updateBounds(map, vectorField);
-
-        }
-
-        // Recreate animation when move end
-        map.on("moveend", function (e) {
+            // Display the vector animation
+            vectorField = displayAnimation(map);
 
             if (vectorField) {
 
@@ -199,6 +196,18 @@
                 updateBounds(map, vectorField);
 
             }
+
+            // Recreate animation when move end
+            map.on("moveend", function (e) {
+
+                if (vectorField) {
+
+                    // Update bounds
+                    updateBounds(map, vectorField);
+
+                }
+
+            });
 
         });
 
@@ -221,6 +230,7 @@
                 // Config
                 center: mapCenter,
                 zoom: 3,
+                minZoom: 2,
                 maxZoom: 5,
                 crs: L.CRS.EPSG3857,
                 layers: [baseLayer],
@@ -239,8 +249,6 @@
                 [90, -180],
                 [-90, 180]
             ]);
-
-            _map.setMinZoom(2);
 
             _map.invalidateSize();
 
@@ -345,7 +353,7 @@
             const magnitude = L.canvasLayer.scalarField(s, {
                 interpolate: true,
                 color: scaleTURBO,
-                opacity: 0.5
+                opacity: 0.3
             });
 
             // Direction layer
