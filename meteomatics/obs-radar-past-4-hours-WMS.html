@@ -82,11 +82,12 @@
                 period: "PT5M"
             },
             timeDimensionControlOptions: {
+                timeZones: ["UTC", "Local"],
                 maxSpeed: 15,
                 autoPlay: false,
                 playReverseButton: true,
                 loopButton: true,
-                timeZones: ["Local", "UTC"],
+                timeSliderDragUpdate: true,
                 playerOptions: {
                     transitionTime: 100,
                     loop: true,
