@@ -17,15 +17,34 @@
 
     <style>
         html,
-        body {
+        body,
+        #main {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
             background-color: #fff;
             font-family: Inter, Arial, Helvetica, sans-serif;
         }
 
         #map {
-            height: 1000px;
-            background-color: #fff;
+            width: 50%;
+            height: 100%;
+            border: none;
+            margin: none;
+            padding: none;
+            float: left;
             cursor: crosshair;
+            background-color: #94c1e2;
+        }
+
+        #chart {
+            width: 50%;
+            height: 100%;
+            border: none;
+            margin: none;
+            padding: none;
+            float: left;
         }
     </style>
 
@@ -33,14 +52,14 @@
 
 <body>
 
-        <div style="width: 100%; height: 100%; display: table;">
-            <div style="display: table-row">
-                <div id="map" style="width: 50%; display: table-cell;"></div>
-                <div id="chart" style="display: table-cell;">Chart</div>
-            </div>
+    <div id="main">
+        <div id="map">
+            Hello
         </div>
-
-    <div id="map"></div>
+        <div id="chart">
+            There
+        </div>
+    </div>
 
     <script>
 
