@@ -55,6 +55,7 @@
         var endDate,
             map,
             baseLayer,
+            overlayLayer,
             wmsEndpoint,
             wmsLayer,
             wmsTimeLayer,
@@ -94,7 +95,12 @@
         });
 
         // Base map layer
-        baseLayer = new L.tileLayer('http://donotbeonfire.co.uk:8080/styles/klokantech-terrain-base/{z}/{x}/{y}{r}.jpg').addTo(map);
+        baseLayer = new L.tileLayer("http://ec2-35-178-192-41.eu-west-2.compute.amazonaws.com/styles/ultra-light-theme/{z}/{x}/{y}{r}.jpg").addTo(map);
+
+        // Overlay map layer
+        overlayLayer = new L.tileLayer("http://ec2-35-178-192-41.eu-west-2.compute.amazonaws.com/styles/light-theme-coast-labels/{z}/{x}/{y}{r}.png", {
+            pane: "labels"
+        });
 
         // WMS
         wmsEndpoint = "https://betatest.metoffice.gov.uk/enthusiast/api/proxy/wms";
@@ -130,6 +136,12 @@
         };
 
         wmsLegend.addTo(map);
+
+        map.createPane('labels');
+        map.getPane('labels').style.zIndex = 650;
+        map.getPane('labels').style.pointerEvents = 'none';
+
+        overlayLayer.addTo(map);
 
     </script>
 
