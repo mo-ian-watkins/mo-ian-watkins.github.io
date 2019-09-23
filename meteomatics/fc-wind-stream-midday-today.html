@@ -223,15 +223,15 @@
             // Base map layer
             baseLayer = new L.tileLayer("http://ec2-35-178-192-41.eu-west-2.compute.amazonaws.com/styles/dev-atlas-ultra-dark-theme/{z}/{x}/{y}{r}.jpg");
 
-            mapCenter = new L.LatLng(20, -25);
+            mapCenter = new L.LatLng(0, -25);
 
             _map = new L.Map("map", {
 
                 // Config
                 center: mapCenter,
-                zoom: 3,
-                minZoom: 2,
-                maxZoom: 5,
+                zoom: 2,
+                minZoom: 1,
+                maxZoom: 4,
                 crs: L.CRS.EPSG3857,
                 layers: [baseLayer],
                 attributionControl: false,
@@ -246,8 +246,8 @@
             }).addTo(_map);
 
             _map.setMaxBounds([
-                [90, -180],
-                [-90, 180]
+                [83, -180],
+                [-83, 180]
             ]);
 
             _map.invalidateSize();
@@ -437,16 +437,16 @@
             bounds._northEast.lng = bounds._northEast.lng + 2;
 
             // Clamp bounds
-            if (bounds._southWest.lat < -80) {
-                bounds._southWest.lat = -80
+            if (bounds._southWest.lat < -70) {
+                bounds._southWest.lat = -70
             }
 
             if (bounds._southWest.lng < -180) {
                 bounds._southWest.lng = -180
             }
 
-            if (bounds._northEast.lat > 80) {
-                bounds._northEast.lat = 80
+            if (bounds._northEast.lat > 70) {
+                bounds._northEast.lat = 70
             }
 
             if (bounds._northEast.lng > 180) {
