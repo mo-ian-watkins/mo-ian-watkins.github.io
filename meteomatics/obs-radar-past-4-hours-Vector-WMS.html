@@ -62,7 +62,6 @@
             baseLayer,
             wmsEndpoint,
             wmsLayer,
-            overlayLayer,
             wmsTimeLayer,
             wmsLegend;
 
@@ -108,7 +107,7 @@
         // Base map layer
         baseLayer = L.mapboxGL({
             accessToken: 'not-needed',
-            style: "http://ec2-35-178-192-41.eu-west-2.compute.amazonaws.com/styles/mountain-theme/style.json"
+            style: "http://ec2-35-178-192-41.eu-west-2.compute.amazonaws.com/styles/dev-atlas-minimal-mono-theme/style.json"
         }).addTo(map);
 
         // WMS
@@ -128,14 +127,6 @@
 
         wmsTimeLayer = L.timeDimension.layer.wms(wmsLayer);
         wmsTimeLayer.addTo(map);
-
-        map.createPane('labels');
-        map.getPane('labels').style.zIndex = 650;
-        map.getPane('labels').style.pointerEvents = 'none';
-
-        overlayLayer = new L.tileLayer('http://donotbeonfire.co.uk:8080/styles/klokantech-terrain-overlay/{z}/{x}/{y}{r}.png', {
-            pane: "labels"
-        }).addTo(map);
 
         // Legend
         wmsLegend = L.control({

@@ -37,7 +37,7 @@
     <script>
 
         var wmtsLayer,
-            overlayLayer,
+            baseLayer,
             mapCenter,
             _map
 
@@ -54,8 +54,8 @@
             tileSize: 256
         });
 
-        // Overlay map layer
-        overlayLayer = new L.tileLayer("http://ec2-35-178-192-41.eu-west-2.compute.amazonaws.com/styles/light-theme-coast-labels/{z}/{x}/{y}{r}.png");
+        // Base map layer
+        baseLayer = new L.tileLayer("http://ec2-35-178-192-41.eu-west-2.compute.amazonaws.com/styles/dev-atlas-minimal-mono-theme/{z}/{x}/{y}{r}.png");
 
         mapCenter = new L.LatLng(50, 0);
 
@@ -65,7 +65,7 @@
             maxZoom: 10,
             minZoom: 3,
             crs: L.CRS.EPSG3857,
-            layers: [wmtsLayer, overlayLayer],
+            layers: [baseLayer, wmtsLayer],
             attributionControl: false
         });
 

@@ -38,7 +38,6 @@
 
         var baseLayer,
             wmtsLayer,
-            overlayLayer,
             mapCenter,
             _map,
             bounds;
@@ -46,7 +45,7 @@
         bounds = L.latLngBounds(L.latLng(47.5, -12.5), L.latLng(60.5, 4.5));
 
         // Base map layer
-        baseLayer = new L.tileLayer("http://ec2-35-178-192-41.eu-west-2.compute.amazonaws.com/styles/light-theme-base/{z}/{x}/{y}{r}.jpg");
+        baseLayer = new L.tileLayer("http://ec2-35-178-192-41.eu-west-2.compute.amazonaws.com/styles/dev-atlas-minimal-mono-theme/{z}/{x}/{y}{r}.jpg");
 
         // Tiled Layer
         wmtsLayer = L.tileLayer.wms('https://betatest.metoffice.gov.uk/enthusiast/api/proxy/wms?', {
@@ -63,9 +62,6 @@
             bounds: bounds
         });
 
-        // Overlay map layer
-        overlayLayer = new L.tileLayer("http://ec2-35-178-192-41.eu-west-2.compute.amazonaws.com/styles/light-theme-coast-labels/{z}/{x}/{y}{r}.png");
-
         mapCenter = new L.LatLng(51, -3);
 
         _map = new L.Map("map", {
@@ -73,7 +69,7 @@
             zoom: 7,
             maxZoom: 12,
             crs: L.CRS.EPSG3857,
-            layers: [baseLayer, wmtsLayer, overlayLayer],
+            layers: [baseLayer, wmtsLayer],
             attributionControl: false
         });
 

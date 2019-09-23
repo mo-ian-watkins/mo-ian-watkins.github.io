@@ -29,11 +29,13 @@
 
     <script>
 
+        // http://labs.metoffice.gov.uk/wotw
+
         var xhr = new XMLHttpRequest(),
             metarEndpoint = "http://labs.metoffice.gov.uk/wotw/collections/metar/qcd/"
 
         // Get data from API
-        xhr.open("GET", metarEndpoint + "/point?coords=POINT(0%2051.48)&time=2019-08-20T09:50:00&parametername=air_temperature", false);
+        xhr.open("GET", metarEndpoint + "/point?coords=POINT(0%2051.48)&time=2019-09-20T08:50:00&parametername=air_temperature", false);
         xhr.onload = function() {
             if (xhr.status !== 200) {
                 alert(xhr.responseText);
@@ -45,7 +47,7 @@
         xhr.send("");
 
         // Get data from API
-        xhr.open("GET", metarEndpoint + "point?coords=POINT(2.650544%2039.571625)&time=2019-08-20T10:00:00&parametername=air_temperature", false);
+        xhr.open("GET", metarEndpoint + "point?coords=POINT(2.650544%2039.571625)&time=2019-09-20T09:00:00&parametername=air_temperature", false);
         xhr.onload = function() {
             if (xhr.status !== 200) {
                 alert(xhr.responseText);
@@ -57,7 +59,7 @@
         xhr.send("");
 
         // Get data from API
-        xhr.open("GET", metarEndpoint + "point?coords=POINT(69.160652%2034.543896)&time=2019-08-20T09:50:00&parametername=air_temperature", false);
+        xhr.open("GET", metarEndpoint + "point?coords=POINT(69.160652%2034.543896)&time=2019-09-20T08:50:00&parametername=air_temperature", false);
         xhr.onload = function() {
             if (xhr.status !== 200) {
                 alert(xhr.responseText);
@@ -66,7 +68,7 @@
                 document.getElementById("valueKabul").innerHTML = "Temperature in Kabul is: " + data.ranges.air_temperature.values[0] + "°C";
             }
         };
-        xhr.send("");        
+        xhr.send("");
 
 </script>
 

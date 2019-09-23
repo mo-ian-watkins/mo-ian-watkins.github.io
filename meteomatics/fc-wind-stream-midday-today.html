@@ -141,8 +141,8 @@
             layer = "300hPa",
             params = {
                 resolution: 1.0,
-                maxLat: 80,
-                minLat: -80,
+                maxLat: 70,
+                minLat: -70,
                 minLon: -180,
                 maxLon: 180
             },
@@ -221,7 +221,7 @@
                 _map
 
             // Base map layer
-            baseLayer = new L.tileLayer("http://ec2-35-178-192-41.eu-west-2.compute.amazonaws.com/styles/ultra-dark-theme/{z}/{x}/{y}{r}.jpg");
+            baseLayer = new L.tileLayer("http://ec2-35-178-192-41.eu-west-2.compute.amazonaws.com/styles/dev-atlas-ultra-dark-theme/{z}/{x}/{y}{r}.jpg");
 
             mapCenter = new L.LatLng(20, -25);
 

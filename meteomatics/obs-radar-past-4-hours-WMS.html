@@ -59,7 +59,6 @@
             baseLayer,
             wmsEndpoint,
             wmsLayer,
-            overlayLayer,
             wmsTimeLayer,
             wmsLegend,
             maskStyle;
@@ -98,7 +97,7 @@
         });
 
         // Base map layer
-        baseLayer = new L.tileLayer("http://ec2-35-178-192-41.eu-west-2.compute.amazonaws.com/styles/light-theme-base/{z}/{x}/{y}{r}.jpg").addTo(map);
+        baseLayer = new L.tileLayer("http://ec2-35-178-192-41.eu-west-2.compute.amazonaws.com/styles/dev-atlas-minimal-mono-theme/{z}/{x}/{y}{r}.jpg").addTo(map);
 
         // WMS
         wmsEndpoint = "https://betatest.metoffice.gov.uk/enthusiast/api/proxy/wms";
@@ -116,14 +115,6 @@
 
         wmsTimeLayer = L.timeDimension.layer.wms(wmsLayer);
         wmsTimeLayer.addTo(map);
-
-        map.createPane('labels');
-        map.getPane('labels').style.zIndex = 650;
-        map.getPane('labels').style.pointerEvents = 'none';
-
-        overlayLayer = new L.tileLayer("http://ec2-35-178-192-41.eu-west-2.compute.amazonaws.com/styles/light-theme-coast-labels/{z}/{x}/{y}{r}.png", {
-            pane: "labels"
-        }).addTo(map);
 
         // Legend
         wmsLegend = L.control({
