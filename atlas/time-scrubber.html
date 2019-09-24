@@ -1,0 +1,131 @@
+
+<html>
+    <head>
+
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Time scrubber</title>
+
+        <style>
+
+            body {
+                background-color: #fff;
+            }
+
+            .container {
+                width: 400px;
+                height: 415px;
+                overflow-x: auto;
+                overflow-y: hidden;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+                margin: 10vh auto 0 auto;
+            }
+
+            .child {
+                width: 400px;
+                height: 400px;
+                position: relative;
+                background-color: #F0F0F0;
+                display: inline-block;
+                margin-right: -4px;
+                border: 1px solid #fff;
+            }
+
+            .image {
+                width: 200px;
+                height: 200px;
+                margin: 100px auto 0 auto;
+            }
+
+            #snap-scroll-container {
+                -webkit-scroll-snap-type: mandatory;
+                scroll-snap-type: x mandatory;
+                -webkit-scroll-snap-points-x: repeat(100%);
+                scroll-snap-points-x: repeat(100%);
+            }
+
+            #snap-scroll-container > .child {
+                scroll-snap-align: start;
+            }
+
+            #snap-scroll-container-coordinates {
+                -webkit-scroll-snap-type: mandatory;
+                scroll-snap-type: x mandatory;
+            }
+
+            #snap-scroll-container-coordinates > .child {
+                -webkit-scroll-snap-coordinate: 0% 0%;
+                scroll-snap-coordinate: 0% 0%;
+                scroll-snap-align: start;
+            }
+
+            #snap-scroll-container-coordinates-centered {
+                width: 402px;
+                -webkit-scroll-snap-type: mandatory;
+                scroll-snap-type: x mandatory;
+                -webkit-scroll-snap-destination: 50% 50%;
+                scroll-snap-destination: 50% 50%;
+            }
+
+            #snap-scroll-container-coordinates-centered > .child {
+                -webkit-scroll-snap-coordinate: 50% 50%;
+                scroll-snap-coordinate: 50% 50%;
+                scroll-snap-align: center;
+            }
+
+            .snap-destination,
+            .snap-destination-centered {
+                width: 25px;
+                height: 25px;
+                z-index: 1;
+                position: absolute;
+            }
+
+            .snap-destination {
+                margin: -10px 0 0 -10px;
+            }
+
+            .snap-destination-centered {
+                margin: 187px 0 0 187px;
+            }
+
+        </style>
+
+    </head>
+
+    <body>
+
+        <div class="container" id="snap-scroll-container-coordinates-centered">
+
+            <img src="resources/images/bluecross.svg" class="snap-destination-centered"></img>
+
+            <div class="child">
+                <div class="image"><img src="https://via.placeholder.com/200x200.png/CCFF33/000000/?text=Step+1"></div>
+            </div>
+            <div class="child">
+                <div class="image"><img src="https://via.placeholder.com/200x200.png/CCFF33/000000/?text=Step+2"></div>
+            </div>
+            <div class="child">
+                <div class="image"><img src="https://via.placeholder.com/200x200.png/CCFF33/000000/?text=Step+3"></div>
+            </div>
+            <div class="child">
+                <div class="image"><img src="https://via.placeholder.com/200x200.png/CCFF33/000000/?text=Step+4"></div>
+            </div>
+            <div class="child">
+                <div class="image"><img src="https://via.placeholder.com/200x200.png/CCFF33/000000/?text=Step+5"></div>
+            </div>
+            <div class="child">
+                <div class="image"><img src="https://via.placeholder.com/200x200.png/CCFF33/000000/?text=Step+6"></div>
+            </div>
+            <div class="child">
+                <div class="image"><img src="https://via.placeholder.com/200x200.png/CCFF33/000000/?text=Step+7"></div>
+            </div>
+            <div class="child">
+                <div class="image"><img src="https://via.placeholder.com/200x200.png/CCFF33/000000/?text=Step+8"></div>
+            </div>
+
+        </div>
+
+    </body>
+
+</html>
