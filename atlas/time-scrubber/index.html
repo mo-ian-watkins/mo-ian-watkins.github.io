@@ -39,6 +39,7 @@
             }
 
             .index {
+                padding-top: 20px;
                 display: flex;
                 justify-content: center;
             }
@@ -54,6 +55,8 @@
     <body>
 
         <div class="map"><img src="resources/images/wms.png"></div>
+
+        <div class="index">Selected time step: 0</div>
 
         <div class="marker">▼</div>
 
@@ -84,8 +87,6 @@
             <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
             <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
         </div>
-
-        <div class="index">Selected time step:</div>
 
         <script>
             jQuery(document).ready(function($) {
