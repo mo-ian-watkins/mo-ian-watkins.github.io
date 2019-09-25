@@ -7,7 +7,7 @@
 
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-        <meta name="viewport" content="initial-scale=1.0, width=device-width, viewport-fit=cover">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, , minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 
         <!-- Stylesheets -->
         <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
@@ -27,20 +27,23 @@
             body {
                 font-family: Inter, Arial, Helvetica, sans-serif;
                 background: #fff;
+                overflow-x: hidden;
             }
 
             .wrapper {
                 display: flex;
                 flex-direction: column;
                 min-height: 90vh;
+                min-width: 100vw;
+
             }
 
-            .page-main {
+            .pageMain {
                 flex-grow: 1;
                 background: #fff;
             }
 
-            .page-footer {
+            .pageFooter {
                 height: 120px;
                 background: #fff;
             }
@@ -53,7 +56,7 @@
             .basemap {
                 display: flex;
                 justify-content: center;
-                background: url("resources/images/375x357_basemap.jpeg");
+                background: url("resources/images/375x357_basemap.jpg");
                 background-position: top center;
                 background-repeat: no-repeat;
             }
@@ -63,10 +66,17 @@
                 height: 357px;
             }
 
-            .index {
-                padding-top: 20px;
+            .currentFrame {
                 display: flex;
                 justify-content: center;
+            }
+
+            .mainCarousel {
+                height: 50px;
+            }
+
+            .carouselCell {
+                height: 100%;
             }
 
         </style>
@@ -77,7 +87,7 @@
 
         <div class="wrapper">
 
-            <main class="page-main">
+            <main class="pageMain">
 
                 <div class="basemap">
 
@@ -87,39 +97,38 @@
 
             </main>
 
-            <footer class="page-footer">
+            <footer class="pageFooter">
 
-                <div id="index" class="index">Selected time step: 0</div>
+                <div id="currentFrame" class="currentFrame">Selected time step: 0</div>
 
                 <div class="marker">▼</div>
 
-                <div id="carousel" class="main-carousel">
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
-                    <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+                <div id="mainCarousel" class="mainCarousel">
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
                 </div>
 
             </footer>
@@ -130,31 +139,75 @@
 
             document.addEventListener('DOMContentLoaded', function(event) {
 
-                var element,
-                    timeScrubber,
-                    index;
+                var toggleLiveUpdate = false,
+                    timeScrubberContainer,
+                    timeScrubberControl,
+                    currentFrameControl,
+                    currentFrame;
 
                 // Handle on the carousel
-                element = document.getElementById('carousel');
+                timeScrubberContainer = document.getElementById('mainCarousel');
 
                 // Create the Time Scrubber
-                timeScrubber = new Flickity(element, {
+                timeScrubberControl = new Flickity(timeScrubberContainer, {
+                    setGallerySize: false,
                     cellAlign: 'center',
                     initialIndex: 0,
-                    selectedAttraction: 0.2,
-                    friction: 0.3,
+                    selectedAttraction: 0.1,
+                    friction: 0.2,
                     prevNextButtons: false,
                     pageDots: false,
-                    autoPlay: false
+                    autoPlay: false,
+                    on: {
+                        ready: function(event) {
+                            this.resize();
+                        }
+                    }
                 });
 
                 // Handle on the time step counter
-                index = document.getElementById('index');
+                currentFrameControl = document.getElementById('currentFrame');
 
-                // On Time Scrubber change event handler
-                timeScrubber.on('change', function(event) {
-                    index.innerHTML = "Selected time step: " + event;
-                });
+                if (toggleLiveUpdate) {
+
+                    // If live updates required
+
+                    // On Time Scrubber scroll event handler
+                    timeScrubberControl.on('scroll', function(event) {
+
+                        var count = timeScrubberControl.cells.length - 1,
+                            target = Math.round((count / 100) * (event * 100));
+
+                        if (target < 0 || target === -0) {
+                            target = 0;
+                        }
+
+                        if (target > count) {
+                            target = count;
+                        }
+
+                        if (target !== currentFrame) {
+
+                            currentFrame = target
+                            currentFrameControl.innerHTML = "Selected time step: " + currentFrame;
+
+                        }
+
+                    });
+
+                } else {
+
+                    // Change events only
+
+                    // On Time Scrubber change event handler
+                    timeScrubberControl.on('change', function(event) {
+
+                        currentFrame = event;
+                        currentFrameControl.innerHTML = "Selected time step: " + currentFrame;
+
+                    });
+
+                }
 
             })
 
