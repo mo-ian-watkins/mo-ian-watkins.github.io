@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+        <title>Time scrubber 3</title>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        <!-- Stylesheets -->
+        <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+
+        <!-- Flickity Stylesheets -->
+        <link rel="stylesheet" href="resources/js/flickity/flickity.min.css" media="screen">
+
+        <!-- Leaflet Stylesheets -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+        <link rel="stylesheet" href="resources/js/leaflet/leaflet.timedimension.control.min.css" />
+
+        <!-- Flickity Javascript -->
+        <script src="resources/js/flickity/flickity.pkgd.min.js"></script>
+
+        <!-- Leaflet Javascript -->
+        <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
+        <script type="text/javascript" src="resources/js/leaflet/leaflet.non.tiled.layer.js"></script>
+        <script type="text/javascript" src="resources/js/leaflet/iso8601.min.js"></script>
+        <script type="text/javascript" src="resources/js/leaflet/leaflet.timedimension.min.js"></script>
+
+        <style>
+
+            html,
+            body,
+            #map {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                max-width: 3072px;  /* WMS Limit */
+                height: 100%;
+                max-height: 3072px;  /* WMS Limit */
+                background-color: #fff;
+                font-family: Inter, Arial, Helvetica, sans-serif;
+            }
+
+            /* Reset Control margin to 0 (zero) */
+
+            .leaflet-top .leaflet-control {
+                margin-top: 0;
+            }
+
+            .leaflet-right .leaflet-control {
+                margin-right: 0;
+            }
+
+            .leaflet-bottom .leaflet-control {
+                margin-bottom: 0;
+            }
+
+            .leaflet-left .leaflet-control {
+                margin-left: 0;
+            }
+
+            .time-scrubber-container {
+                background: #f0f0f0;
+                width: 100vw;
+                height: 100px;
+            }
+
+            .selected-time-step-indicator {
+                display: flex;
+                justify-content: center;
+            }
+
+            .selected-time-step-marker {
+                display: flex;
+                justify-content: center;
+            }
+
+            .main-farousel {
+                height: 50px;
+            }
+
+            .carousel-cell {
+                height: 100%;
+            }
+
+        </style>
+
+    </head>
+
+    <body>
+
+        <div id="map"></div>
+
+        <script>
+
+            var map,
+                baseLayer,
+                timeScrubberContainer,
+                timeSteps = 25;
+
+            // Map
+            map = L.map('map', {
+                attributionControl: false,
+                zoomControl: false,
+                zoom: 5,
+                minZoom: 3,
+                maxZoom: 11,
+                maxBounds: L.latLngBounds(L.latLng(46.5, -13.5), L.latLng(61.5, 5.5)),
+                center: [52.0, -2]
+            });
+
+            // Base map layer
+            baseLayer = new L.tileLayer("http://ec2-35-178-192-41.eu-west-2.compute.amazonaws.com/styles/dev-atlas-minimal-mono-theme/{z}/{x}/{y}{r}.jpg").addTo(map);
+
+            // Time scrubber container
+            timeScrubberContainer = L.control({
+                position: 'bottomleft'
+            });
+
+            timeScrubberContainer.onAdd = function(map) {
+
+                var timeScrubberControl,
+                    selectedTimeStepIndicator,
+                    selectedTimeStepMarker,
+                    timeStepCarousel;
+
+                // Time Scrubber Control
+                timeScrubberControl = L.DomUtil.create('div', 'time-scrubber-container');
+
+                // Disable mouse events
+                L.DomEvent.disableClickPropagation(timeScrubberControl);
+                L.DomEvent.disableScrollPropagation(timeScrubberControl);
+
+                // Selected Time Step Indicator
+                selectedTimeStepIndicator = L.DomUtil.create('div', 'selected-time-step-indicator', timeScrubberControl);
+                selectedTimeStepIndicator.innerHTML = 'Selected time step: 0';
+
+                // Selected Time Step Indicator
+                selectedTimeStepMarker = L.DomUtil.create('div', 'selected-time-step-marker', timeScrubberControl);
+                selectedTimeStepMarker.innerHTML = '▼';
+
+/*                 control.innerHTML = control.innerHTML + '<div id="currentFrame" class="currentFrame">Selected time step: 0</div>';
+                control.innerHTML = control.innerHTML + '<div class="marker">▼</div>';
+
+                control.innerHTML = control.innerHTML + '<div id="mainCarousel" class="mainCarousel">' +
+                                                        '<div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>' +
+                                                        '<div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>' +
+                                                        '</div>'; */
+
+                return timeScrubberControl;
+
+            };
+
+            timeScrubberContainer.addTo(map);
+
+            // Time scrubber carousel
+
+        </script>
+
+<!--         <div class="wrapper">
+
+            <main class="pageMain">
+
+                <div class="basemap">
+
+                    <img class="overlayImage" src="resources/images/375x357_radar.png">
+
+                </div>
+
+            </main>
+
+            <footer class="pageFooter">
+
+                <div id="currentFrame" class="currentFrame">Selected time step: 0</div>
+
+                <div class="marker">▼</div>
+
+                <div id="mainCarousel" class="mainCarousel">
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                    <div class="carouselCell"><img src="resources/images/noun_measure_95971.png"></div>
+                </div>
+
+            </footer>
+
+        </div> -->
+
+<!--         <script>
+
+             document.addEventListener('DOMContentLoaded', function(event) {
+
+                var toggleLiveUpdate = false,
+                    timeScrubberContainer,
+                    timeScrubberControl,
+                    currentFrameControl,
+                    currentFrame;
+
+                // Handle on the carousel
+                timeScrubberContainer = document.getElementById('mainCarousel');
+
+                // Create the Time Scrubber
+                timeScrubberControl = new Flickity(timeScrubberContainer, {
+                    setGallerySize: false,
+                    cellAlign: 'center',
+                    initialIndex: 0,
+                    selectedAttraction: 0.1,
+                    friction: 0.2,
+                    prevNextButtons: false,
+                    pageDots: false,
+                    autoPlay: false,
+                    on: {
+                        ready: function(event) {
+                            this.resize();
+                        }
+                    }
+                });
+
+                // Handle on the time step counter
+                currentFrameControl = document.getElementById('currentFrame');
+
+                if (toggleLiveUpdate) {
+
+                    // If live updates required
+
+                    // On Time Scrubber scroll event handler
+                    timeScrubberControl.on('scroll', function(event) {
+
+                        var count = timeScrubberControl.cells.length - 1,
+                            target = Math.round((count / 100) * (event * 100));
+
+                        if (target < 0 || target === -0) {
+                            target = 0;
+                        }
+
+                        if (target > count) {
+                            target = count;
+                        }
+
+                        if (target !== currentFrame) {
+
+                            currentFrame = target
+                            currentFrameControl.innerHTML = "Selected time step: " + currentFrame;
+
+                        }
+
+                    });
+
+                } else {
+
+                    // Change events only
+
+                    // On Time Scrubber change event handler
+                    timeScrubberControl.on('change', function(event) {
+
+                        currentFrame = event;
+                        currentFrameControl.innerHTML = "Selected time step: " + currentFrame;
+
+                    });
+
+                }
+
+            })
+
+        </script>  -->
+
+    </body>
+
+</html>
