@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+        <title>Time scrubber 2</title>
+
+        <meta charset="utf-8">
+        <meta name="msapplication-tap-highlight" content="no" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <!-- Stylesheets -->
+        <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+
+        <!-- Flickity Stylesheets -->
+        <link rel="stylesheet" href="resources/js/flickity/flickity.min.css" media="screen">
+
+        <!-- Flickity Javascript -->
+        <script src="resources/js/flickity/flickity.pkgd.min.js"></script>
+
+        <style>
+
+            html,
+            body {
+                height: 95%;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                overflow-x: hidden;
+                overflow-y: hidden;
+                font-family: Inter, Arial, Helvetica, sans-serif;
+            }
+
+            .marker {
+                display: flex;
+                justify-content: center;
+            }
+
+            .basemap {
+                display: flex;
+                justify-content: center;
+                background: url("http://ec2-35-178-192-41.eu-west-2.compute.amazonaws.com/styles/dev-atlas-minimal-mono-theme/static/-4.0283,54.5030,5/420x400.jpeg");
+                background-position: top center;
+                background-repeat: no-repeat;
+            }
+
+            .overlayImage {
+                width: 420px;
+                height: 400px;
+            }
+
+            .index {
+                padding-top: 20px;
+                display: flex;
+                justify-content: center;
+            }
+
+        </style>
+
+    </head>
+
+    <body>
+
+        <div class="basemap">
+            <img class="overlayImage" src="https://betatest.metoffice.gov.uk/enthusiast/api/proxy/wms?service=WMS&request=GetMap&version=1.3.0&layers=ukmo-500m-radar%3Aprecip_raw_5min%3Amm&styles=RADAR_LOG&format=image%2Fpng&transparent=true&crs=EPSG%3A3857&uppercase=false&width=420&height=400&bbox=-1391493.6349159197,6024072.119373784,500937.70856973104,8511908.69220489">
+        </div>
+
+        <div id="index" class="index">Selected time step: 0</div>
+
+        <div class="marker">▼</div>
+
+        <div id="carousel" class="main-carousel">
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+            <div class="carousel-cell"><img src="resources/images/noun_measure_95971.svg"></div>
+        </div>
+
+        <script>
+
+                var element,
+                    timeScrubber,
+                    index;
+
+                // Handle on the carousel
+                element = document.getElementById('carousel');
+
+                // Create the Time Scrubber
+                timeScrubber = new Flickity(element, {
+                    cellAlign: 'center',
+                    initialIndex: 0,
+                    selectedAttraction: 0.2,
+                    friction: 0.3,
+                    prevNextButtons: false,
+                    pageDots: false,
+                    autoPlay: false
+                });
+
+                // Handle on the time step counter
+                index = document.getElementById('index');
+
+                // On Time Scrubber change event handler
+                timeScrubber.on('change', function(event) {
+                    index.innerHTML = "Selected time step: " + event;
+                });
+
+        </script>
+
+    </body>
+
+</html>
