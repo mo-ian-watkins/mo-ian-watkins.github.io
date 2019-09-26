@@ -98,13 +98,25 @@
 
             document.addEventListener('DOMContentLoaded', function(event) {
 
-                var map,
+                var toggleLiveUpdate = true,
+                    map,
                     baseLayer,
                     timeScrubberContainer,
                     timeStepCarousel,
-                    timeSteps = 25,
-                    toggleLiveUpdate = false,
-                    selectedTimeStep;
+                    timeSteps,
+                    selectedTimeStep = 0,
+                    dateNow,
+                    datePrecip,
+                    fiveMinutes = 1000 * 60 * 5,
+                    map,
+                    wmsEndpoint,
+                    wmsLayer,
+                    wmsTimeLayer,
+                    maskStyle;
+
+                // Set start date to now but rounded up to next whole five minutes
+                dateNow = new Date();
+                datePrecip = new Date((dateNow.getTime() - (dateNow.getTime() % fiveMinutes) + fiveMinutes));
 
                 // Map
                 map = L.map('map', {
@@ -113,133 +125,194 @@
                     zoom: 5,
                     minZoom: 3,
                     maxZoom: 11,
-                    maxBounds: L.latLngBounds(L.latLng(46.5, -13.5), L.latLng(61.5, 5.5)),
-                    center: [52.0, -2]
+                    maxBounds: L.latLngBounds(L.latLng(-83, -180), L.latLng(83, 180)),
+                    center: [52.0, -2],
+                    timeDimension: true,
+                    timeDimensionControl: false,
+                    timeDimensionOptions: {
+                        timeInterval: datePrecip.toISOString() + "/" + "PT6H",
+                        period: "PT15M"
+                    },
+                    timeDimensionControlOptions: {
+                        timeZones: ["UTC", "Local"],
+                        maxSpeed: 15,
+                        autoPlay: false,
+                        playReverseButton: true,
+                        loopButton: true,
+                        timeSliderDragUpdate: true,
+                        playerOptions: {
+                            transitionTime: 100,
+                            loop: true,
+                            startOver: true
+                        }
+                    }
                 });
 
                 // Base map layer
                 baseLayer = new L.tileLayer("http://www.donotbeonfire.co.uk:8080/styles/dev-atlas-minimal-mono-theme/{z}/{x}/{y}{r}.jpg").addTo(map);
 
-                // Time scrubber container
-                timeScrubberContainer = L.control({
-                    position: 'bottomleft'
+                // WMS
+                wmsEndpoint = "https://betatest.metoffice.gov.uk/enthusiast/api/proxy/wms";
+
+                var wmsLayer = L.nonTiledLayer.wms(wmsEndpoint, {
+                    layers: 'mix:precip_5min:mm',
+                    format: 'image/png',
+                    transparent: true,
+                    attribution: 'Meteomatics',
+                    version: "1.3.0",
+                    styles: "RADAR_LOG",
+                    opacity: 0.9
                 });
 
-                timeScrubberContainer.onAdd = function() {
+                wmsTimeLayer = L.timeDimension.layer.wms(wmsLayer);
+                wmsTimeLayer.addTo(map);
 
-                    var timeScrubberControl,
-                        selectedTimeStepIndicator,
-                        selectedTimeStepMarker;
+                // Setup time steps from WMS
+                timeSteps = map.timeDimension.getAvailableTimes().length;
 
-                    // Time Scrubber Control
-                    timeScrubberControl = L.DomUtil.create('div', 'time-scrubber-container');
+                // Only build a time scrubber control if we have data
+                if (timeSteps > 0) {
 
-                    // Disable mouse events
-                    L.DomEvent.disableClickPropagation(timeScrubberControl);
-                    L.DomEvent.disableScrollPropagation(timeScrubberControl);
+                    // Time scrubber container
+                    timeScrubberContainer = L.control({
+                        position: 'bottomleft'
+                    });
 
-                    // Selected Time Step Indicator
-                    selectedTimeStepIndicator = L.DomUtil.create('div', 'selected-time-step-indicator', timeScrubberControl);
-                    selectedTimeStepIndicator.id = 'selectedTimeStepIndicator';
-                    selectedTimeStepIndicator.innerHTML = 'Selected time step: 0';
+                    timeScrubberContainer.onAdd = function() {
 
-                    // Selected Time Step Marker
-                    selectedTimeStepMarker = L.DomUtil.create('div', 'selected-time-step-marker', timeScrubberControl);
-                    selectedTimeStepMarker.innerHTML = '▼';
+                        var timeScrubberControl,
+                            selectedTimeStepIndicator,
+                            selectedTimeStepMarker;
 
-                    // Time Step Carousel
-                    timeStepCarousel = L.DomUtil.create('div', 'time-step-carousel', timeScrubberControl);
-                    timeStepCarousel.id = "timeStepCarousel";
+                        // Time Scrubber Control
+                        timeScrubberControl = L.DomUtil.create('div', 'time-scrubber-container');
 
-                    // Create the Time Scrubber
-                    timeStepCarousel = new Flickity(timeStepCarousel, {
-                        setGallerySize: false,
-                        cellAlign: 'center',
-                        initialIndex: 0,
-                        selectedAttraction: 0.1,
-                        friction: 0.2,
-                        prevNextButtons: false,
-                        pageDots: false,
-                        autoPlay: false,
-                        on: {
-                            ready: function(event) {
+                        // Disable mouse events
+                        L.DomEvent.disableClickPropagation(timeScrubberControl);
+                        L.DomEvent.disableScrollPropagation(timeScrubberControl);
 
-                                var counter,
-                                    timeStepCells = [];
+                        // Selected Time Step Indicator
+                        selectedTimeStepIndicator = L.DomUtil.create('div', 'selected-time-step-indicator', timeScrubberControl);
+                        selectedTimeStepIndicator.id = 'selectedTimeStepIndicator';
+                        selectedTimeStepIndicator.innerHTML = 'Selected time step: ';
 
-                                // Create the timesteps
-                                for (counter = 0; counter < timeSteps; counter++) {
+                        // Selected Time Step Marker
+                        selectedTimeStepMarker = L.DomUtil.create('div', 'selected-time-step-marker', timeScrubberControl);
+                        selectedTimeStepMarker.innerHTML = '▼';
 
-                                    var cell = document.createElement('div');
-                                    cell.className = 'time-step-carousel-cell';
-                                    cell.innerHTML = '<img src="resources/images/noun_measure_95971.svg">';
-                                    timeStepCells.push(cell);
+                        // Time Step Carousel
+                        timeStepCarousel = L.DomUtil.create('div', 'time-step-carousel', timeScrubberControl);
+                        timeStepCarousel.id = "timeStepCarousel";
+
+                        // Create the Time Scrubber
+                        timeStepCarousel = new Flickity(timeStepCarousel, {
+                            setGallerySize: false,
+                            cellAlign: 'center',
+                            initialIndex: 0,
+                            selectedAttraction: 0.1,
+                            friction: 0.2,
+                            prevNextButtons: false,
+                            pageDots: false,
+                            autoPlay: false,
+                            on: {
+                                ready: function(event) {
+
+                                    var counter,
+                                        timeStepCells = [];
+
+                                    // Create the timesteps
+                                    for (counter = 0; counter < timeSteps; counter++) {
+
+                                        var cell = document.createElement('div');
+                                        cell.className = 'time-step-carousel-cell';
+                                        cell.innerHTML = '<img src="resources/images/noun_measure_95971.svg">';
+                                        timeStepCells.push(cell);
+
+                                    }
+
+                                    // Add to Time Scrubber
+                                    this.append(timeStepCells);
 
                                 }
+                            }
+                        });
 
-                                // Add to Time Scrubber
-                                this.append(timeStepCells);
+                        return timeScrubberControl;
+
+                    };
+
+                    timeScrubberContainer.addTo(map);
+
+                    // Handle on the selected time step indicator
+                    selectedTimeStepIndicator = document.getElementById('selectedTimeStepIndicator');
+
+                    // Handle on the time step carousel
+                    timeStepCarousel = Flickity.data(document.querySelector('.time-step-carousel'));
+
+                    if (toggleLiveUpdate) {
+
+                        // If live updates required
+
+                        // On Time Scrubber scroll event handler
+                        timeStepCarousel.on('scroll', function(event) {
+
+                            var count = timeStepCarousel.cells.length - 1,
+                                target = Math.round((count / 100) * (event * 100));
+
+                            if (target < 0 || target === -0) {
+                                target = 0;
+                            }
+
+                            if (target > count) {
+                                target = count;
+                            }
+
+                            if (target !== selectedTimeStep) {
+
+                                selectedTimeStep = target
+                                selectedTimeStepIndicator.innerHTML = "Selected time step: " + formatDateTime(map.timeDimension.getAvailableTimes()[selectedTimeStep]);
+
+                                map.timeDimension.setCurrentTime(map.timeDimension.getAvailableTimes()[selectedTimeStep]);
 
                             }
-                        }
-                    });
 
-                    return timeScrubberControl;
+                        });
 
-                };
+                    } else {
 
-                timeScrubberContainer.addTo(map);
+                        // Change events only
 
-                // Handle on the selected time step indicator
-                selectedTimeStepIndicator = document.getElementById('selectedTimeStepIndicator');
+                        // On Time Scrubber change event handler
+                        timeStepCarousel.on('change', function(event) {
 
-                // Handle on the time step carousel
-                timeStepCarousel = Flickity.data(document.querySelector('.time-step-carousel'));
+                            if (event !== selectedTimeStep) {
 
-                if (toggleLiveUpdate) {
+                                selectedTimeStep = event;
+                                selectedTimeStepIndicator.innerHTML = "Selected time step: " + formatDateTime(map.timeDimension.getAvailableTimes()[selectedTimeStep]);
 
-                    // If live updates required
+                                map.timeDimension.setCurrentTime(map.timeDimension.getAvailableTimes()[selectedTimeStep]);
 
-                    // On Time Scrubber scroll event handler
-                    timeStepCarousel.on('scroll', function(event) {
+                            }
 
-                        var count = timeScrubberControl.cells.length - 1,
-                            target = Math.round((count / 100) * (event * 100));
+                        });
 
-                        if (target < 0 || target === -0) {
-                            target = 0;
-                        }
+                    }
 
-                        if (target > count) {
-                            target = count;
-                        }
+                    // Update selected time step indicator
+                    selectedTimeStepIndicator.innerHTML = "Selected time step: " + formatDateTime(map.timeDimension.getAvailableTimes()[selectedTimeStep]);
 
-                        if (target !== currentFrame) {
-
-                            selectedTimeStep = target
-                            selectedTimeStepIndicator.innerHTML = "Selected time step: " + selectedTimeStep;
-
-                        }
-
-                    });
-
-                } else {
-
-                    // Change events only
-
-                    // On Time Scrubber change event handler
-                    timeStepCarousel.on('change', function(event) {
-
-                        selectedTimeStep = event;
-                        selectedTimeStepIndicator.innerHTML = "Selected time step: " + selectedTimeStep;
-
+                    window.addEventListener('load', function() {
+                        timeStepCarousel.resize();
                     });
 
                 }
 
-                window.addEventListener('load', function() {
-                    timeStepCarousel.resize();
-                });
+                function formatDateTime (epochString) {
+
+                    return new Date(epochString).toLocaleString("en-GB", {timeStyle: "short"}) + " " +
+                           new Date(epochString).toLocaleString("en-GB", {dateStyle: "short"});
+
+                }
 
             })
 
