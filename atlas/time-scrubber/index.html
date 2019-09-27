@@ -3,53 +3,99 @@
 
   <head>
 
-        <title>Time scrubber</title>
+        <title>Time Scrubber Prototype</title>
 
         <meta charset="utf-8">
-        <meta name="msapplication-tap-highlight" content="no" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
         <!-- Stylesheets -->
         <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
 
-        <!-- Owl Stylesheets -->
-        <link rel="stylesheet" href="resources/js/owl/assets/owl.carousel.min.css">
+        <!-- Flickity Stylesheets -->
+        <link rel="stylesheet" href="resources/js/flickity/flickity.min.css" media="screen">
 
-        <!-- javascript -->
-        <script src="resources/js/jquery/jquery-3.4.1.min.js"></script>
-        <script src="resources/js/owl/owl.carousel.min.js"></script>
+        <!-- Leaflet Stylesheets -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+        <link rel="stylesheet" href="resources/js/leaflet/leaflet.timedimension.control.min.css" />
+
+        <!-- Flickity Javascript -->
+        <script src="resources/js/flickity/flickity.pkgd.min.js"></script>
+
+        <!-- Leaflet Javascript -->
+        <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
+        <script type="text/javascript" src="resources/js/leaflet/leaflet.non.tiled.layer.js"></script>
+        <script type="text/javascript" src="resources/js/leaflet/iso8601.min.js"></script>
+        <script type="text/javascript" src="resources/js/leaflet/leaflet.timedimension.min.js"></script>
 
         <style>
 
             html,
-            body {
-                height: 95%;
-                width: 100%;
+            body,
+            #map {
                 margin: 0;
                 padding: 0;
-                overflow-x: hidden;
-                overflow-y: hidden;
+                width: 100%;
+                max-width: 3072px;  /* WMS Limit */
+                height: 100%;
+                max-height: 3072px;  /* WMS Limit */
+                background-color: #fff;
                 font-family: Inter, Arial, Helvetica, sans-serif;
             }
 
-            .marker {
+            /* Reset Control margin to 0 (zero) */
+
+            .leaflet-top .leaflet-control {
+                margin-top: 0;
+            }
+
+            .leaflet-right .leaflet-control {
+                margin-right: 0;
+            }
+
+            .leaflet-bottom .leaflet-control {
+                margin-bottom: 0;
+            }
+
+            .leaflet-left .leaflet-control {
+                margin-left: 0;
+            }
+
+            .time-scrubber-container {
+                background: #f0f0f0;
+                width: 100vw;
+                height: 130px;
+            }
+
+            .selected-time-step-indicator {
+                display: flex;
+                justify-content: center;
+                padding-top: 10px;
+                font-size: 14px;
+                font-weight: 600;
+            }
+
+            .selected-time-step-marker {
                 display: flex;
                 justify-content: center;
             }
 
-            .map {
-                display: flex;
-                justify-content: center;
+            .time-step-carousel {
+                height: 40px;
             }
 
-            .index {
-                padding-top: 20px;
-                display: flex;
-                justify-content: center;
+            .time-step-carousel-cell {
+                height: 100%;
             }
 
-            .owl-carousel .owl-item img {
-                max-height: 60px;
+            .transport-button {
+                display: flex;
+                justify-content: center;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                font-size: 16px;
+                font-weight: 800;
+                cursor: pointer;
             }
 
         </style>
@@ -58,69 +104,276 @@
 
     <body>
 
-        <div class="map"><img src="https://via.placeholder.com/420x400.png?text=Here+is+a+map"></div>
-
-        <div class="index">Selected time step: 0</div>
-
-        <div class="marker">▼</div>
-
-        <div class="nonloop owl-carousel">
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-            <div class="item"><img src="resources/images/noun_measure_95971.svg"></div>
-        </div>
+        <div id="map"></div>
 
         <script>
-            jQuery(document).ready(function($) {
 
-                $('.nonloop').owlCarousel({
-                center: true,
-                items: 8,
-                loop: false,
-                margin: 0,
-                responsive: {
-                    0: {
-                        items: 8
-                    },
-                    600:{
-                        items: 12
-                    },
-                    1200:{
-                        items: 24
+            document.addEventListener('DOMContentLoaded', function(event) {
+
+                var toggleLiveUpdate = true,  // Whether scrolling time scrubber should update map without releasing (like app)
+                    toggleUseWMS = true,      // Whether to use WMS otherwise use pseudo WMTS (expensive on request quota)
+                    map,
+                    baseLayer,
+                    timeScrubberContainer,
+                    timeStepCarousel,
+                    timeSteps,
+                    selectedTimeStep = 0,
+                    dateNow,
+                    datePrecip,
+                    fifteenMinutes = 1000 * 60 * 15,
+                    map,
+                    wmsEndpoint,
+                    wmsLayer,
+                    wmsLayerOptions,
+                    wmsTimeLayer,
+                    maskStyle,
+                    urlParams;
+
+                // Parse URL parameters
+                urlParams = (document.location.search.substring(1)).split("=");
+
+                // Set start date to now but rounded up to next whole fifteen minutes
+                dateNow = new Date();
+                datePrecip = new Date((dateNow.getTime() - (dateNow.getTime() % fifteenMinutes) + fifteenMinutes));
+
+                // Map
+                map = L.map('map', {
+                    attributionControl: false,
+                    zoomControl: false,
+                    fadeAnimation: false,
+                    zoom: 5,
+                    minZoom: 3,
+                    maxZoom: 11,
+                    maxBounds: L.latLngBounds(L.latLng(-83, -180), L.latLng(83, 180)),
+                    center: [53.5, -4],
+                    timeDimension: true,
+                    timeDimensionControl: false,
+                    timeDimensionOptions: {
+                        timeInterval: datePrecip.toISOString() + "/" + "PT3H",
+                        period: "PT15M"
                     }
-                }
                 });
 
-                var owl = $('.owl-carousel');
-                var index = $('.index');
+                // Base map layer
+                baseLayer = new L.tileLayer("http://www.donotbeonfire.co.uk:8080/styles/dev-atlas-minimal-mono-theme/{z}/{x}/{y}{r}.jpg").addTo(map);
 
-                owl.on('changed.owl.carousel', function(event) {
-                    index[0].innerHTML = "Selected time step: " + event.item.index;
-                })
+                // WMS
+                wmsEndpoint = "https://betatest.metoffice.gov.uk/enthusiast/api/proxy/wms";
 
-            });
+                // Set WMS/WMTS Layer options
+                wmsLayerOptions = {
+                    layers: 'mix:precip_5min:mm',
+                    format: 'image/png',
+                    transparent: true,
+                    attribution: 'Meteomatics',
+                    version: "1.3.0",
+                    styles: "RADAR_LOG",
+                    opacity: 0.9
+                }
+
+                // Add params
+                wmsLayerOptions[urlParams[0]] = urlParams[1];
+
+                // Whether to use WMS or pseudo WMTS
+                if (toggleUseWMS) {
+
+                    wmsLayer = L.nonTiledLayer.wms(wmsEndpoint, wmsLayerOptions);
+
+                } else {
+
+                    wmsLayer = L.tileLayer.wms(wmsEndpoint, wmsLayerOptions);
+
+                }
+
+                wmsTimeLayer = L.timeDimension.layer.wms(wmsLayer);
+                wmsTimeLayer.addTo(map);
+
+                // Setup time steps from WMS
+                timeSteps = map.timeDimension.getAvailableTimes().length;
+
+                // Only build a time scrubber control if we have data
+                if (timeSteps > 0) {
+
+                    // Time scrubber container
+                    timeScrubberContainer = L.control({
+                        position: 'bottomleft'
+                    });
+
+                    timeScrubberContainer.onAdd = function() {
+
+                        var timeScrubberControl,
+                            selectedTimeStepIndicator,
+                            selectedTimeStepMarker;
+
+                        // Time Scrubber Control
+                        timeScrubberControl = L.DomUtil.create('div', 'time-scrubber-container');
+
+                        // Disable mouse events
+                        L.DomEvent.disableClickPropagation(timeScrubberControl);
+                        L.DomEvent.disableScrollPropagation(timeScrubberControl);
+
+                        // Selected Time Step Indicator
+                        selectedTimeStepIndicator = L.DomUtil.create('div', 'selected-time-step-indicator', timeScrubberControl);
+                        selectedTimeStepIndicator.id = 'selectedTimeStepIndicator';
+                        selectedTimeStepIndicator.innerHTML = '';
+
+                        // Selected Time Step Marker
+                        selectedTimeStepMarker = L.DomUtil.create('div', 'selected-time-step-marker', timeScrubberControl);
+                        selectedTimeStepMarker.innerHTML = '▼';
+
+                        // Time Step Carousel
+                        timeStepCarousel = L.DomUtil.create('div', 'time-step-carousel', timeScrubberControl);
+                        timeStepCarousel.id = "timeStepCarousel";
+
+                        // Transport Button
+                        transportButton = L.DomUtil.create('div', 'transport-button', timeScrubberControl);
+                        transportButton.id = 'transportButton';
+                        transportButton.innerHTML = 'PLAY';
+                        transportButton.playing = false;
+
+                        transportButton.addEventListener('click', function(event) {
+
+                            transportButton.playing = !transportButton.playing;
+
+                            // Handle on the time step carousel
+                            timeStepCarousel = Flickity.data(document.querySelector('.time-step-carousel'));
+
+                            if (transportButton.playing) {
+
+                                transportButton.innerHTML = "PAUSE";
+                                timeStepCarousel.playPlayer();
+
+                            } else {
+                                transportButton.innerHTML = "PLAY";
+                                timeStepCarousel.stopPlayer();
+                            }
+
+                        });
+
+                        // Create the Time Scrubber
+                        timeStepCarousel = new Flickity(timeStepCarousel, {
+                            setGallerySize: false,
+                            cellAlign: 'center',
+                            autoPlay: 500,
+                            initialIndex: 0,
+                            selectedAttraction: 0.1,
+                            friction: 0.5,
+                            prevNextButtons: false,
+                            pageDots: false,
+                            on: {
+                                ready: function(event) {
+
+                                    var counter,
+                                        timeStepCells = [];
+
+                                    this.stopPlayer();
+
+                                    // Create the timesteps
+                                    for (counter = 0; counter < timeSteps; counter++) {
+
+                                        var cell = document.createElement('div');
+                                        cell.className = 'time-step-carousel-cell';
+                                        cell.innerHTML = '<img src="resources/images/noun_measure_95971.svg">';
+                                        timeStepCells.push(cell);
+
+                                    }
+
+                                    // Add to Time Scrubber
+                                    this.append(timeStepCells);
+
+                                }
+                            }
+                        });
+
+                        return timeScrubberControl;
+
+                    };
+
+                    timeScrubberContainer.addTo(map);
+
+                    // Handle on the selected time step indicator
+                    selectedTimeStepIndicator = document.getElementById('selectedTimeStepIndicator');
+
+                    // Handle on the time step carousel
+                    timeStepCarousel = Flickity.data(document.querySelector('.time-step-carousel'));
+
+                    // Stop the playing if it is playing on interaction with the scrubber
+                    timeStepCarousel.on('pointerDown', function(event) {
+
+                        transportButton.innerHTML = "PLAY";
+                        transportButton.playing = false;
+                        timeStepCarousel.stopPlayer();
+
+                    });
+
+                    // On Time Scrubber scroll event handler
+                    timeStepCarousel.on('scroll', function(event) {
+
+                        if (toggleLiveUpdate && !transportButton.playing) {
+
+                            var count = timeStepCarousel.cells.length - 1,
+                                target = Math.round((count / 100) * (event * 100));
+
+                            if (target < 0 || target === -0) {
+                                target = 0;
+                            }
+
+                            if (target > count) {
+                                target = count;
+                            }
+
+                            if (target !== selectedTimeStep) {
+
+                                selectedTimeStep = target
+                                selectedTimeStepIndicator.innerHTML = formatDateTime(map.timeDimension.getAvailableTimes()[selectedTimeStep]);
+
+                                map.timeDimension.setCurrentTime(map.timeDimension.getAvailableTimes()[selectedTimeStep]);
+
+                            }
+
+                        }
+
+                    });
+
+                    // On Time Scrubber change event handler
+                    timeStepCarousel.on('change', function(event) {
+
+                        if (!toggleLiveUpdate || transportButton.playing) {
+
+                            if (event !== selectedTimeStep) {
+
+                                selectedTimeStep = event;
+                                selectedTimeStepIndicator.innerHTML = formatDateTime(map.timeDimension.getAvailableTimes()[selectedTimeStep]);
+
+                                map.timeDimension.setCurrentTime(map.timeDimension.getAvailableTimes()[selectedTimeStep]);
+
+                            }
+
+                        }
+
+                    });
+
+                    // Update selected time step indicator
+                    selectedTimeStepIndicator.innerHTML = formatDateTime(map.timeDimension.getAvailableTimes()[selectedTimeStep]);
+
+                    window.addEventListener('load', function() {
+                        timeStepCarousel.resize();
+                    });
+
+                }
+
+                function formatDateTime (epochString) {
+
+                    var dateTime = new Date(epochString),
+                        hoursString = String(dateTime.getHours() < 10? '0' : '') + String(dateTime.getHours()),
+                        minutesString = String(dateTime.getMinutes() < 10? '0' : '') + String(dateTime.getMinutes()),
+                        dateString = dateTime.toDateString();
+
+                    return hoursString + ":" + minutesString + " - " + dateString;
+
+                }
+
+            })
 
         </script>
 
