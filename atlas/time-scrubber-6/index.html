@@ -112,7 +112,11 @@
                     wmsEndpoint,
                     wmsLayer,
                     wmsTimeLayer,
-                    maskStyle;
+                    maskStyle,
+                    urlParams;
+
+                // Parse URL parameters
+                urlParams = (document.location.search.substring(1)).split("=");
 
                 // Set start date to now but rounded up to next whole five minutes
                 dateNow = new Date();
@@ -130,8 +134,8 @@
                     timeDimension: true,
                     timeDimensionControl: false,
                     timeDimensionOptions: {
-                        timeInterval: datePrecip.toISOString() + "/" + "PT6H",
-                        period: "PT15M"
+                        timeInterval: datePrecip.toISOString() + "/" + "PT2H",
+                        period: "PT5M"
                     },
                     timeDimensionControlOptions: {
                         timeZones: ["UTC", "Local"],
@@ -161,7 +165,8 @@
                     attribution: 'Meteomatics',
                     version: "1.3.0",
                     styles: "RADAR_LOG",
-                    opacity: 0.9
+                    opacity: 0.9,
+                    [urlParams[0]]: urlParams[1]
                 });
 
                 wmsTimeLayer = L.timeDimension.layer.wms(wmsLayer);
@@ -316,88 +321,7 @@
 
             })
 
-
-
         </script>
-
-
-<!--         <script>
-
-             document.addEventListener('DOMContentLoaded', function(event) {
-
-                var toggleLiveUpdate = false,
-                    timeScrubberContainer,
-                    timeScrubberControl,
-                    currentFrameControl,
-                    currentFrame;
-
-                // Handle on the carousel
-                timeScrubberContainer = document.getElementById('timeStepCarousel');
-
-                // Create the Time Scrubber
-                timeScrubberControl = new Flickity(timeScrubberContainer, {
-                    setGallerySize: false,
-                    cellAlign: 'center',
-                    initialIndex: 0,
-                    selectedAttraction: 0.1,
-                    friction: 0.2,
-                    prevNextButtons: false,
-                    pageDots: false,
-                    autoPlay: false,
-                    on: {
-                        ready: function(event) {
-                            this.resize();
-                        }
-                    }
-                });
-
-                // Handle on the time step counter
-                currentFrameControl = document.getElementById('currentFrame');
-
-                if (toggleLiveUpdate) {
-
-                    // If live updates required
-
-                    // On Time Scrubber scroll event handler
-                    timeScrubberControl.on('scroll', function(event) {
-
-                        var count = timeScrubberControl.cells.length - 1,
-                            target = Math.round((count / 100) * (event * 100));
-
-                        if (target < 0 || target === -0) {
-                            target = 0;
-                        }
-
-                        if (target > count) {
-                            target = count;
-                        }
-
-                        if (target !== currentFrame) {
-
-                            currentFrame = target
-                            currentFrameControl.innerHTML = "Selected time step: " + currentFrame;
-
-                        }
-
-                    });
-
-                } else {
-
-                    // Change events only
-
-                    // On Time Scrubber change event handler
-                    timeScrubberControl.on('change', function(event) {
-
-                        currentFrame = event;
-                        currentFrameControl.innerHTML = "Selected time step: " + currentFrame;
-
-                    });
-
-                }
-
-            })
-
-        </script> -->
 
     </body>
 
