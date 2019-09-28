@@ -35,7 +35,7 @@
             metarEndpoint = "http://labs.metoffice.gov.uk/wotw/collections/metar/qcd/"
 
         // Get data from API
-        xhr.open("GET", metarEndpoint + "/point?coords=POINT(0%2051.48)&time=2019-09-20T08:50:00&parametername=air_temperature", false);
+        xhr.open("GET", metarEndpoint + "point?coords=POINT(0%2051.48)&time=2019-09-20T08:50:00&parametername=air_temperature", false);
         xhr.onload = function() {
             if (xhr.status !== 200) {
                 alert(xhr.responseText);
