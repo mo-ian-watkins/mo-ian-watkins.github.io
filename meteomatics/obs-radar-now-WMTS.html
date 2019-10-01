@@ -45,7 +45,7 @@
         bounds = L.latLngBounds(L.latLng(47.5, -12.5), L.latLng(60.5, 4.5));
 
         // Base map layer
-        baseLayer = new L.tileLayer("http://ec2-35-178-192-41.eu-west-2.compute.amazonaws.com/styles/dev-atlas-minimal-mono-theme/{z}/{x}/{y}{r}.jpg");
+        baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-minimal-mono-theme/{z}/{x}/{y}{r}.jpg");
 
         // Tiled Layer
         wmtsLayer = L.tileLayer.wms('https://betatest.metoffice.gov.uk/enthusiast/api/proxy/wms?', {
