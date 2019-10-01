@@ -110,8 +110,8 @@
 
             document.addEventListener('DOMContentLoaded', function(event) {
 
-                var toggleLiveUpdate = true,  // Whether scrolling time scrubber should update map without releasing (like app)
-                    toggleUseWMS = true,      // Whether to use WMS otherwise use pseudo WMTS (expensive on request quota)
+                var toggleLiveUpdate = true,    // Whether scrolling time scrubber should update map without releasing (like app)
+                    toggleUseWMS = true,        // Whether to use WMS otherwise use pseudo WMTS (expensive on request quota)
                     map,
                     baseLayer,
                     timeScrubberContainer,
@@ -120,7 +120,7 @@
                     selectedTimeStep = 0,
                     dateNow,
                     datePrecip,
-                    fifteenMinutes = 1000 * 60 * 15,
+                    fiveMinutes = 1000 * 60 * 5,
                     map,
                     wmsEndpoint,
                     wmsLayer,
@@ -132,9 +132,9 @@
                 // Parse URL parameters
                 urlParams = (document.location.search.substring(1)).split("=");
 
-                // Set start date to now but rounded up to next whole fifteen minutes
+                // Set start date to now but rounded up to next whole five minutes
                 dateNow = new Date();
-                datePrecip = new Date((dateNow.getTime() - (dateNow.getTime() % fifteenMinutes) + fifteenMinutes));
+                datePrecip = new Date((dateNow.getTime() - (dateNow.getTime() % fiveMinutes) + fiveMinutes));
 
                 // Map
                 map = L.map('map', {
@@ -149,8 +149,8 @@
                     timeDimension: true,
                     timeDimensionControl: false,
                     timeDimensionOptions: {
-                        timeInterval: datePrecip.toISOString() + "/" + "PT3H",
-                        period: "PT15M"
+                        timeInterval: datePrecip.toISOString() + "/" + "PT2H",
+                        period: "PT5M"
                     }
                 });
 
@@ -185,7 +185,9 @@
 
                 }
 
-                wmsTimeLayer = L.timeDimension.layer.wms(wmsLayer);
+                wmsTimeLayer = L.timeDimension.layer.wms(wmsLayer, {
+                    setDefaultTime: true
+                });
                 wmsTimeLayer.addTo(map);
 
                 // Setup time steps from WMS
@@ -254,7 +256,7 @@
                         timeStepCarousel = new Flickity(timeStepCarousel, {
                             setGallerySize: false,
                             cellAlign: 'center',
-                            autoPlay: 500,
+                            autoPlay: 300,
                             initialIndex: 0,
                             selectedAttraction: 0.1,
                             friction: 0.5,

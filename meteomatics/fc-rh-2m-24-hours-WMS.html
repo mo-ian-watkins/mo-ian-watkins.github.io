@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Forecast Relative Humidity at 2m for next 24 hours - WMS Map</title>
+    <title>Forecast Relative Humidity at 2m for next 7 days (12 hourly) - WMS Map</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -75,8 +75,8 @@
             timeDimension: true,
             timeDimensionControl: true,
             timeDimensionOptions: {
-                timeInterval: startDate.toISOString() + "/" + "P1D",
-                period: "PT3H"
+                timeInterval: startDate.toISOString() + "/" + "P7D",
+                period: "PT12H"
             },
             timeDimensionControlOptions: {
                 maxSpeed: 15,
@@ -110,7 +110,6 @@
         });
 
         wmsTimeLayer = L.timeDimension.layer.wms(wmsLayer, {
-            updateTimeDimension: true,
             setDefaultTime: true
         });
         wmsTimeLayer.addTo(map);
