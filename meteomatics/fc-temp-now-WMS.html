@@ -9,23 +9,22 @@
     <link rel="shortcut icon" type="image/x-icon" href="/resources/images/favicon.png" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
-    <script src="resources/leaflet-wms.js"></script>
+    <script type="text/javascript" src="resources/leaflet.non.tiled.layer.js"></script>
 
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
 
     <style>
             html,
-            body {
+            body,
+            #map {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                max-width: 800px;  /* WMS Limit */
+                height: 100%;
+                max-height: 600px;  /* WMS Limit */
                 background-color: #fff;
                 font-family: Inter, Arial, Helvetica, sans-serif;
-            }
-
-            #map {
-                margin: 20px;
-                padding: 0;
-                width: 1200px;
-                height: 800px;
-                background-color: #fff;
             }
         </style>
 
@@ -38,12 +37,12 @@
     <script>
 
         var wmsLayer,
-            baselayLayer,
+            overlayLayer,
             mapCenter,
-            _map
+            map
 
         // Single Layer
-        wmsLayer = L.WMS.overlay('https://betatest.metoffice.gov.uk/enthusiast/api/proxy/wms?', {
+        wmsLayer = L.nonTiledLayer.wms('https://betatest.metoffice.gov.uk/enthusiast/api/proxy/wms?', {
             'service': 'WMS',
             'version': '1.3.0',
             'request': 'GetMap',
@@ -52,7 +51,8 @@
             'format': 'image/png',
             'transparent': 'TRUE',
             'model': 'mix',
-            'uppercase': true
+            'uppercase': true,
+            bounds: L.latLngBounds(L.latLng(-83, -180), L.latLng(83, 180))
         });
 
         // Base map layer
@@ -60,17 +60,27 @@
 
         mapCenter = new L.LatLng(50, 0);
 
-        _map = new L.Map("map", {
+        map = new L.Map("map", {
             center: mapCenter,
             zoom: 3,
             maxZoom: 10,
-            minZoom: 3,
+            minZoom: 1,
+            fadeAnimation: false,
             crs: L.CRS.EPSG3857,
             attributionControl: false
         });
 
-        wmsLayer.addTo(_map);
-        baselayLayer.addTo(_map);
+        wmsLayer.addTo(map);
+
+        map.createPane('overlay');
+        map.getPane('overlay').style.zIndex = 650;
+        map.getPane('overlay').style.pointerEvents = 'none';
+
+        overlayLayer = new L.tileLayer('http://donotbeonfire.co.uk:8080/styles/test-overlay/{z}/{x}/{y}{r}.png', {
+            pane: "overlay"
+        });
+
+        overlayLayer.addTo(map);
 
     </script>
 
