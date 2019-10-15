@@ -221,7 +221,7 @@
                 _map
 
             // Base map layer
-            baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-ultra-dark-theme/{z}/{x}/{y}{r}.jpg");
+            baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-minimal-mono-theme-base-inverted/{z}/{x}/{y}{r}.jpg");
 
             mapCenter = new L.LatLng(0, -25);
 
@@ -230,7 +230,7 @@
                 // Config
                 center: mapCenter,
                 zoom: 2,
-                minZoom: 1,
+                minZoom: 2,
                 maxZoom: 4,
                 crs: L.CRS.EPSG3857,
                 layers: [baseLayer],

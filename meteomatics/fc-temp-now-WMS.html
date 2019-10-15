@@ -36,27 +36,11 @@
 
     <script>
 
-        var wmsLayer,
+        var baseLayer,
             overlayLayer,
+            wmsLayer,
             mapCenter,
-            map
-
-        // Single Layer
-        wmsLayer = L.nonTiledLayer.wms('https://betatest.metoffice.gov.uk/enthusiast/api/proxy/wms?', {
-            'service': 'WMS',
-            'version': '1.3.0',
-            'request': 'GetMap',
-            'layers': 't_2m:C',
-            'styles': 'JET',
-            'format': 'image/png',
-            'transparent': 'TRUE',
-            'model': 'mix',
-            'uppercase': true,
-            bounds: L.latLngBounds(L.latLng(-83, -180), L.latLng(83, 180))
-        });
-
-        // Base map layer
-        baselayLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-minimal-mono-theme/{z}/{x}/{y}{r}.png");
+            map;
 
         mapCenter = new L.LatLng(50, 0);
 
@@ -70,17 +54,32 @@
             attributionControl: false
         });
 
-        wmsLayer.addTo(map);
+        // Base map layer
+        baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-minimal-mono-theme-base/{z}/{x}/{y}{r}.jpeg").addTo(map);
 
+        // Overlay layer
         map.createPane('overlay');
         map.getPane('overlay').style.zIndex = 650;
         map.getPane('overlay').style.pointerEvents = 'none';
 
-        overlayLayer = new L.tileLayer('http://donotbeonfire.co.uk:8080/styles/test-overlay/{z}/{x}/{y}{r}.png', {
+        overlayLayer = new L.tileLayer('https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-minimal-mono-theme-overlay/{z}/{x}/{y}{r}.png', {
             pane: "overlay"
+        }).addTo(map);
+
+        // Single Layer
+        wmsLayer = L.nonTiledLayer.wms('https://betatest.metoffice.gov.uk/enthusiast/api/proxy/wms?', {
+            'service': 'WMS',
+            'version': '1.3.0',
+            'request': 'GetMap',
+            'layers': 'mix:t_2m:C',
+            'styles': 'JET_SEGMENTED',
+            'format': 'image/png',
+            'transparent': 'TRUE',
+            'uppercase': true,
+            bounds: L.latLngBounds(L.latLng(-83, -180), L.latLng(83, 180))
         });
 
-        overlayLayer.addTo(map);
+        wmsLayer.addTo(map);
 
     </script>
 

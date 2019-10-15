@@ -55,6 +55,7 @@
         var endDate,
             map,
             baseLayer,
+            overlayLayer,
             wmsEndpoint,
             wmsLayer,
             wmsTimeLayer,
@@ -94,7 +95,16 @@
         });
 
         // Base map layer
-        baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-minimal-mono-theme/{z}/{x}/{y}{r}.jpg").addTo(map);
+        baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-minimal-mono-theme-base/{z}/{x}/{y}{r}.jpg").addTo(map);
+
+        // Overlay layer
+        map.createPane('overlay');
+        map.getPane('overlay').style.zIndex = 650;
+        map.getPane('overlay').style.pointerEvents = 'none';
+
+        overlayLayer = new L.tileLayer('https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-minimal-mono-theme-overlay/{z}/{x}/{y}{r}.png', {
+            pane: "overlay"
+        }).addTo(map);
 
         // WMS
         wmsEndpoint = "https://betatest.metoffice.gov.uk/enthusiast/api/proxy/wms";

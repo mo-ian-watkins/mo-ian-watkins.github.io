@@ -28,7 +28,7 @@
                 max-width: 3072px;  /* WMS Limit */
                 height: 100%;
                 max-height: 3072px;  /* WMS Limit */
-                background-color: #fff;
+                background-color: #000;
                 font-family: Inter, Arial, Helvetica, sans-serif;
             }
 
@@ -118,7 +118,7 @@
         map.createPane('satellite');
 
         // Base map layer
-        baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-minimal-mono-theme/{z}/{x}/{y}{r}.jpg").addTo(map);
+        baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-minimal-mono-theme-base-inverted/{z}/{x}/{y}{r}.jpg").addTo(map);
 
         // WMS
         wmsEndpoint = "https://betatest.metoffice.gov.uk/enthusiast/api/proxy/wms";
@@ -240,10 +240,10 @@
         sat_cloud_temp_TimeLayer = L.timeDimension.layer.wms(sat_cloud_temp_Layer);
 
         map.createPane('labels');
-        map.getPane('labels').style.zIndex = 650;
+        map.getPane('labels').style.zIndex = 400;
         map.getPane('labels').style.pointerEvents = 'none';
 
-        overlayLayer = new L.tileLayer('http://donotbeonfire.co.uk:8080/styles/klokantech-terrain-overlay/{z}/{x}/{y}{r}.png', {
+        overlayLayer = new L.tileLayer('https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-minimal-mono-theme-overlay-inverted/{z}/{x}/{y}{r}.png', {
             pane: "labels"
         });
 
@@ -259,7 +259,7 @@
                 "Cloud top temperature": sat_cloud_temp_TimeLayer
             },
             {
-                "Placenames overlay": overlayLayer
+                "Coastline / Places overlay": overlayLayer
             }, {
                 position: 'topright',
                 collapsed: false

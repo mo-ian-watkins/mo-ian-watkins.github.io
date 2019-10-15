@@ -36,10 +36,34 @@
 
     <script>
 
-        var wmtsLayer,
-            baseLayer,
+        var baseLayer,
+            overlayLayer,
+            wmtsLayer,
             mapCenter,
-            _map
+            map
+
+        mapCenter = new L.LatLng(50, 0);
+
+        map = new L.Map("map", {
+            center: mapCenter,
+            zoom: 3,
+            maxZoom: 10,
+            minZoom: 3,
+            crs: L.CRS.EPSG3857,
+            attributionControl: false
+        });
+
+        // Base map layer
+        baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-minimal-mono-theme-base/{z}/{x}/{y}{r}.png").addTo(map);
+
+        // Overlay layer
+        map.createPane('overlay');
+        map.getPane('overlay').style.zIndex = 650;
+        map.getPane('overlay').style.pointerEvents = 'none';
+
+        overlayLayer = new L.tileLayer('https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-minimal-mono-theme-overlay/{z}/{x}/{y}{r}.png', {
+            pane: "overlay"
+        }).addTo(map);
 
         // Tiled Layer
         wmtsLayer = L.tileLayer.wms('https://betatest.metoffice.gov.uk/enthusiast/api/proxy/wms?', {
@@ -52,23 +76,7 @@
             'uppercase': true,
             'model': 'mix',
             tileSize: 256
-        });
-
-        // Base map layer
-        baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-minimal-mono-theme/{z}/{x}/{y}{r}.png");
-
-        mapCenter = new L.LatLng(50, 0);
-
-        _map = new L.Map("map", {
-            center: mapCenter,
-            zoom: 3,
-            maxZoom: 10,
-            minZoom: 3,
-            crs: L.CRS.EPSG3857,
-            layers: [baseLayer, wmtsLayer],
-            attributionControl: false
-        });
-
+        }).addTo(map);
 
     </script>
 

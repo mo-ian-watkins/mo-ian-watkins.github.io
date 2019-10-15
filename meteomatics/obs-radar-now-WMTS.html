@@ -24,7 +24,7 @@
             padding: 0;
             width: 800px;
             height: 1000px;
-            background-color: #fff;
+            background-color: rgb(184, 184, 184);
         }
     </style>
 
@@ -37,15 +37,35 @@
     <script>
 
         var baseLayer,
+            overlayLayer,
             wmtsLayer,
             mapCenter,
-            _map,
+            map,
             bounds;
 
         bounds = L.latLngBounds(L.latLng(47.5, -12.5), L.latLng(60.5, 4.5));
 
+        mapCenter = new L.LatLng(51, -3);
+
+        map = new L.Map("map", {
+            center: mapCenter,
+            zoom: 7,
+            maxZoom: 12,
+            crs: L.CRS.EPSG3857,
+            attributionControl: false
+        });
+
         // Base map layer
-        baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-minimal-mono-theme/{z}/{x}/{y}{r}.jpg");
+        baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-minimal-mono-theme-base/{z}/{x}/{y}{r}.jpg").addTo(map);
+
+        // Overlay layer
+        map.createPane('overlay');
+        map.getPane('overlay').style.zIndex = 400;
+        map.getPane('overlay').style.pointerEvents = 'none';
+
+        overlayLayer = new L.tileLayer('https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-minimal-mono-theme-overlay/{z}/{x}/{y}{r}.png', {
+            pane: "overlay"
+        }).addTo(map);
 
         // Tiled Layer
         wmtsLayer = L.tileLayer.wms('https://betatest.metoffice.gov.uk/enthusiast/api/proxy/wms?', {
@@ -60,18 +80,9 @@
             //'time': '2019-08-07T14:00:00Z',
             tileSize: 256,
             bounds: bounds
-        });
+        }).addTo(map);
 
-        mapCenter = new L.LatLng(51, -3);
 
-        _map = new L.Map("map", {
-            center: mapCenter,
-            zoom: 7,
-            maxZoom: 12,
-            crs: L.CRS.EPSG3857,
-            layers: [baseLayer, wmtsLayer],
-            attributionControl: false
-        });
 
     </script>
 
