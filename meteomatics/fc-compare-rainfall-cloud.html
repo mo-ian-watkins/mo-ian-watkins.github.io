@@ -93,7 +93,7 @@
 
         // Cloud cover forecast
         var wmsSatelliteLayer = L.tileLayer.wms(wmsEndpoint, {
-            layers: "ncep-gfs:effective_cloud_cover:p",
+            layers: "mix:effective_cloud_cover:p",
             format: 'image/png',
             transparent: true,
             attribution: 'Meteomatics',
