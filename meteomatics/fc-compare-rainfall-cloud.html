@@ -42,14 +42,14 @@
 
         var dateNow,
             dateRadarSat,
-            timeOffset = 1000 * 60 * 15,
+            timeOffset = 1000 * 60 * 5,
             map,
             baseLayer,
             overlayLayer,
             wmsEndpoint,
             wmsSatelliteLayer;
 
-        // Set date to now but rounded up to the next whole fifteen minutes
+        // Set date to now but rounded up to the next whole five minutes
         dateNow = new Date();
         dateRadarSat = new Date((dateNow.getTime() - (dateNow.getTime() % timeOffset)) + timeOffset);
 
@@ -57,7 +57,7 @@
         map = L.map('map', {
             attributionControl: false,
             zoom: 4,
-            minZoom: 3,
+            minZoom: 1,
             maxZoom: 8,
             center: [52.0, -2],
             maxBounds: L.latLngBounds(L.latLng(-83, -180), L.latLng(83, 180)),
@@ -80,7 +80,7 @@
 
         // Rainfall forecast
         var wmsRadarLayer = L.tileLayer.wms(wmsEndpoint, {
-            layers: 'mix:precip_15min:mm',
+            layers: 'mix:precip_5min:mm',
             format: 'image/png',
             transparent: true,
             attribution: 'Meteomatics',
@@ -104,7 +104,7 @@
             tileSize: 1024
         }).addTo(map);
 
-        L.control.sideBySide(wmsSatelliteLayer, wmsRadarLayer).addTo(map);
+        L.control.sideBySide(wmsRadarLayer, wmsSatelliteLayer).addTo(map);
 
     </script>
 
