@@ -70,7 +70,7 @@
         document.title = numberOfMinutes + " minutes of European lightning strikes";
 
         // Basemap
-        url = 'https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-minimal-mono-theme-base/{z}/{x}/{y}{r}.jpg';
+        url = 'https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-light-theme-base/{z}/{x}/{y}{r}.jpg';
         L.tileLayer(url, {
             attribution: 'OSM',
             maxZoom: 18,
@@ -82,7 +82,7 @@
         map.getPane('overlay').style.zIndex = 400;
         map.getPane('overlay').style.pointerEvents = 'none';
 
-        overlayLayer = new L.tileLayer('https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-minimal-mono-theme-overlay/{z}/{x}/{y}{r}.png', {
+        overlayLayer = new L.tileLayer('https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-light-theme-overlay/{z}/{x}/{y}{r}.png', {
             pane: "overlay"
         }).addTo(map);
 

@@ -118,7 +118,7 @@
         map.createPane('satellite');
 
         // Base map layer
-        baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-minimal-mono-theme-base-inverted/{z}/{x}/{y}{r}.jpg").addTo(map);
+        baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-dark-theme-base/{z}/{x}/{y}{r}.jpg").addTo(map);
 
         // WMS
         wmsEndpoint = "https://betatest.metoffice.gov.uk/enthusiast/api/proxy/wms";
@@ -243,7 +243,7 @@
         map.getPane('labels').style.zIndex = 400;
         map.getPane('labels').style.pointerEvents = 'none';
 
-        overlayLayer = new L.tileLayer('https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-minimal-mono-theme-overlay-inverted/{z}/{x}/{y}{r}.png', {
+        overlayLayer = new L.tileLayer('https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-dark-theme-overlay/{z}/{x}/{y}{r}.png', {
             pane: "labels"
         });
 
