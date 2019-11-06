@@ -14,17 +14,14 @@
 
     <style>
         html,
-        body {
+        body,
+        #map {
             background-color: #fff;
             font-family: Inter, Arial, Helvetica, sans-serif;
-        }
-
-        #map {
-            margin: 20px;
+            margin: 0;
             padding: 0;
-            width: 1200px;
-            height: 800px;
-            background-color: #fff;
+            width: 100%;
+            height: 100%;
         }
     </style>
 
@@ -48,7 +45,7 @@
             center: mapCenter,
             zoom: 3,
             maxZoom: 10,
-            minZoom: 3,
+            minZoom: 1,
             crs: L.CRS.EPSG3857,
             attributionControl: false
         });
@@ -75,7 +72,7 @@
             'format': 'image/png',
             'uppercase': true,
             'model': 'mix',
-            tileSize: 256
+            tileSize: 512
         }).addTo(map);
 
     </script>
