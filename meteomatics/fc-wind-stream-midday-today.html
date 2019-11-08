@@ -140,14 +140,14 @@
             meteomaticsProxy = "https://betatest.metoffice.gov.uk/enthusiast/api/proxy",
             layer = "300hPa",
             params = {
-                resolution: 1.0,
-                maxLat: 70,
-                minLat: -70,
+                resolution: 1,
+                maxLat: 83,
+                minLat: -83,
                 minLon: -180,
                 maxLon: 180
             },
-            uWindParams = "/todayT12Z/wind_speed_u_" + layer + ":ms/" + params.maxLat + "," + params.minLon + "_" + params.minLat + "," + params.maxLon + ":" + params.resolution + "," + params.resolution + "/json?model=ncep-gfs",
-            vWindParams = "/todayT12Z/wind_speed_v_" + layer + ":ms/" + params.maxLat + "," + params.minLon + "_" + params.minLat + "," + params.maxLon + ":" + params.resolution + "," + params.resolution + "/json?model=ncep-gfs",
+            uWindParams = "/todayT12Z/wind_speed_u_" + layer + ":mph/" + params.maxLat + "," + params.minLon + "_" + params.minLat + "," + params.maxLon + ":" + params.resolution + "," + params.resolution + "/json?model=mix&interp_select=none",
+            vWindParams = "/todayT12Z/wind_speed_v_" + layer + ":mph/" + params.maxLat + "," + params.minLon + "_" + params.minLat + "," + params.maxLon + ":" + params.resolution + "," + params.resolution + "/json?model=mix&interp_select=none",
             urls,
             uWind,
             vWind,
@@ -229,9 +229,9 @@
 
                 // Config
                 center: mapCenter,
-                zoom: 2,
+                zoom: 3,
                 minZoom: 2,
-                maxZoom: 4,
+                maxZoom: 6,
                 crs: L.CRS.EPSG3857,
                 layers: [baseLayer],
                 attributionControl: false,
@@ -354,7 +354,7 @@
                 interpolate: true,
                 color: scaleTURBO,
                 opacity: 0.4
-            });
+            }).addTo(surface);
 
             // Direction layer
             const direction = L.canvasLayer.scalarField (
@@ -392,16 +392,16 @@
 
             // Simple colorbar
             var bar = L.control.colorBar(scaleTURBO, vf.range, {
-                title: 'Wind velocity (m/s)',
-                units: 'm/s',
-                steps: 100,
+                title: 'Wind velocity (mph)',
+                units: 'mph',
+                steps: 255,
                 decimals: 0,
                 width: 270,
                 height: 20,
                 position: 'topright',
                 background: '#2a2a2a',
                 textColor: 'white',
-                labels: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+                labels: [0, 50, 100, 150, 200],
                 textLabels: [],
                 labelTextPosition: 'end'
             }).addTo(map);
@@ -409,7 +409,7 @@
             magnitude.on('click', function (e) {
                 if (e.value !== null) {
                     var v = (e.value).toFixed(1);
-                    var html = 'Wind speed: ' + v + ' m/s';
+                    var html = 'Wind speed: ' + v + ' mph';
                     var popup = L.popup().setLatLng(e.latlng).setContent(html).openOn(map);
                 }
             });
@@ -437,16 +437,16 @@
             bounds._northEast.lng = bounds._northEast.lng + 2;
 
             // Clamp bounds
-            if (bounds._southWest.lat < -70) {
-                bounds._southWest.lat = -70
+            if (bounds._southWest.lat < -83) {
+                bounds._southWest.lat = -83
             }
 
             if (bounds._southWest.lng < -180) {
                 bounds._southWest.lng = -180
             }
 
-            if (bounds._northEast.lat > 70) {
-                bounds._northEast.lat = 70
+            if (bounds._northEast.lat > 83) {
+                bounds._northEast.lat = 83
             }
 
             if (bounds._northEast.lng > 180) {
