@@ -93,7 +93,7 @@
                 _map
 
             // Base map layer
-            baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-dark-theme-base//{z}/{x}/{y}{r}.jpg");
+            baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-dark-theme-base/{z}/{x}/{y}{r}.jpg");
 
             mapCenter = new L.LatLng(52, -25);
 
@@ -104,11 +104,11 @@
                 zoom: 4,
                 maxZoom: 10,
                 crs: L.CRS.EPSG3857,
-                attributionControl: false,
                 layers: [baseLayer],
 
                 // Controls
                 zoomControl: false,
+                attributionControl: false,
 
                 // Interactions
                 boxZoom: false,
