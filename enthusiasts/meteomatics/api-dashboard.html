@@ -171,6 +171,7 @@
         fetchPromise.then(response => {
             return response.json();
         }).then(data => {
+            console.log(data);
             chartToday.series[0].points[0].update(data["user statistics"]["requests since last UTC midnight"].used);
             chartParallel.series[0].points[0].update(data["user statistics"]["requests in parallel"].used);
         });
