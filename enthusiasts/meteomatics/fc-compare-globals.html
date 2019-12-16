@@ -80,10 +80,10 @@
             attributionControl: false,
             zoomControl: false,
             zoom: 4,
-            minZoom: 4,
+            minZoom: 2,
             maxZoom: 12,
             center: [52.0, -3],
-            maxBounds: L.latLngBounds(L.latLng(-80, -170), L.latLng(80, 170))
+            maxBounds: L.latLngBounds(L.latLng(-80, -360), L.latLng(80, 360))
         });
 
         // Base map layer
@@ -110,7 +110,7 @@
             styles: "BLUE_MAGENTA",
             opacity: 1,
             time: "todayT12Z",
-            tileSize: 256,
+            tileSize: 1024,
             interp_select: "none"
         }).addTo(map);
 
@@ -123,7 +123,7 @@
             styles: "BLUE_MAGENTA",
             opacity: 1,
             time: "todayT12Z",
-            tileSize: 256,
+            tileSize: 1024,
             interp_select: "none"
         }).addTo(map);
 
