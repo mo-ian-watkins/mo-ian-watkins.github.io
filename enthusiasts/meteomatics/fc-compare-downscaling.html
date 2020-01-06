@@ -28,13 +28,37 @@
                 background-color: rgb(0,0,0);
                 font-family: Inter, Arial, Helvetica, sans-serif;
             }
+
+            .mapTitle {
+                position: absolute;
+                padding: 16px;
+                z-index: 999;
+                background-color: #2a2a2a !important;
+                border-color: #2a2a2a !important;
+                color: #fff !important;
+            }
+
+            .left {
+                top: 0px;
+                left: 10px;
+            }
+
+            .right {
+                text-align: right;
+                top: 0px;
+                right: 10px;
+            }
+
     </style>
 
 </head>
 
 <body>
 
-    <div id="map"></div>
+    <div id="map">
+        <h3 id="mapTitleLeft" class="mapTitle left">← Downscaling Off</h3>
+        <h3 id="mapTitleRight" class="mapTitle right">Downscaling On →</h3>
+    </div>
 
     <script>
 
@@ -55,24 +79,25 @@
         // Map
         map = L.map('map', {
             attributionControl: false,
+            zoomControl: false,
             zoom: 8,
             minZoom: 1,
             maxZoom: 12,
             center: [52.0, -3],
-            maxBounds: L.latLngBounds(L.latLng(-83, -180), L.latLng(83, 180)),
+            maxBounds: L.latLngBounds(L.latLng(-83, -270), L.latLng(83, 270)),
         });
 
         // Base map layer
         baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-light-theme-base/{z}/{x}/{y}{r}.jpg").addTo(map);
 
         // Hillshade layer
-        map.createPane('hillshade');
+/*         map.createPane('hillshade');
         map.getPane('hillshade').style.zIndex = 400;
         map.getPane('hillshade').style.pointerEvents = 'none';
 
         hillshadeLayer = new L.tileLayer('https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-hillshades/{z}/{x}/{y}{r}.png', {
             pane: "hillshade"
-        }).addTo(map);
+        }).addTo(map); */
 
         // Overlay layer
         map.createPane('overlay');
@@ -88,12 +113,12 @@
 
         // Rainfall forecast
         var wmsRadarLayer = L.tileLayer.wms(wmsEndpoint, {
-            layers: 'mix:relative_humidity_2m:p',
+            layers: 'mix:t_2m:C',
             format: 'image/png',
             transparent: true,
             attribution: 'Meteomatics',
             version: "1.3.0",
-            styles: "RED_TO_BLUE",
+            styles: "T_GLOBAL",
             opacity: 1,
             time: dateRadarSat.toISOString(),
             tileSize: 1024,
@@ -102,12 +127,12 @@
 
         // Cloud cover forecast
         var wmsSatelliteLayer = L.tileLayer.wms(wmsEndpoint, {
-            layers: 'mix:relative_humidity_2m:p',
+            layers: 'mix:t_2m:C',
             format: 'image/png',
             transparent: true,
             attribution: 'Meteomatics',
             version: "1.3.0",
-            styles: "RED_TO_BLUE",
+            styles: "T_GLOBAL",
             opacity: 1,
             time: dateRadarSat.toISOString(),
             tileSize: 1024
