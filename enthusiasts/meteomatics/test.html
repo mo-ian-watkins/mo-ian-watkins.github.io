@@ -57,7 +57,9 @@
             //console.log(thisMap.target);
 
             metresPerPixel = 156543.03392 * Math.cos(thisMap.target.getCenter().lat * Math.PI / 180) / Math.pow(2, thisMap.target.getZoom());
-            console.log(metresPerPixel);
+            console.log(1 / (10 / (metresPerPixel / 111.111)));
+
+            //console.log(591657550.500000 / Math.pow( 2, thisMap.target.getZoom()-1));
 
         };
 
