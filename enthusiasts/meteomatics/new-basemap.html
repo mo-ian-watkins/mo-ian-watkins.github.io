@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Compare overlays</title>
+    <title>New basemap/overlay</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -11,9 +11,6 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
 
     <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
-    <script src="resources/leaflet.non.tiled.layer.js"></script>
-    <script src="resources/leaflet-side-by-side.min.js"></script>
-
 
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
 
@@ -39,8 +36,8 @@
     <script>
 
         var map,
-            overlayOriginal,
-            overlaySimple;
+            baseLayer,
+            overlayLayer;
 
         // Map
         map = L.map('map', {
@@ -52,11 +49,8 @@
             maxBounds: L.latLngBounds(L.latLng(-83, -180), L.latLng(83, 180)),
         });
 
-
-        overlayOriginal = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-light-theme-overlay/{z}/{x}/{y}{r}.png").addTo(map);
-        overlaySimple = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-light-theme-overlay-2/{z}/{x}/{y}{r}.png").addTo(map);
-
-        L.control.sideBySide(overlayOriginal, overlaySimple).addTo(map);
+        baseLayer = new L.tileLayer("http://ec2-35-178-192-41.eu-west-2.compute.amazonaws.com/styles/dev-atlas-light-theme-base/{z}/{x}/{y}{r}.png").addTo(map);
+        overlayLayer = new L.tileLayer("http://ec2-35-178-192-41.eu-west-2.compute.amazonaws.com/styles/dev-atlas-light-theme-overlay/{z}/{x}/{y}{r}.png").addTo(map);
 
     </script>
 
