@@ -52,7 +52,7 @@
 
         var dateNow,
             dateSatellite,
-            timeRoundDown = 1000 * 60 * 30,
+            timeRoundDown = 1000 * 60 * 60,
             map,
             baseLayer,
             overlayLayer,
@@ -74,7 +74,7 @@
             sat_cloud_temp_Layer,
             sat_cloud_temp_TimeLayer;
 
-        // Set end date to now but rounded back 30 minutes
+        // Set end date to now but rounded back 60 minutes
         dateNow = new Date();
         dateSatellite = new Date(dateNow.getTime() - ((dateNow.getTime() % timeRoundDown)) - timeRoundDown);
 
@@ -83,14 +83,14 @@
             attributionControl: false,
             zoom: 6,
             minZoom: 2,
-            maxZoom: 11,
+            maxZoom: 10,
             maxBounds: L.latLngBounds(L.latLng(-68, -180.0), L.latLng(68.0, 180.0)),
             center: [51, 2.5],
             timeDimension: true,
             timeDimensionControl: true,
             timeDimensionOptions: {
-                timeInterval: "PT6H/" + dateSatellite.toISOString(),
-                period: "PT15M"
+                timeInterval: "PT24H/" + dateSatellite.toISOString(),
+                period: "PT1H"
             },
             timeDimensionControlOptions: {
                 maxSpeed: 15,
@@ -118,12 +118,12 @@
 
         // Satellite True colour visible
         var sat_rgb_Layer = L.nonTiledLayer.wms(wmsEndpoint, {
-            layers: 'mix:sat_rgb_hd:idx',
+            layers: 'mix-satellite:sat_rgb:idx',
             format: 'image/png',
             transparent: true,
             attribution: 'Meteomatics',
             version: "1.3.0",
-            styles: "SATELLITE",
+            styles: "GRAY",
             opacity: 1,
             bounds: L.latLngBounds(L.latLng(-65.7, -180.0), L.latLng(65.7, 180.0)),
             pane: "satellite"
@@ -134,15 +134,15 @@
 
         // Satellite High Resolution Visible
         var sat_hrv_Layer = L.nonTiledLayer.wms(wmsEndpoint, {
-            layers: 'mix:sat_hrv:idx',
+            layers: 'mix-satellite:sat_rgb_hd:idx',
             format: 'image/png',
             transparent: true,
             attribution: 'Meteomatics',
             version: "1.3.0",
             styles: "GRAY",
-            className: ".contrast",
+            //className: ".contrast",
             opacity: 1,
-            bounds: L.latLngBounds(L.latLng(40.0, -12.0), L.latLng(67.9935, 26.0)),
+            bounds: L.latLngBounds(L.latLng(-65.8, -180.0), L.latLng(65.7, 180.0)),
             pane: "satellite"
         });
 
@@ -178,28 +178,29 @@
 
         // Satellite Cloud Layer
         var sat_cloud_layer_Layer = L.nonTiledLayer.wms(wmsEndpoint, {
-            layers: 'meteosat-msg:sat_cloud_layer:idx',
+            layers: 'mix-satellite:sat_cloud_layer:idx',
             format: 'image/png',
             transparent: true,
             attribution: 'Meteomatics',
             version: "1.3.0",
             styles: "GRAY",
             opacity: 1,
-            bounds: L.latLngBounds(L.latLng(40.0, -12.0), L.latLng(67.9935, 26.0))
+            bounds: L.latLngBounds(L.latLng(40.0, -12.0), L.latLng(67.99, -12.0))
+
         });
 
         sat_cloud_layer_TimeLayer = L.timeDimension.layer.wms(sat_cloud_layer_Layer);
 
         // Satellite Cloud Type
         var sat_cloud_type_Layer = L.nonTiledLayer.wms(wmsEndpoint, {
-            layers: 'meteosat-msg:sat_cloud_type:idx',
+            layers: 'mix-satellite:sat_rgb_hd:idx',
             format: 'image/png',
             transparent: true,
             attribution: 'Meteomatics',
             version: "1.3.0",
             styles: "CLOUD_TYPE",
             opacity: 1,
-            bounds: L.latLngBounds(L.latLng(40.0, -12.0), L.latLng(67.9935, 26.0))
+            bounds: L.latLngBounds(L.latLng(-65.8, -180.0), L.latLng(65.8, 180.0))
         });
 
         sat_cloud_type_TimeLayer = L.timeDimension.layer.wms(sat_cloud_type_Layer);
@@ -260,8 +261,8 @@
         ).addTo(map);
 
         // Increase satellite imagery pane contrast
-        map.getPanes().satellite.style.webkitFilter = "saturate(0%) brightness(90%) contrast(150%)";
-	    map.getPanes().satellite.style.filter = "saturate(0%) brightness(90%) contrast(150%)";
+        map.getPanes().satellite.style.webkitFilter = "brightness(100%) contrast(130%)";
+	    map.getPanes().satellite.style.filter = "brightness(100%) contrast(130%)";
 
     </script>
 
