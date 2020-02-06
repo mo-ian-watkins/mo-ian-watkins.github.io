@@ -8,8 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <link rel="shortcut icon" type="image/x-icon" href="/resources/images/favicon.png" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-responsive-popup@0.6.4/leaflet.responsive.popup.css" integrity="sha256-C0ETFwdXWvo4w8IRcgTfpVutBCgw7aEvcVyREb96yGE=" crossorigin="anonymous">
     <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-responsive-popup@0.6.4/leaflet.responsive.popup.min.js"></script>
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
 
     <style>
@@ -66,11 +67,11 @@
         });
 
         // Base map layer
-        baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-light-theme-base/{z}/{x}/{y}{r}.png").addTo(map);
+        baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-dark-theme-base/{z}/{x}/{y}{r}.png").addTo(map);
 
         map.on("click", function(event) {
 
-            var dataPopup = L.popup({
+            var dataPopup = L.responsivePopup({
                 closeButton: false
             })
             .setLatLng(event.latlng)
