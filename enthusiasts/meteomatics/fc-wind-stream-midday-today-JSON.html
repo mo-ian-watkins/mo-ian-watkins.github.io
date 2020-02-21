@@ -148,8 +148,8 @@
                 minLon: -180,
                 maxLon: 180
             },
-            uWindParams = "/todayT12Z/wind_speed_u_" + layer + ":mph/" + params.maxLat + "," + params.minLon + "_" + params.minLat + "," + params.maxLon + ":" + params.resolution + "," + params.resolution + "/csv?model=ukmo-um17&interp_select=none",
-            vWindParams = "/todayT12Z/wind_speed_v_" + layer + ":mph/" + params.maxLat + "," + params.minLon + "_" + params.minLat + "," + params.maxLon + ":" + params.resolution + "," + params.resolution + "/csv?model=ukmo-um17&interp_select=none",
+            uWindParams = "/todayT12Z/wind_speed_u_" + layer + ":mph/" + params.maxLat + "," + params.minLon + "_" + params.minLat + "," + params.maxLon + ":" + params.resolution + "," + params.resolution + "/json?model=mix&interp_select=none",
+            vWindParams = "/todayT12Z/wind_speed_v_" + layer + ":mph/" + params.maxLat + "," + params.minLon + "_" + params.minLat + "," + params.maxLon + ":" + params.resolution + "," + params.resolution + "/json?model=mix&interp_select=none",
             urls,
             uWind,
             vWind,
@@ -171,50 +171,23 @@
             meteomaticsProxy + vWindParams
         ];
 
-        // Fetch CSV data and process
-        Promise.all([
-            urls[0],
-            urls[1]
-        ].map(function(url) {
-            return fetch(url).then(function(response) {
-                return response.ok ? response.text() : Promise.reject(response.status);
-            }).then(function(text) {
+        // Use map() to perform a fetch and handle the response for each url
+        Promise.all(urls.map(url =>
+            fetch(url).then(resp => resp.json())
+        ))
+        .then(data => {
 
-                var lineCounter,
-                    pointCounter,
-                    lines,
-                    line = [],
-                    row = [],
-                    data = [];
+            // Sort U Wind
+            uWind = sortDataNS(data[0]);
 
-                // Split and remove first three lines
-                lines = text.split("\n").slice(3);
-
-                // Parse into number arrays
-                for (lineCounter = 0; lineCounter < lines.length - 1; lineCounter++) {
-
-                    line = lines[lineCounter].split(";");
-                    line.shift();
-
-                    row = [];
-
-                    for (pointCounter = 0; pointCounter < line.length; pointCounter++) {
-                        row.push(parseFloat(line[pointCounter]));
-                    }
-
-                    data.push(row);
-                }
-
-                return data;
-
-            });
-        })).then(function(data) {
+            // Sort V Wind
+            vWind = sortDataNS(data[1]);
 
             // ASCIIGrid U Wind
-            uWind = asciiGridWind(data[0], params);
+            uWind = asciiGridWind(uWind, params);
 
             // ASCIIGrid V Wind
-            vWind = asciiGridWind(data[1], params);
+            vWind = asciiGridWind(vWind, params);
 
             // Display the vector animation
             fields = displayAnimation(map, fields[0], fields[1]);
@@ -292,7 +265,40 @@
 
         }
 
-        function asciiGridWind (dataArray) {
+        function getWindVectorData (url, parameters) {
+
+            // Get Wind Vector Data
+            var xhr = new XMLHttpRequest(),
+                JSONString;
+
+            // Get data from API via proxy
+            xhr.open("GET", url + parameters, false);
+            xhr.onload = function() {
+                if (xhr.status !== 200) {
+                    alert(xhr.responseText);
+                } else {
+                    JSONString = JSON.parse(xhr.responseText);
+                }
+            };
+            xhr.send("");
+
+            return JSONString;
+
+        }
+
+        function sortDataNS (JSONString) {
+
+            var JSONString;
+
+            JSONString.data[0].coordinates = JSONString.data[0].coordinates.sort(function (a, b) {
+                return b.lat - a.lat;
+            });
+
+            return JSONString;
+
+        }
+
+        function asciiGridWind (JSONString) {
 
             var asciiString = "",
                 headerString = "",
@@ -309,11 +315,29 @@
             headerString = headerString + "NODATA_value  -999\n";
 
             // Data
-            dataArray.forEach(function(element) {
+            JSONString.data[0].coordinates.forEach(function(element) {
 
-                rowString = element.join(" ") + "\n";
+                if (!rowCounter) {
+                    rowCounter = element.lat;
+                }
 
-                dataString = dataString + rowString;
+                if (element.lat === rowCounter) {
+
+                    // Add next value
+                    rowString = rowString + element.dates[0].value + " ";
+
+                } else {
+
+                    // Complete row
+                    rowString = rowString + "\n";
+                    dataString = dataString + rowString;
+
+                    // Start new row
+                    rowString = "";
+                    rowCounter = element.lat;
+                    rowString = rowString + element.dates[0].value + " ";
+
+                }
 
             });
 
@@ -339,13 +363,13 @@
                 interpolate: true,
                 color: scaleTURBO,
                 opacity: 0.4
-            });
+            }).addTo(surface);
 
             // Direction layer
             const direction = L.canvasLayer.scalarField (
                 vf.getScalarField('directionFrom'), {
                     type: 'vector',
-                    color: '#ddd',
+                    color: '#ccc',
                     vectorSize: 20,
                     arrowDirection: 'from'
                 }
@@ -353,10 +377,10 @@
 
             // Animation layer
             const animation = L.canvasLayer.vectorFieldAnim(vf, {
-                paths: 3000,
-                fade: 0.97,
-                maxAge: 20,
-                velocityScale: 0.01,
+                paths: 4000,
+                fade: 0.98,
+                maxAge: 100,
+                velocityScale: 0.02,
                 color: scaleTURBO,
                 width: 1.8,
                 opacity: 0.9
@@ -386,7 +410,7 @@
                 position: 'topright',
                 background: '#2a2a2a',
                 textColor: 'white',
-                labels: [0, 50, 100, 150, 200],
+                labels: [0, 50, 100, 150],
                 textLabels: [],
                 labelTextPosition: 'middle'
             }).addTo(map);

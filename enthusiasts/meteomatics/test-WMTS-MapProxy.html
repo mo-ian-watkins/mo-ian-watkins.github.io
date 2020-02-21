@@ -69,10 +69,10 @@
             timeDimension: true,
             timeDimensionControl: true,
             timeDimensionOptions: {
-/*                 timeInterval: dateDatar.toISOString() + "/P5D",
-                period: "PT6H" */
-                timeInterval:  "PT12H/" + dateDatar.toISOString(),
-                period: "PT1H"
+                timeInterval: dateDatar.toISOString() + "/P5D",
+                period: "PT3H"
+/*                 timeInterval:  "PT72H/" + dateDatar.toISOString(),
+                period: "PT1H" */
             },
             timeDimensionControlOptions: {
                 timeZones: ["Local", "UTC"],
@@ -102,15 +102,26 @@
         }).addTo(map);
 
         // WMTS
-        wmtsEndpoint = "http://mo-tilecache-test-1218387702.eu-west-2.elb.amazonaws.com/cache2/service?";
+        //wmtsEndpoint = "http://mo-tilecache-test-1218387702.eu-west-2.elb.amazonaws.com/cache2/service?";
+        wmtsEndpoint = "http://dev-elb-1495068948.eu-west-2.elb.amazonaws.com/cache2/service?";
         wmtsTemplate = "TileMatrixSet=webmercator&TileMatrix={z}&TileCol={x}&TileRow={y}";
 
-        var wmtsLayer = L.tileLayer.wms(wmtsEndpoint + wmtsTemplate, {
+/*         var wmtsLayer = L.tileLayer.wms(wmtsEndpoint + wmtsTemplate, {
             service: 'WMTS',
             request: "GetTile",
             layer: 'mix-satellite:sat_rgb:idx',
             style: 'blue_magenta',
-            format: 'image/png',
+            format: 'image/jpeg',
+            version: "1.0.0",
+            transparent: true
+        }); */
+
+        var wmtsLayer = L.tileLayer.wms(wmtsEndpoint + wmtsTemplate, {
+            service: 'WMTS',
+            request: "GetTile",
+            layer: 'ecmwf-ifs:relative_humidity_2m:p',
+            style: 'red_to_blue',
+            format: 'image/jpeg',
             version: "1.0.0",
             transparent: true
         });
