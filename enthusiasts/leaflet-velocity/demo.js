@@ -15,10 +15,10 @@ function initDemoMap() {
 
     var map = L.map("map", {
       layers: [darkTheme],
-      minZoom: 2,
+      minZoom: 3,
       maxBounds: [
-        [83, -180],
-        [-83, 180]
+        [83, -270],
+        [-83, 270]
       ]
     });
 
