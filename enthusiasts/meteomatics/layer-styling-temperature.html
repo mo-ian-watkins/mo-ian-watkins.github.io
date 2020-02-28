@@ -71,6 +71,7 @@
         }).addTo(map);
 
         // Tiled Layer
+        //wmtsLayer = L.tileLayer.wms('https://api.meteomatics.com/wms?', {
         wmtsLayer = L.tileLayer.wms('https://betatest.metoffice.gov.uk/enthusiast/api/proxy/wms?', {
             'service': 'WMS',
             'version': '1.3.0',
