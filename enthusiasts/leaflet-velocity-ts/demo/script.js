@@ -7,8 +7,8 @@ L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/M
 
 var velocity = L.velocityLayer({
 
-  displayValues: true,
-  displayOptions: {
+  displayValues: false,
+/*   displayOptions: {
     velocityType: 'GBR Wind',
     position: 'bottomleft',
     emptyString: 'No velocity data',
@@ -16,13 +16,17 @@ var velocity = L.velocityLayer({
     displayPosition: 'bottomleft',
     displayEmptyString: 'No velocity data',
     speedUnit: 'kt'
-  },
+  }, */
   data: data, // see demo/*.json, or wind-js-server for example data service
 
   // OPTIONAL
-  /*minVelocity: 0,          // used to align color scale
-  maxVelocity: 10,         // used to align color scale*/
+  minVelocity: 0,
   maxVelocity: 10,
+  velocityScale: 0.005,
+  colorScale: ["#999999"],
+  particleAge: 90,
+  lineWidth: 1,
+  particleMultiplier: 0.0033
 });
 
 mymap.addLayer(velocity);
@@ -34,7 +38,11 @@ function removeWind(){
 function addWind(){
   mymap.addLayer(velocity);
 }
+/*
+setTimeout(function () {
+  velocity._clearWind();
+}, 3000);
 
-/*setTimeout(function () {
-	velocity.setData(data);
-}, 2000);*/
+setTimeout(function () {
+  velocity.setData(data);
+}, 6000); */
