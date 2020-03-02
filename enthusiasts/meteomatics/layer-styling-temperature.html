@@ -44,7 +44,9 @@
             mapCenter,
             map,
             styleList,
-            stylePicker;
+            stylePicker,
+            altitudeList,
+            altitudePicker;
 
         mapCenter = new L.LatLng(50, 0);
 
@@ -131,7 +133,7 @@
         ];
 
         // Leaflet Control Basic
-        L.Control.Picker = L.Control.extend({
+        L.Control.StylePicker = L.Control.extend({
 
             onAdd: function (map) {
 
@@ -162,7 +164,55 @@
 
         });
 
-        stylePicker = new L.Control.Picker({
+        stylePicker = new L.Control.StylePicker({
+            position: 'topright'
+        }).addTo(map);
+
+        altitudeList = [
+            "2m",
+            "1000hPa",
+            "950hPa",
+            "925hPa",
+            "850hPa",
+            "700hPa",
+            "500hPa",
+            "300hPa",
+            "200hPa"
+        ];
+
+        // Leaflet Control Basic
+        L.Control.AltitudePicker = L.Control.extend({
+
+            onAdd: function (map) {
+
+                var picker = L.DomUtil.create('select', 'picker');
+                picker.setAttribute("id", "picker");
+                L.DomEvent.disableClickPropagation(picker);
+
+                for (var i = 0; i < altitudeList.length; i++) {
+
+                    var item = L.DomUtil.create('option');
+                    item.setAttribute("value", altitudeList[i]);
+                    item.innerHTML = altitudeList[i];
+                    picker.appendChild(item);
+
+                }
+
+                picker.addEventListener("change", function(e) {
+
+                    wmtsLayer.setParams({
+                        layers: "t_" + e.target.value +":C"
+                    });
+
+                });
+
+                return picker;
+
+            }
+
+        });
+
+        altitudePicker = new L.Control.AltitudePicker({
             position: 'topright'
         }).addTo(map);
 
