@@ -39,6 +39,7 @@ function initDemoMap() {
 
   $.getJSON("wind-test.json", function(data) {
     var velocityLayer = L.velocityLayer({
+      opacity: 0.01,
       displayValues: true,
       velocityScale: 0.005, // modifier for particle animations, arbitrarily defaults to 0.005
       data: data,

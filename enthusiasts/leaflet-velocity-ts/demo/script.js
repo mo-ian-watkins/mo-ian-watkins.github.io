@@ -5,6 +5,8 @@ L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/M
   maxZoom: 18
 }).addTo(mymap);
 
+console.log(windGbr);
+
 var velocity = L.velocityLayer({
 
   displayValues: false,
@@ -17,7 +19,7 @@ var velocity = L.velocityLayer({
     displayEmptyString: 'No velocity data',
     speedUnit: 'kt'
   }, */
-  data: data, // see demo/*.json, or wind-js-server for example data service
+  data: windGbr, // see demo/*.json, or wind-js-server for example data service
 
   // OPTIONAL
   minVelocity: 0,
