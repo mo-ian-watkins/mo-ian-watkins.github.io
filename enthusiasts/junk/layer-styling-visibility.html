@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Visibility Layer Styling </title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="shortcut icon" type="image/x-icon" href="/resources/images/favicon.png" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
+
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+
+    <style>
+        html,
+        body,
+        #map {
+            background-color: #fff;
+            font-family: Inter, Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .picker {
+            width: 250px;
+            height: 40px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div id="map"></div>
+
+    <script>
+
+        var baseLayer,
+            overlayLayer,
+            wmtsLayer,
+            mapCenter,
+            map,
+            styleList,
+            stylePicker;
+
+        mapCenter = new L.LatLng(50, 0);
+
+        map = new L.Map("map", {
+            zoomControl: false,
+            center: mapCenter,
+            zoom: 3,
+            maxZoom: 10,
+            minZoom: 1,
+            crs: L.CRS.EPSG3857,
+            attributionControl: false
+        });
+
+        // Base map layer
+        baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-light-theme-base/{z}/{x}/{y}{r}.png").addTo(map);
+
+        // Overlay layer
+        map.createPane('overlay');
+        map.getPane('overlay').style.zIndex = 650;
+        map.getPane('overlay').style.pointerEvents = 'none';
+
+        overlayLayer = new L.tileLayer('https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-light-theme-overlay/{z}/{x}/{y}{r}.png', {
+            pane: "overlay"
+        }).addTo(map);
+
+        // Tiled Layer
+        wmtsLayer = L.tileLayer.wms('https://betatest.metoffice.gov.uk/enthusiast/api/proxy/wms?', {
+            'service': 'WMS',
+            'version': '1.3.0',
+            'request': 'GetMap',
+            'layers': 'visibility:m',
+            'styles': 'default',
+            'format': 'image/png',
+            'uppercase': true,
+            'model': 'ecmwf-ifs',
+            'interp_select': 'none',
+            'time': 'todayT12Z',
+            tileSize: 1024
+        }).addTo(map);
+
+        styleList = [
+            "default",
+            "blue_magenta",
+            "blue_to_red",
+            "blues",
+            "blues_inverted",
+            "ceiling_height_segmented",
+            "dwd_warnings",
+            "gray",
+            "gray_inverted",
+            "gray_transparent",
+            "jet",
+            "jet_inverted",
+            "jet_segmented",
+            "jet_segmented_inverted",
+            "lifted_index_global",
+            "lifted_index_global_segmented",
+            "magenta_blue",
+            "periodic",
+            "periodic_inverted",
+            "plasma",
+            "plasma_inverted",
+            "prism",
+            "prism_inverted",
+            "radar_log",
+            "radar_segmented",
+            "reds",
+            "reds_inverted",
+            "red_to_blue",
+            "red_yellow_green",
+            "seismic",
+            "seismic_inverted",
+            "t_europe",
+            "t_europe_segmented",
+            "t_global",
+            "t_global_segmented",
+            "traffic_light",
+            "traffic_light_inverted",
+            "viridis",
+            "viridis_inverted",
+            "visibility_segmented",
+            "wave_height_segmented"
+        ];
+
+        // Leaflet Control Basic
+        L.Control.Picker = L.Control.extend({
+
+            onAdd: function (map) {
+
+                var picker = L.DomUtil.create('select', 'picker');
+                picker.setAttribute("id", "picker");
+                L.DomEvent.disableClickPropagation(picker);
+
+                for (var i = 0; i < styleList.length; i++) {
+
+                    var item = L.DomUtil.create('option');
+                    item.setAttribute("value", styleList[i]);
+                    item.innerHTML = styleList[i];
+                    picker.appendChild(item);
+
+                }
+
+                picker.addEventListener("change", function(e) {
+
+                    wmtsLayer.setParams({
+                        styles: e.target.value
+                    });
+
+                });
+
+                return picker;
+
+            }
+
+        });
+
+        stylePicker = new L.Control.Picker({
+            position: 'topright'
+        }).addTo(map);
+
+    </script>
+
+</body>
+
+</html>
