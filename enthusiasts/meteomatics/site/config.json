@@ -1551,6 +1551,416 @@
             ],
             "layers": [
                 {
+                    "id": "accumulated-precipitation",
+                    "label": "Accumulated precipitation",
+                    "baseStyle": "light",
+                    "style": "radar_log",
+                    "format": "png",
+                    "parameter": {
+                        "name": "precip",
+                        "interval": "1h",
+                        "units": ["mm"]
+                    },
+                    "time": {
+                        "period": "P5D",
+                        "step": "PT6H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "ordinal",
+                        "ticks": [0.01, 0.5, 1, 2, 4, 8, 16, 32, 40]
+                    },
+                    "popup": [
+                        {"label": "Accumulated<br>precipitation"},
+                        {"label": "Previous 1 hour", "parameter": "precip", "interval": "1h", "units": ["mm"]},
+                        {"label": "Previous 6 hours", "parameter": "precip", "interval": "6h", "units": ["mm"]}
+                    ]
+                },
+                {
+                    "id": "freezing-level",
+                    "label": "Freezing level",
+                    "baseStyle": "light",
+                    "style": "plasma_inverted",
+                    "format": "png",
+                    "parameter": {
+                        "name": "freezing_level",
+                        "units": ["m"]
+                    },
+                    "time": {
+                        "period": "P5D",
+                        "step": "PT6H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "Freezing level", "parameter": "freezing_level", "units": ["m"]}
+                    ]
+                },
+                {
+                    "id": "mean-sea-level-presure",
+                    "label": "Mean sea level pressure",
+                    "baseStyle": "light",
+                    "style": "jet_segmented",
+                    "format": "jpeg",
+                    "parameter": {
+                        "name": "msl_pressure",
+                        "units": ["hPa"]
+                    },
+                    "time": {
+                        "period": "P5D",
+                        "step": "PT6H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "Mean sea level pressure", "parameter": "msl_pressure", "units": ["hPa"]}
+                    ]
+                },
+                {
+                    "id": "visibility",
+                    "label": "Visibility",
+                    "baseStyle": "light",
+                    "style": "visibility_segmented",
+                    "format": "png",
+                    "parameter": {
+                        "name": "visibility",
+                        "units": ["m"]
+                    },
+                    "time": {
+                        "period": "P5D",
+                        "step": "PT6H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "ordinal",
+                        "scaling": 1000,
+                        "ticks": [0, 1000, 2000, 3000, 6000, 10000],
+                        "minimum": 0,
+                        "maximum": 10000
+                    },
+                    "popup": [
+                        {"label": "Visibility", "parameter": "visibility", "units": ["m"]}
+                    ]
+                },
+                {
+                    "id": "total-cloud-cover",
+                    "label": "Total cloud cover",
+                    "baseStyle": "dark",
+                    "style": "blues_inverted",
+                    "format": "jpeg",
+                    "parameter": {
+                        "name": "total_cloud_cover",
+                        "units": ["p"]
+                    },
+                    "time": {
+                        "period": "P5D",
+                        "step": "PT6H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "Total cloud cover", "parameter": "total_cloud_cover", "units": ["p"]},
+                        {"label": "Low cloud cover", "parameter": "low_cloud_cover", "units": ["p"]},
+                        {"label": "Medium cloud cover", "parameter": "medium_cloud_cover", "units": ["p"]},
+                        {"label": "High cloud cover", "parameter": "high_cloud_cover", "units": ["p"]}
+                    ]
+                },
+                {
+                    "id": "low-cloud-cover",
+                    "label": "Low cloud cover",
+                    "baseStyle": "dark",
+                    "style": "blues_inverted",
+                    "format": "jpeg",
+                    "parameter": {
+                        "name": "low_cloud_cover",
+                        "units": ["p"]
+                    },
+                    "time": {
+                        "period": "P5D",
+                        "step": "PT6H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "Low cloud cover", "parameter": "low_cloud_cover", "units": ["p"]},
+                        {"label": "Medium cloud cover", "parameter": "medium_cloud_cover", "units": ["p"]},
+                        {"label": "High cloud cover", "parameter": "high_cloud_cover", "units": ["p"]},
+                        {"label": "Total cloud cover", "parameter": "total_cloud_cover", "units": ["p"]}
+                    ]
+                },
+                {
+                    "id": "medium-cloud-cover",
+                    "label": "Medium cloud cover",
+                    "baseStyle": "dark",
+                    "style": "blues_inverted",
+                    "format": "jpeg",
+                    "parameter": {
+                        "name": "medium_cloud_cover",
+                        "units": ["p"]
+                    },
+                    "time": {
+                        "period": "P5D",
+                        "step": "PT6H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "Medium cloud cover", "parameter": "medium_cloud_cover", "units": ["p"]},
+                        {"label": "High cloud cover", "parameter": "high_cloud_cover", "units": ["p"]},
+                        {"label": "Total cloud cover", "parameter": "total_cloud_cover", "units": ["p"]},
+                        {"label": "Low cloud cover", "parameter": "low_cloud_cover", "units": ["p"]}
+                    ]
+                },
+                {
+                    "id": "high-cloud-cover",
+                    "label": "High cloud cover",
+                    "baseStyle": "dark",
+                    "style": "blues_inverted",
+                    "format": "jpeg",
+                    "parameter": {
+                        "name": "high_cloud_cover",
+                        "units": ["p"]
+                    },
+                    "time": {
+                        "period": "P5D",
+                        "step": "PT6H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "High cloud cover", "parameter": "high_cloud_cover", "units": ["p"]},
+                        {"label": "Total cloud cover", "parameter": "total_cloud_cover", "units": ["p"]},
+                        {"label": "Low cloud cover", "parameter": "low_cloud_cover", "units": ["p"]},
+                        {"label": "Medium cloud cover", "parameter": "medium_cloud_cover", "units": ["p"]}
+                    ]
+                },
+                {
+                    "id": "cape",
+                    "label": "CAPE",
+                    "baseStyle": "dark",
+                    "style": "seismic",
+                    "format": "jpeg",
+                    "parameter": {
+                        "name": "cape",
+                        "units": ["Jkg"]
+                    },
+                    "time": {
+                        "period": "P5D",
+                        "step": "PT6H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "CAPE", "parameter": "cape", "units": ["Jkg"]}
+                    ]
+                },
+                {
+                    "id": "dew-point-temperature",
+                    "label": "Dew point temperature",
+                    "baseStyle": "light",
+                    "style": "t_europe",
+                    "format": "jpeg",
+                    "parameter": {
+                        "name": "dew_point",
+                        "units": ["C"],
+                        "vertical": ["2m"]
+                    },
+                    "time": {
+                        "period": "P5D",
+                        "step": "PT6H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "Dew point temperature", "parameter": "dew_point", "units": ["C"]}
+                    ]
+                },
+                {
+                    "id": "temperature",
+                    "label": "Temperature",
+                    "baseStyle": "light",
+                    "style": "t_europe",
+                    "format": "jpeg",
+                    "parameter": {
+                        "name": "t",
+                        "units": ["C"],
+                        "vertical": ["2m", "1000hPa", "950hPa", "925hPa", "850hPa", "700hPa", "500hPa", "300hPa", "200hPa", "50hPa"]
+                    },
+                    "time": {
+                        "period": "P5D",
+                        "step": "PT6H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "Temperature", "parameter": "t", "units": ["C"]}
+                    ]
+                },
+                {
+                    "id": "theta-e",
+                    "label": "Theta E",
+                    "baseStyle": "light",
+                    "style": "seismic",
+                    "format": "jpeg",
+                    "parameter": {
+                        "name": "theta_e",
+                        "units": ["C"],
+                        "vertical": ["1000hPa", "950hPa", "925hPa", "850hPa", "700hPa", "500hPa", "300hPa", "200hPa"]
+                    },
+                    "time": {
+                        "period": "P5D",
+                        "step": "PT6H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "Theta E", "parameter": "theta_e", "units": ["C"]}
+                    ]
+                },
+                {
+                    "id": "relative-humidity",
+                    "label": "Relative humidity",
+                    "baseStyle": "light",
+                    "style": "blues",
+                    "format": "jpeg",
+                    "parameter": {
+                        "name": "relative_humidity",
+                        "units": ["p"],
+                        "vertical": ["2m", "1000hPa", "950hPa", "925hPa", "850hPa", "700hPa", "500hPa", "300hPa"]
+                    },
+                    "time": {
+                        "period": "P5D",
+                        "step": "PT6H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "Relative humidity", "parameter": "relative_humidity", "units": ["p"]}
+                    ]
+                },
+                {
+                    "id": "wind-speed",
+                    "label": "Wind speed",
+                    "baseStyle": "light",
+                    "style": "blue_magenta",
+                    "format": "jpeg",
+                    "parameter": {
+                        "name": "wind_speed",
+                        "units": ["mph", "kn", "bft", "ms", "kmh"],
+                        "vertical": ["10m", "1000hPa", "950hPa", "925hPa", "850hPa", "700hPa", "500hPa", "300hPa", "200hPa", "50hPa"]
+                    },
+                    "time": {
+                        "period": "P5D",
+                        "step": "PT6H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "Wind speed", "parameter": "wind_speed", "units": ["mph", "kn", "bft", "ms", "kmh"]},
+                        {"label": "Wind direction", "parameter": "wind_dir", "units": ["d"]}
+                    ]
+                },
+                {
+                    "id": "wind-speed-animated",
+                    "label": "Wind speed (animated)",
+                    "baseStyle": "light",
+                    "style": "blue_magenta",
+                    "format": "jpeg",
+                    "secondary": true,
+                    "parameter": {
+                        "name": "wind_speed",
+                        "units": ["mph", "kn", "bft", "ms", "kmh"],
+                        "vertical": ["10m", "1000hPa", "950hPa", "925hPa", "850hPa", "700hPa", "500hPa", "300hPa", "200hPa", "50hPa"]
+                    },
+                    "time": {
+                        "period": "P5D",
+                        "step": "PT6H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "Wind speed", "parameter": "wind_speed", "units": ["mph", "kn", "bft", "ms", "kmh"]},
+                        {"label": "Wind direction", "parameter": "wind_dir", "units": ["d"]}
+                    ]
+                },
+                {
+                    "id": "wind-gusts",
+                    "label": "Wind gusts",
+                    "baseStyle": "light",
+                    "style": "blue_magenta",
+                    "format": "jpeg",
+                    "parameter": {
+                        "name": "wind_gusts",
+                        "units": ["mph", "kn", "bft", "ms", "kmh"],
+                        "vertical": ["10m"]
+                    },
+                    "time": {
+                        "period": "P5D",
+                        "step": "PT6H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "Wind gusts", "parameter": "wind_gusts", "units": ["mph", "kn", "bft", "ms", "kmh"]},
+                        {"label": "Wind direction", "parameter": "wind_dir", "units": ["d"]},
+                        {"label": "Wind speed", "parameter": "wind_speed", "units": ["mph", "kn", "bft", "ms", "kmh"]}
+                    ]
+                },
+                {
+                    "id": "wind-gusts-animated",
+                    "label": "Wind gusts (animated)",
+                    "baseStyle": "light",
+                    "style": "blue_magenta",
+                    "format": "jpeg",
+                    "secondary": true,
+                    "parameter": {
+                        "name": "wind_gusts",
+                        "units": ["mph", "kn", "bft", "ms", "kmh"],
+                        "vertical": ["10m"]
+                    },
+                    "time": {
+                        "period": "P5D",
+                        "step": "PT6H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "Wind gusts", "parameter": "wind_gusts", "units": ["mph", "kn", "bft", "ms", "kmh"]},
+                        {"label": "Wind direction", "parameter": "wind_dir", "units": ["d"]},
+                        {"label": "Wind speed", "parameter": "wind_speed", "units": ["mph", "kn", "bft", "ms", "kmh"]}
+                    ]
+                },
+                {
                     "id": "significant-wave-height",
                     "label": "Significant wave height",
                     "baseStyle": "light",
