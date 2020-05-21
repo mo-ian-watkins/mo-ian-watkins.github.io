@@ -3,7 +3,7 @@
         "pathWMTS": "https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/demo/service/service",
         "pathAPI": "https://betatest.metoffice.gov.uk/enthusiast/api/proxy",
         "pathBaseMap": "https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles",
-        "pathLatestRuns": "https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/run_config.json"
+        "pathLatestRuns": "https://betatest.metoffice.gov.uk/weather/maps-and-charts/global-map/run_config.json"
     },
     "map": {
         "container": "map",
