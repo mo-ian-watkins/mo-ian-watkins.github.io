@@ -50,6 +50,386 @@
     },
     "models": [
         {
+            "id": "ukmo-nowcast-precip",
+            "label": "Met Office Nowcast (Precip)",
+            "downsampling": false,
+            "preloadCount": 5,
+            "type": "WMS",
+            "bounds": [
+                [48.4, -10.59],
+                [60.0, 4.0]
+            ],
+            "layers": [
+                {
+                    "id": "accumulated-precipitation",
+                    "label": "Accumulated precipitation",
+                    "baseStyle": "light",
+                    "style": "radar_log",
+                    "format": "png",
+                    "parameter": {
+                        "name": "precip",
+                        "interval": "1h",
+                        "units": ["mm"]
+                    },
+                    "time": {
+                        "period": "PT4H",
+                        "step": "PT15M",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "ordinal",
+                        "ticks": [0.01, 0.5, 1, 2, 4, 8, 16, 32, 40]
+                    },
+                    "popup": [
+                        {"label": "Accumulated<br>precipitation"},
+                        {"label": "Previous 1 hour", "parameter": "precip", "interval": "1h", "units": ["mm"]},
+                        {"label": "Previous 6 hours", "parameter": "precip", "interval": "6h", "units": ["mm"]}
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "ukmo-nowcast-wind",
+            "label": "Met Office Nowcast (Wind)",
+            "downsampling": false,
+            "preloadCount": 5,
+            "type": "WMS",
+            "bounds": [
+                [48.4, -10.59],
+                [60.0, 4.0]
+            ],
+            "layers": [
+                {
+                    "id": "wind-speed",
+                    "label": "Wind speed",
+                    "baseStyle": "light",
+                    "style": "blue_magenta",
+                    "format": "jpeg",
+                    "parameter": {
+                        "name": "wind_speed",
+                        "units": ["mph", "kn", "bft", "ms", "kmh"],
+                        "vertical": ["10m"]
+                    },
+                    "time": {
+                        "period": "PT4H",
+                        "step": "PT15M",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "Wind speed", "parameter": "wind_speed", "units": ["mph", "kn", "bft", "ms", "kmh"]},
+                        {"label": "Wind direction", "parameter": "wind_dir", "units": ["d"]}
+                    ]
+                },
+                {
+                    "id": "wind-gusts",
+                    "label": "Wind gusts",
+                    "baseStyle": "light",
+                    "style": "blue_magenta",
+                    "format": "jpeg",
+                    "parameter": {
+                        "name": "wind_gusts",
+                        "units": ["mph", "kn", "bft", "ms", "kmh"],
+                        "vertical": ["10m"]
+                    },
+                    "time": {
+                        "period": "PT4H",
+                        "step": "PT15M",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "Wind gusts", "parameter": "wind_gusts", "units": ["mph", "kn", "bft", "ms", "kmh"]},
+                        {"label": "Wind direction", "parameter": "wind_dir", "units": ["d"]},
+                        {"label": "Wind speed", "parameter": "wind_speed", "units": ["mph", "kn", "bft", "ms", "kmh"]}
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "ukmo-euro4",
+            "label": "Met Office EURO 4km",
+            "downsampling": false,
+            "preloadCount": 5,
+            "type": "WMS",
+            "bounds": [
+                [33.0, -13.95],
+                [67.95, 36.96]
+            ],
+            "layers": [
+                {
+                    "id": "accumulated-precipitation",
+                    "label": "Accumulated precipitation",
+                    "baseStyle": "light",
+                    "style": "radar_log",
+                    "format": "png",
+                    "parameter": {
+                        "name": "precip",
+                        "interval": "1h",
+                        "units": ["mm"]
+                    },
+                    "time": {
+                        "period": "PT36H",
+                        "step": "PT1H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "ordinal",
+                        "ticks": [0.01, 0.5, 1, 2, 4, 8, 16, 32, 40]
+                    },
+                    "popup": [
+                        {"label": "Accumulated<br>precipitation"},
+                        {"label": "Previous 1 hour", "parameter": "precip", "interval": "1h", "units": ["mm"]},
+                        {"label": "Previous 6 hours", "parameter": "precip", "interval": "6h", "units": ["mm"]}
+                    ]
+                },
+                {
+                    "id": "mean-sea-level-presure",
+                    "label": "Mean sea level pressure",
+                    "baseStyle": "light",
+                    "style": "jet_segmented",
+                    "format": "jpeg",
+                    "parameter": {
+                        "name": "msl_pressure",
+                        "units": ["hPa"]
+                    },
+                    "time": {
+                        "period": "PT36H",
+                        "step": "PT1H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "Mean sea level pressure", "parameter": "msl_pressure", "units": ["hPa"]}
+                    ]
+                },
+                {
+                    "id": "total-cloud-cover",
+                    "label": "Total cloud cover",
+                    "baseStyle": "dark",
+                    "style": "blues_inverted",
+                    "format": "jpeg",
+                    "parameter": {
+                        "name": "total_cloud_cover",
+                        "units": ["p"]
+                    },
+                    "time": {
+                        "period": "PT36H",
+                        "step": "PT1H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "Total cloud cover", "parameter": "total_cloud_cover", "units": ["p"]},
+                        {"label": "Low cloud cover", "parameter": "low_cloud_cover", "units": ["p"]},
+                        {"label": "Medium cloud cover", "parameter": "medium_cloud_cover", "units": ["p"]},
+                        {"label": "High cloud cover", "parameter": "high_cloud_cover", "units": ["p"]}
+                    ]
+                },
+                {
+                    "id": "low-cloud-cover",
+                    "label": "Low cloud cover",
+                    "baseStyle": "dark",
+                    "style": "blues_inverted",
+                    "format": "jpeg",
+                    "parameter": {
+                        "name": "low_cloud_cover",
+                        "units": ["p"]
+                    },
+                    "time": {
+                        "period": "PT36H",
+                        "step": "PT1H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "Low cloud cover", "parameter": "low_cloud_cover", "units": ["p"]},
+                        {"label": "Medium cloud cover", "parameter": "medium_cloud_cover", "units": ["p"]},
+                        {"label": "High cloud cover", "parameter": "high_cloud_cover", "units": ["p"]},
+                        {"label": "Total cloud cover", "parameter": "total_cloud_cover", "units": ["p"]}
+                    ]
+                },
+                {
+                    "id": "medium-cloud-cover",
+                    "label": "Medium cloud cover",
+                    "baseStyle": "dark",
+                    "style": "blues_inverted",
+                    "format": "jpeg",
+                    "parameter": {
+                        "name": "medium_cloud_cover",
+                        "units": ["p"]
+                    },
+                    "time": {
+                        "period": "PT36H",
+                        "step": "PT1H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "Medium cloud cover", "parameter": "medium_cloud_cover", "units": ["p"]},
+                        {"label": "High cloud cover", "parameter": "high_cloud_cover", "units": ["p"]},
+                        {"label": "Total cloud cover", "parameter": "total_cloud_cover", "units": ["p"]},
+                        {"label": "Low cloud cover", "parameter": "low_cloud_cover", "units": ["p"]}
+                    ]
+                },
+                {
+                    "id": "high-cloud-cover",
+                    "label": "High cloud cover",
+                    "baseStyle": "dark",
+                    "style": "blues_inverted",
+                    "format": "jpeg",
+                    "parameter": {
+                        "name": "high_cloud_cover",
+                        "units": ["p"]
+                    },
+                    "time": {
+                        "period": "PT36H",
+                        "step": "PT1H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "High cloud cover", "parameter": "high_cloud_cover", "units": ["p"]},
+                        {"label": "Total cloud cover", "parameter": "total_cloud_cover", "units": ["p"]},
+                        {"label": "Low cloud cover", "parameter": "low_cloud_cover", "units": ["p"]},
+                        {"label": "Medium cloud cover", "parameter": "medium_cloud_cover", "units": ["p"]}
+                    ]
+                },
+                {
+                    "id": "temperature",
+                    "label": "Temperature",
+                    "baseStyle": "light",
+                    "style": "t_global",
+                    "format": "jpeg",
+                    "parameter": {
+                        "name": "t",
+                        "units": ["C"],
+                        "vertical": ["2m", "1000hPa", "950hPa", "925hPa", "850hPa", "700hPa", "500hPa", "300hPa"]
+                    },
+                    "time": {
+                        "period": "PT36H",
+                        "step": "PT1H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "Temperature", "parameter": "t", "units": ["C"]}
+                    ]
+                },
+                {
+                    "id": "theta-e",
+                    "label": "Theta E",
+                    "baseStyle": "light",
+                    "style": "seismic",
+                    "format": "jpeg",
+                    "parameter": {
+                        "name": "theta_e",
+                        "units": ["C"],
+                        "vertical": ["1000hPa", "950hPa", "925hPa", "850hPa", "700hPa", "500hPa", "300hPa"]
+                    },
+                    "time": {
+                        "period": "PT36H",
+                        "step": "PT1H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "Theta E", "parameter": "theta_e", "units": ["C"]}
+                    ]
+                },
+                {
+                    "id": "relative-humidity",
+                    "label": "Relative humidity",
+                    "baseStyle": "light",
+                    "style": "red_to_blue",
+                    "format": "jpeg",
+                    "parameter": {
+                        "name": "relative_humidity",
+                        "units": ["p"],
+                        "vertical": ["2m", "1000hPa", "950hPa", "925hPa", "850hPa", "700hPa", "500hPa", "300hPa"]
+                    },
+                    "time": {
+                        "period": "PT36H",
+                        "step": "PT1H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "Relative humidity", "parameter": "relative_humidity", "units": ["p"]}
+                    ]
+                },
+                {
+                    "id": "wind-speed",
+                    "label": "Wind speed",
+                    "baseStyle": "light",
+                    "style": "blue_magenta",
+                    "format": "jpeg",
+                    "parameter": {
+                        "name": "wind_speed",
+                        "units": ["mph", "kn", "bft", "ms", "kmh"],
+                        "vertical": ["10m", "1000hPa", "950hPa", "925hPa", "850hPa", "700hPa", "500hPa", "300hPa"]
+                    },
+                    "time": {
+                        "period": "PT36H",
+                        "step": "PT1H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "Wind speed", "parameter": "wind_speed", "units": ["mph", "kn", "bft", "ms", "kmh"]},
+                        {"label": "Wind direction", "parameter": "wind_dir", "units": ["d"]}
+                    ]
+                },
+                {
+                    "id": "wind-gusts",
+                    "label": "Wind gusts",
+                    "baseStyle": "light",
+                    "style": "blue_magenta",
+                    "format": "jpeg",
+                    "parameter": {
+                        "name": "wind_gusts",
+                        "units": ["mph", "kn", "bft", "ms", "kmh"],
+                        "vertical": ["10m"]
+                    },
+                    "time": {
+                        "period": "PT36H",
+                        "step": "PT1H",
+                        "default": "first"
+                    },
+                    "key": {
+                        "type": "continuous"
+                    },
+                    "popup": [
+                        {"label": "Wind gusts", "parameter": "wind_gusts", "units": ["mph", "kn", "bft", "ms", "kmh"]},
+                        {"label": "Wind direction", "parameter": "wind_dir", "units": ["d"]},
+                        {"label": "Wind speed", "parameter": "wind_speed", "units": ["mph", "kn", "bft", "ms", "kmh"]}
+                    ]
+                }
+            ]
+        },
+        {
             "id": "ukmo-um10",
             "label": "Met Office Global 10km",
             "downsampling": false,
