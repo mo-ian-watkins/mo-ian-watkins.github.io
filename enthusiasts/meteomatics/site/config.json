@@ -320,7 +320,7 @@
                     "parameter": {
                         "name": "t",
                         "units": ["C"],
-                        "vertical": ["2m", "1000hPa", "950hPa", "925hPa", "850hPa", "700hPa", "500hPa", "300hPa", "200hPa"]
+                        "vertical": ["0m", "2m", "1000hPa", "950hPa", "925hPa", "850hPa", "700hPa", "500hPa", "300hPa", "200hPa"]
                     },
                     "time": {
                         "period": "PT36H",
