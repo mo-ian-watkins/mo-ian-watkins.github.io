@@ -2838,7 +2838,7 @@
         },
         {
             "id": "ukmo-500m-radar",
-            "label": "Radar",
+            "label": "UK Radar",
             "downsampling": false,
             "preloadCount": 5,
             "type": "WMS",
@@ -2870,6 +2870,46 @@
                     },
                     "popup": [
                         {"label": "Met Office UK 500m"},
+                        {"label": "Previous 5 minutes", "parameter": "precip_raw", "interval": "5min", "units": ["mm"]},
+                        {"label": "Previous 1 hour", "parameter": "precip_raw", "interval": "1h", "units": ["mm"]}
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "mix-radar",
+            "label": "Europe / USA Radar",
+            "downsampling": false,
+            "preloadCount": 5,
+            "type": "WMS",
+            "bounds": [
+                [21.67, -127.62],
+                [61.0, 16.1]
+            ],
+            "layers": [
+                {
+                    "id": "radar-rainfall",
+                    "label": "Radar rainfall",
+                    "baseStyle": "light",
+                    "style": "radar_log",
+                    "format": "png",
+                    "parameter": {
+                        "name": "precip_raw",
+                        "interval": "5min",
+                        "units": ["mm"]
+                    },
+                    "time": {
+                        "period": "PT2H",
+                        "step": "PT5M",
+                        "delay": "PT5M",
+                        "default": "last"
+                    },
+                    "key": {
+                        "type": "ordinal",
+                        "ticks": [0.01, 0.07, 0.15, 0.3, 0.6, 1.2, 2.4, 4.8, 6]
+                    },
+                    "popup": [
+                        {"label": "Radar rainfall"},
                         {"label": "Previous 5 minutes", "parameter": "precip_raw", "interval": "5min", "units": ["mm"]},
                         {"label": "Previous 1 hour", "parameter": "precip_raw", "interval": "1h", "units": ["mm"]}
                     ]
