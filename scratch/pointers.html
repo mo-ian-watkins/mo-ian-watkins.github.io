@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .hover, .none, .coarse, .fine { display: none;}
+        @media (any-hover: hover) {
+            .any-hover .hover { display: inline; }
+        }
+        @media (any-hover: none) {
+            .any-hover .none { display: inline; }
+        }
+        @media (hover: hover) {
+            .s-hover .hover { display: inline; }
+        }
+        @media (hover: none) {
+            .s-hover .none { display: inline; }
+        }
+        @media (any-pointer: none) {
+            .any-pointer .none { display: inline; }
+        }
+        @media (any-pointer: coarse) {
+            .any-pointer .coarse { display: inline; }
+        }
+        @media (any-pointer: fine) {
+            .any-pointer .fine { display: inline; }
+        }
+        @media (pointer: none) {
+            .pointer .none { display: inline; }
+        }
+        @media (pointer: coarse) {
+            .pointer .coarse { display: inline; }
+        }
+        @media (pointer: fine) {
+            .pointer .fine { display: inline; }
+        }
+​
+    </style>
+</head>
+<body>
+<p class="any-hover">any-hover: <span class="hover">hover</span> <span class="none">none</span></p>
+<p class="s-hover">hover: <span class="hover">hover</span> <span class="none">none</span></p>
+<p class="any-pointer">any-pointer: <span class="none">none</span> <span class="coarse">coarse</span> <span class="fine">fine</span></p>
+<p class="pointer">pointer: <span class="none">none</span> <span class="coarse">coarse</span> <span class="fine">fine</span></p>
+​
+</body>
+</html>
