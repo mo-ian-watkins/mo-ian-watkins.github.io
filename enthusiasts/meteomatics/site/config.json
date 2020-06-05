@@ -175,7 +175,7 @@
                         "units": ["mm"]
                     },
                     "time": {
-                        "period": "PT36H",
+                        "period": "PT12H",
                         "step": "PT1H",
                         "default": "first"
                     },
@@ -200,7 +200,7 @@
                         "units": ["hPa"]
                     },
                     "time": {
-                        "period": "PT36H",
+                        "period": "PT12H",
                         "step": "PT1H",
                         "default": "first"
                     },
@@ -222,7 +222,7 @@
                         "units": ["p"]
                     },
                     "time": {
-                        "period": "PT36H",
+                        "period": "PT12H",
                         "step": "PT1H",
                         "default": "first"
                     },
@@ -247,7 +247,7 @@
                         "units": ["p"]
                     },
                     "time": {
-                        "period": "PT36H",
+                        "period": "PT12H",
                         "step": "PT1H",
                         "default": "first"
                     },
@@ -272,7 +272,7 @@
                         "units": ["p"]
                     },
                     "time": {
-                        "period": "PT36H",
+                        "period": "PT12H",
                         "step": "PT1H",
                         "default": "first"
                     },
@@ -297,7 +297,7 @@
                         "units": ["p"]
                     },
                     "time": {
-                        "period": "PT36H",
+                        "period": "PT12H",
                         "step": "PT1H",
                         "default": "first"
                     },
@@ -323,7 +323,7 @@
                         "vertical": ["0m", "2m", "1000hPa", "950hPa", "925hPa", "850hPa", "700hPa", "500hPa", "300hPa", "200hPa"]
                     },
                     "time": {
-                        "period": "PT36H",
+                        "period": "PT12H",
                         "step": "PT1H",
                         "default": "first"
                     },
@@ -346,7 +346,7 @@
                         "vertical": ["1000hPa", "950hPa", "925hPa", "850hPa", "700hPa", "500hPa", "300hPa", "200hPa"]
                     },
                     "time": {
-                        "period": "PT36H",
+                        "period": "PT12H",
                         "step": "PT1H",
                         "default": "first"
                     },
@@ -369,7 +369,7 @@
                         "vertical": ["2m", "1000hPa", "950hPa", "925hPa", "850hPa", "700hPa", "500hPa", "300hPa", "200hPa"]
                     },
                     "time": {
-                        "period": "PT36H",
+                        "period": "PT12H",
                         "step": "PT1H",
                         "default": "first"
                     },
@@ -392,7 +392,7 @@
                         "vertical": ["10m", "1000hPa", "950hPa", "925hPa", "850hPa", "700hPa", "500hPa", "300hPa", "200hPa"]
                     },
                     "time": {
-                        "period": "PT36H",
+                        "period": "PT12H",
                         "step": "PT1H",
                         "default": "first"
                     },
@@ -417,7 +417,7 @@
                         "vertical": ["10m", "1000hPa", "950hPa", "925hPa", "850hPa", "700hPa", "500hPa", "300hPa", "200hPa"]
                     },
                     "time": {
-                        "period": "PT36H",
+                        "period": "PT12H",
                         "step": "PT1H",
                         "default": "first"
                     },
@@ -441,7 +441,7 @@
                         "vertical": ["10m"]
                     },
                     "time": {
-                        "period": "PT36H",
+                        "period": "PT12H",
                         "step": "PT1H",
                         "default": "first"
                     },
@@ -467,7 +467,7 @@
                         "vertical": ["10m"]
                     },
                     "time": {
-                        "period": "PT36H",
+                        "period": "PT12H",
                         "step": "PT1H",
                         "default": "first"
                     },
