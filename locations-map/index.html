@@ -36,6 +36,7 @@
         var map,
             mapCenter,
             baseLayer,
+            overlayLayer,
             markerLayer,
             locationsFC;
 
@@ -52,7 +53,14 @@
         });
 
         // Base map layer
-        baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-light-theme-base/{z}/{x}/{y}{r}.png").addTo(map);
+        baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-light-theme-base/{z}/{x}/{y}{r}.png", {
+            opacity: 0.8
+        }).addTo(map);
+
+        // Overlay map layer
+        overlayLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-light-theme-overlay/{z}/{x}/{y}{r}.png", {
+            opacity: 0.4
+        }).addTo(map);
 
         var getLocations = function(locationsURL) {
 
