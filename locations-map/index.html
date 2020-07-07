@@ -180,12 +180,15 @@
                     html = items.join("");
 
                     layer.bindTooltip(html, {
-                        direction: "top"
+                        direction: "top",
+                        offset: L.point(0,-10)
                     });
 
                 },
                 filter: function(feature, layer) {
+
                     return feature.properties.visible;
+
                 }
 
             }).addTo(map);
