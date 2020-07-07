@@ -270,6 +270,8 @@
 
                 })
 
+                map.panTo(L.latLng(e.layer.feature.geometry.coordinates[1], e.layer.feature.geometry.coordinates[0]));
+
                 plotLocations(locationsFC);
 
             });
