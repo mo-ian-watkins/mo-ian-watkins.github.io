@@ -163,6 +163,7 @@
                         items = [];
 
                     items.push("<pre>","Name:     ", "<b>", feature.properties.name, "</b>", "<br>");
+                    items.push("Altitude: ", "<b>", feature.properties.locationMetadata.altitude, " m", "</b>", "<br>");
 
                     if (feature.properties.domestic) {
                         items.push("Type:     ", feature.properties.locationType, "<br>");
@@ -249,7 +250,9 @@
                 // Get distances
                 closestFeatures.forEach(function (nearestFeature) {
 
-                    nearestFeature.properties.distance = turf.distance(e.layer.feature.geometry, nearestFeature.geometry, {units: "miles"})
+                    nearestFeature.properties.distance = turf.distance(e.layer.feature.geometry, nearestFeature.geometry, {units: "miles"});
+
+                    console.log( nearestFeature.properties);
 
                 });
 
