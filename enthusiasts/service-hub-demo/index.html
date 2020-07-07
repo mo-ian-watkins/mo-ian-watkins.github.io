@@ -34,34 +34,41 @@
         // WMS Service: https://metoffice.sharepoint.com/sites/technologyservicehubservice/SitePages/Map%20Layers%20Template.aspx#4-0
 
         // Base map layer
-        var baseLayer = new L.tileLayer('http://donotbeonfire.co.uk:8080/styles/simple-map-dark/{z}/{x}/{y}{r}.png');
+        var baseLayer = new L.tileLayer('http://ec2-3-8-19-236.eu-west-2.compute.amazonaws.com/styles/dev-atlas-light-theme-base/{z}/{x}/{y}{r}.png');
 
         // Single Layer
-/*         var wmsLayer = L.WMS.overlay('https://mdda.hub.metoffice.cloud/wms/glm/short', {
+        var wmsLayer = L.WMS.overlay('https://mdda.hub.metoffice.cloud/wms/glm/long', {
             //'service': 'WMS',
             //'version': '1.3.0',
             //'request': 'GetMap',
-            'layers': 'wind_gust_10m',
-            //'styles': '​numbers_degrees_celsius​',
+            //'layers': 'wind_speed_and_direction_on_pressure_levels',
+            'layers': 'mean_sea_level_pressure',
+            //'styles': 'streamlines',
+            'styles': 'isobars_2hpa',
             'format': 'image/png',
             'transparent': 'TRUE',
             //'dim_run': '2019-07-26T06:00:00Z',
             //'dim_forecast': 'PT0S',
+            //'elevation': '1000',
             'uppercase': true,
             opacity: 0.75
-        }); */
+        });
 
         // Tiled Layer
-        var wmsLayer2 = L.TileLayer.wmsHeader('https://mdda.hub.metoffice.cloud/wms/glm/short', {
+        var wmsLayer2 = L.TileLayer.wmsHeader('https://mdda.hub.metoffice.cloud/wms/glm/long', {
             'service': 'WMS',
             'version': '1.3.0',
             'request': 'GetMap',
-            'layers': 'cloud_amount_high',
-            'styles': 'colour_gradient_blue_green',
+            //'layers': 'wind_speed_and_direction_on_pressure_levels',
+            'layers': 'mean_sea_level_pressure',
+            //'styles': 'arrows',
+            'styles': 'isobars_2hpa',
             'format': 'image/png',
             'transparent': 'TRUE',
-            'dim_run': '2019-07-26T06:00:00Z',
-            'dim_forecast': 'PT0S',
+            //'dim_run': '2020-06-12T00:00:00Z',
+            //'dim_forecast': 'PT0S',
+            'elevation': '1000',
+            'buffer': '256',
             'uppercase': true
         },
         [
