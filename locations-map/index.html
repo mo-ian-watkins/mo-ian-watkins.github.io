@@ -210,6 +210,14 @@
                     featureCollection,
                     closestFeatures = [];
 
+                // Link on second click
+                if (e.layer.feature.properties.selected === true) {
+
+                    // Navigate browser to forecast page in new tab
+                    window.open("https://www.metoffice.gov.uk/weather/forecast/" + e.layer.feature.properties.geohash, '_blank');
+
+                }
+
                 // Reset state and styling
                 locationsFC.features.forEach(function (location) {
 
@@ -277,8 +285,6 @@
                     });
 
                 })
-
-                map.panTo(L.latLng(e.layer.feature.geometry.coordinates[1], e.layer.feature.geometry.coordinates[0]));
 
                 plotLocations(locationsFC);
 
