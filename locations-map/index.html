@@ -210,6 +210,9 @@
                     featureCollection,
                     closestFeatures = [];
 
+                // Dump record to console
+                console.log(e.layer.feature.properties);
+
                 // Link on second click
                 if (e.layer.feature.properties.selected === true) {
 
