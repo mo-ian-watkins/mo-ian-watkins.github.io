@@ -307,7 +307,8 @@
         };
 
         // Get locations data
-        getLocations("locations.json");
+        //getLocations("locations.json");
+        getLocations("https://wwwpre.metoffice.gov.uk/public/data/services/locations/v3/");
 
         // Event handler
         map.on("moveend", function(e) {
