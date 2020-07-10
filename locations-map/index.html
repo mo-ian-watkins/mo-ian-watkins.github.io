@@ -216,8 +216,17 @@
                 // Link on second click
                 if (e.layer.feature.properties.selected === true) {
 
-                    // Navigate browser to forecast page in new tab
-                    window.open("https://www.metoffice.gov.uk/weather/forecast/" + e.layer.feature.properties.geohash, '_blank');
+                    if (e.layer.feature.properties.domestic && e.layer.feature.properties.locationType && e.layer.feature.properties.locationType === "Beaches") {
+
+                        // Navigate browser to beach forecast page in new tab
+                        window.open("https://www.metoffice.gov.uk/weather/specialist-forecasts/coast-and-sea/beach-forecast-and-tide-times/" + e.layer.feature.properties.geohash, '_blank');
+
+                    } else {
+
+                        // Navigate browser to forecast page in new tab
+                        window.open("https://www.metoffice.gov.uk/weather/forecast/" + e.layer.feature.properties.geohash, '_blank');
+
+                    }
 
                 }
 
