@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Locations v3 Map</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="shortcut icon" type="image/x-icon" href="/resources/images/favicon.png" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.js" integrity="sha256-fNoRrwkP2GuYPbNSJmMJOCyfRB2DhPQe0rGTgzRsyso=" crossorigin="anonymous"></script>
+    <script src='https://unpkg.com/@turf/turf/turf.min.js'></script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+
+    <style>
+        html,
+        body,
+        #map {
+            background-color: #fff;
+            font-family: Inter, Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .picker {
+            width: 250px;
+            height: 40px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div id="map"></div>
+
+    <script>
+
+        var map,
+            mapBounds,
+            baseLayer,
+            overlayLayer,
+            markerLayer,
+            locationsFC,
+            nearestCountList,
+            nearestCountPicker;
+
+        mapBounds = [[50, -12], [62, 4]];
+
+        map = new L.Map("map", {
+            zoomControl: false,
+            zoom: 2,
+            maxZoom: 12,
+            minZoom: 2,
+            crs: L.CRS.EPSG3857,
+            attributionControl: false
+        });
+
+        map.fitBounds(mapBounds);
+
+        // Base map layer
+        baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-light-theme-base/{z}/{x}/{y}{r}.png", {
+            opacity: 0.8
+        }).addTo(map);
+
+        // Overlay map layer
+        overlayLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-light-theme-overlay/{z}/{x}/{y}{r}.png", {
+            opacity: 0.4
+        }).addTo(map);
+
+        var getLocations = function(locationsURL) {
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open("GET", locationsURL);
+            xhr.onload = function() {
+                afterGetLocations(xhr);
+            };
+            xhr.send();
+
+        };
+
+        var afterGetLocations = function(xhr) {
+
+            if (xhr.status === 200) {
+                parseLocations(xhr.responseText);
+            } else {
+                console.error("Locations failed to load", xhr.responseURL);
+            }
+
+        };
+
+        var parseLocations = function(responseText) {
+
+            var locations,
+                tempLocations = [],
+                counter;
+
+            locations = JSON.parse(responseText);
+
+            // Turn into an array of Features
+            locations.forEach(function (element, index) {
+
+                var geometry;
+
+                geometry = {
+                    "type": "Point",
+                    "coordinates": [element.position[1],element.position[0]]
+                };
+
+                delete element.position;
+
+                element.style = defaultPointStyle;
+
+                // Domestic only
+                if (element.domestic) {
+                    tempLocations.push(turf.feature(geometry, element));
+                }
+
+            });
+
+            // Turn into a FeatureCollection
+            locationsFC = turf.featureCollection(tempLocations);
+
+            console.log(locationsFC.features.length);
+
+        };
+
+        var plotLocations = function(locations) {
+
+            var mapBounds = map.getBounds(),
+                mapBoundsPolygonFeature;
+
+            mapBoundsPolygonFeature = turf.polygon([
+                [
+                    [mapBounds._northEast.lng, mapBounds._northEast.lat],
+                    [mapBounds._southWest.lng, mapBounds._northEast.lat],
+                    [mapBounds._southWest.lng, mapBounds._southWest.lat],
+                    [mapBounds._northEast.lng, mapBounds._southWest.lat],
+                    [mapBounds._northEast.lng, mapBounds._northEast.lat]
+                ]
+            ]);
+
+            // Clear if exists
+            if (typeof markerLayer !== "undefined") {
+                markerLayer.clearLayers();
+            }
+
+            // Add all Points in within the viewport to the map
+            markerLayer = new L.geoJSON(locations, {
+                pointToLayer: function (feature) {
+
+                    return L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]]);
+
+                },
+                style: function (feature) {
+
+                    if (feature.properties.local) {
+                        return localPointStyle;
+                    } else {
+                        return defaultPointStyle;
+                    }
+
+                },
+                onEachFeature: function (feature, layer) {
+
+                    var html,
+                        items = [];
+
+                    items.push("<pre>","Name:     ", "<b>", feature.properties.name, "</b>", "<br>");
+                    items.push("Altitude: ", "<b>", feature.properties.locationMetadata.altitude, " m", "</b>", "<br>");
+
+                    if (feature.properties.domestic) {
+                        items.push("Type:     ", feature.properties.locationType, "<br>");
+                    }
+
+                    items.push("Geohash:  ", feature.properties.geohash, "<br>");
+                    items.push("SspaId:   ", feature.properties.sspaId);
+
+                    if (feature.properties.distance && Number(feature.properties.distance) >= 0) {
+                        items.push("<br>", "Distance: ", "<b>", Number(feature.properties.distance).toFixed(2), " miles", "</b>", "<br>");
+                    }
+
+                    items.push("</pre>");
+
+                    html = items.join("");
+
+                    layer.bindTooltip(html, {
+                        direction: "top",
+                        offset: L.point(0,-10)
+                    });
+
+                }
+
+            }).addTo(map);
+
+            // Virtual crawl to x number of locations per location
+
+/*
+            markerLayer.on("click", function(e) {
+
+                var numberOfNearest = 10,
+                    counter,
+                    point,
+                    featureCollection,
+                    closestFeatures = [];
+
+                // Dump record to console
+                console.log(e.layer.feature.properties);
+
+                // Link on second click
+                if (e.layer.feature.properties.selected === true) {
+
+                    if (e.layer.feature.properties.domestic && e.layer.feature.properties.locationType && e.layer.feature.properties.locationType === "Beaches") {
+
+                        // Navigate browser to beach forecast page in new tab
+                        window.open("https://www.metoffice.gov.uk/weather/specialist-forecasts/coast-and-sea/beach-forecast-and-tide-times/" + e.layer.feature.properties.geohash, '_blank');
+
+                    } else {
+
+                        // Navigate browser to forecast page in new tab
+                        window.open("https://www.metoffice.gov.uk/weather/forecast/" + e.layer.feature.properties.geohash, '_blank');
+
+                    }
+
+                }
+
+                // Reset state and styling
+                locationsFC.features.forEach(function (location) {
+
+                    location.properties.selected = false;
+                    location.properties.nearest = false;
+                    location.properties.distance = -1;
+
+                });
+
+                // Set selected state
+                locationsFC.features.forEach(function (location) {
+
+                    if (location.properties.sspaId === e.layer.feature.properties.sspsId)
+
+                    location.properties.selected = true;
+
+                });
+
+                // Deep copy
+                featureCollection = JSON.parse(JSON.stringify(locationsFC));
+
+                // Set selected
+                e.layer.feature.properties.selected = true;
+
+                // Get X nearest sites
+                for (i = 0; i <= numberOfNearest; i++) {
+
+                    var feature,
+                        itemIndex;
+
+                    feature = turf.nearestPoint(e.layer.feature.geometry, featureCollection);
+                    closestFeatures.push(feature);
+
+                    featureCollection.features.forEach(function (element, index) {
+
+                        if (element.properties.sspaId === feature.properties.sspaId) {
+                            itemIndex = index;
+                        }
+
+                    })
+
+                    featureCollection.features.splice(itemIndex, 1);
+
+                }
+
+                // Get distances
+                closestFeatures.forEach(function (nearestFeature) {
+
+                    nearestFeature.properties.distance = turf.distance(e.layer.feature.geometry, nearestFeature.geometry, {units: "miles"});
+
+                });
+
+                // Update main featureCollection with nearest
+                locationsFC.features.forEach(function (feature) {
+
+                    closestFeatures.forEach(function (nearestFeature) {
+
+                        if (feature.properties.sspaId === nearestFeature.properties.sspaId) {
+
+                            feature.properties.nearest = true;
+                            feature.properties.distance = nearestFeature.properties.distance;
+
+                        }
+
+                    });
+
+                })
+
+                plotLocations(locationsFC);
+
+            });
+ */
+        };
+
+        var processNearest = function(count, locationsFC) {
+
+            // Reset state
+            locationsFC.features.forEach(function (feature) {
+
+                feature.properties.local = false;
+
+            });
+
+            locationsFC.features.forEach(function (outer, outerIndex) {
+
+                var workingCollection = JSON.parse(JSON.stringify(locationsFC));
+
+                if (outerIndex % 100 === 0) {
+                    console.log(outerIndex);
+                }
+
+                // Get X nearest sites
+                for (i = 0; i <= count; i++) {
+
+                    var feature,
+                        itemIndex;
+
+                    feature = turf.nearestPoint(outer.geometry, workingCollection);
+                    if (feature.properties.sspaId !== outer.properties.sspaId) {
+                        outer.properties.local = true;
+                    }
+
+                    workingCollection.features.forEach(function (inner, index) {
+
+                        if (inner.properties.sspaId === feature.properties.sspaId) {
+                            itemIndex = index;
+                        }
+
+                    })
+                    workingCollection.features.splice(itemIndex, 1);
+
+                }
+
+            });
+
+            plotLocations(locationsFC);
+
+        };
+
+        var defaultPointStyle = {
+            radius: 10,
+            weight: 1,
+            color: "black",
+            fillColor: "black",
+            fillOpacity: 0.5,
+        };
+        var localPointStyle = {
+            radius: 5,
+            weight: 1,
+            color: "blue",
+            fillColor: "blue",
+            fillOpacity: 0.3,
+        };
+
+        // Get locations data
+        getLocations("locations.json");
+
+        nearestCountList = [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+        ];
+
+        // Leaflet Control Basic
+        L.Control.Picker = L.Control.extend({
+
+            onAdd: function (map) {
+
+                var picker = L.DomUtil.create('select', 'picker');
+                picker.setAttribute("id", "picker");
+                L.DomEvent.disableClickPropagation(picker);
+
+                for (var i = 0; i < nearestCountList.length; i++) {
+
+                    var item = L.DomUtil.create('option');
+                    item.setAttribute("value", nearestCountList[i]);
+                    item.innerHTML = nearestCountList[i];
+                    picker.appendChild(item);
+
+                }
+
+                picker.addEventListener("change", function(e) {
+
+                    processNearest(e.target.value, locationsFC);
+
+                });
+
+                return picker;
+
+            }
+
+        });
+
+        nearestCountPicker = new L.Control.Picker({
+            position: 'topright'
+        }).addTo(map);
+
+
+    </script>
+
+</body>
+
+</html>
