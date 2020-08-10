@@ -22,6 +22,7 @@ window.metoffice.serviceHub.core = (function() {
         var xhr = new XMLHttpRequest();
 
         xhr.open("GET", capabilitiesURL);
+        xhr.setRequestHeader("x-api-key", "29095ff2ff043405adb7913eba4844e536a54136f7dd70fa50cc613c94dfe93c");
         xhr.onload = function() {
             afterGetCapabilities(xhr);
         };
