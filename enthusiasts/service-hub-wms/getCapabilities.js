@@ -44,14 +44,13 @@ window.metoffice.serviceHub.core = (function() {
 
         var layers,
             defaultRun,
-            timeStrings;
+            timeStrings,
+            previousStep;
 
         capabilities = new WMSCapabilities().parse(responseText);
         layers = capabilities.Capability.Layer.Layer;
 
         layers.forEach(function(layer) {
-
-            //console.log(layer.Title);
 
             defaultRun = Date.parse(layer.Dimension[0].default);
             timeStrings = layer.Dimension[1].values.split(",");
@@ -59,13 +58,32 @@ window.metoffice.serviceHub.core = (function() {
 
             timeStrings.forEach(function(timeString, index) {
 
-                var valueInMilliSeconds = window.nezasa.iso8601.Period.parseToTotalSeconds(timeString) * 1000,
-                    timeStep = {
-                        index: index,
-                        epoch: defaultRun + valueInMilliSeconds,
-                        periodISO8601: timeString,
-                        stepISO8601: new Date(defaultRun + valueInMilliSeconds).toISOString()
-                    };
+                var valueInMilliSeconds,
+                    gapToPreviousStep,
+                    timeStep;
+
+                valueInMilliSeconds = window.nezasa.iso8601.Period.parseToTotalSeconds(timeString) * 1000;
+
+                // Get gap to previous time step
+                if (index > 0) {
+                    gapToPreviousStep = valueInMilliSeconds - previousStep;
+                } else {
+                    gapToPreviousStep = 0;
+                }
+
+                previousStep = valueInMilliSeconds;
+
+                // Create each time step
+                timeStep = {
+                    index: index,
+                    runMS: defaultRun,
+                    runISO8601: new Date(defaultRun).toISOString(),
+                    epochMS: defaultRun + valueInMilliSeconds,
+                    periodISO8601: timeString,
+                    stepISO8601: new Date(defaultRun + valueInMilliSeconds).toISOString(),
+                    gapToPreviousMS: gapToPreviousStep,
+                    layerLoaded: false
+                };
 
                 timeSteps.push(timeStep);
 
