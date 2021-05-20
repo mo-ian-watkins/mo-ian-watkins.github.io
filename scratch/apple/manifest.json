@@ -1,0 +1,29 @@
+{
+	"name": "Test Application",
+	"short_name": "Test App",
+	"theme_color": "#2a2a2a",
+	"background_color": "#2a2a2a",
+	"display": "standalone",
+	"scope": "/",
+	"start_url": "/",
+	"icons": [
+		{
+			"src": "assets/logos/mobile/maskable_logo_x192.png",
+			"type": "image/png",
+			"sizes": "192x192",
+			"purpose": "any"
+		},
+		{
+			"src": "assets/logos/mobile/maskable_logo_x512.png",
+			"type": "image/png",
+			"sizes": "512x512",
+			"purpose": "any"
+		},
+		{
+			"src": "assets/logos/mobile/maskable_logo.png",
+			"sizes": "48x48 72x72 96x96 128x128 192x192 384x384 512x512",
+			"type": "image/png",
+			"purpose": "maskable"
+		}
+	]
+}
