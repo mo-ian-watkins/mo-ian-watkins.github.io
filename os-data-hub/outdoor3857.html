@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>OS Maps API | EPSG:3857 | Leaflet</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<!-- Leaflet -->
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+		integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+		crossorigin=""/>
+
+	<style>
+        body { margin:0; padding:0; }
+        #map { position:absolute; top:0; bottom:0; width:100%; }
+    </style>
+
+</head>
+
+<body>
+	<div id="map"></div>
+
+	<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+		integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+		crossorigin="">
+	</script>
+
+	<script type="text/javascript">
+
+		var apiKey = 'AuqDtdEeeoE4LGGzKRqjV5gvubGdHfBb';
+
+		var serviceUrl = 'https://api.os.uk/maps/raster/v1/zxy';
+
+		// Instantiate a tile layer object for the Outdoor style (displayed at zoom levels 10-13).
+		var outdoor = L.tileLayer(serviceUrl + '/Outdoor_3857/{z}/{x}/{y}.png?key=' + apiKey, {
+			maxZoom: 20
+		});
+
+		// Initialize the map.
+		var mapOptions = {
+			layers: [ outdoor ],
+			minZoom: 8,
+			maxZoom: 20,
+			center: [ 50.727359, -3.475215 ],
+			zoom: 18,
+			maxBounds: [
+				[ 49.528423, -10.76418 ],
+				[ 61.331151, 1.9134116 ]
+			],
+			attributionControl: false
+		};
+
+		var map = L.map('map', mapOptions);
+
+		function onMapClick(e) {
+			console.log("You clicked the map at " + e.latlng);
+		}
+
+		map.on('click', onMapClick);
+
+	</script>
+</body>
+
+</html>
