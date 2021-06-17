@@ -91,28 +91,47 @@
 		var map = L.map('map', mapOptions);
 
 		// Add geocoder control to the map.
-		// Further information can be found at https://github.com/OrdnanceSurvey/leaflet-control-geocoder
 		var control = L.Control.geocoder({
-			geocoder: new L.Control.Geocoder.osPlacesAPI(apiKey, 'find', { dataset: 'DPA,LPI' })
+			geocoder: new L.Control.Geocoder.osPlacesAPI(apiKey, 'find', { dataset: 'DPA,LPI' }),
+			defaultMarkGeocode: false
 		})
 		.on('markgeocode', function(e) {
-			if (typeof e.geocode.properties.DPA !== "undefined") {
-				console.table(e.geocode.properties.DPA);
-			} else if (typeof e.geocode.properties.LPI !== "undefined") {
-				console.table(e.geocode.properties.LPI);
-			}
+			var geocode = e.geocode;
+			displayMarkGeocode(geocode);
+			map.fitBounds(geocode.bbox);
 		})
 		.addTo(map);
 
-		map.on('click', function(e) {
-			var coords = proj4('EPSG:27700', [ e.latlng.lng, e.latlng.lat ]).map(function(elem) {
-				return Number(elem.toFixed(2));
-			});
+		var marker;
 
-			console.log("---------------------------------------------------");
-			console.log("EPSG:27700 - Easting:", coords[0], "Northing:", coords[1]);
-			console.log("EPSG:3857 - Latitude:", e.latlng.lat.toFixed(5), "Longitude:", e.latlng.lng.toFixed(5));
+		// Click event for reverse geocode.
+		map.on('click', function(e) {
+			control.options.geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function(results) {
+				var result = results[0];
+				if(! result ) {
+					result = { center: e.latlng, name: 'Nothing found' };
+				}
+				displayMarkGeocode(result);
+			})
 		});
+
+		function displayMarkGeocode(props) {
+			if( marker ) {
+				marker.setLatLng(props.center).setPopupContent(props.html || props.name).openPopup();
+			}
+			else {
+				marker = L.marker(props.center).bindPopup(props.html || props.name).addTo(map).openPopup();
+			}
+
+			// Dump to console
+			console.clear();
+			if (typeof props.properties.DPA !== "undefined") {
+				console.table(props.properties.DPA);
+			} else if (typeof props.properties.LPI !== "undefined") {
+				console.table(props.properties.LPI);
+			}
+
+		}
 
 	</script>
 
