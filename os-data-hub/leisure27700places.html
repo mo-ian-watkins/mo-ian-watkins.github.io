@@ -113,7 +113,7 @@
 			control.options.geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function(results) {
 				var result = results[0];
 				if(!result) {
-					result = { center: e.latlng, name: 'Nothing found' };
+					result = { center: e.latlng, name: 'Nothing found within 100m' };
 				}
 				displayMarkGeocode(result);
 			});
@@ -129,7 +129,7 @@
 				marker = L.marker(props.center).bindPopup(props.html || props.name).addTo(map).openPopup();
 			}
 
-			if (props.name !== "Nothing found") {
+			if (props.name !== "Nothing found within 100m") {
 
 				// Dump to console
 				console.clear();
