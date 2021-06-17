@@ -80,7 +80,7 @@
 			minZoom: 1,
 			maxZoom: 13,
 			center: transformCoords([ 295974, 93009 ]),
-			zoom: 11,
+			zoom: 9,
 			maxBounds: [
 				transformCoords([ -238375.0, 0.0 ]),
 				transformCoords([ 900000.0, 1376256.0 ])
@@ -92,13 +92,16 @@
 
 		// Add geocoder control to the map.
 		var control = L.Control.geocoder({
-			geocoder: new L.Control.Geocoder.osPlacesAPI(apiKey, 'find', { dataset: 'DPA,LPI' }),
+			collapsed: false,
+			queryMinLength: 5,
+			placeholder: 'Search OS Places API...',
+			geocoder: new L.Control.Geocoder.osPlacesAPI(apiKey, 'find', { dataset: 'DPA,LPI'}),
 			defaultMarkGeocode: false
 		})
 		.on('markgeocode', function(e) {
 			var geocode = e.geocode;
 			displayMarkGeocode(geocode);
-			map.fitBounds(geocode.bbox);
+			map.panTo(geocode.center);
 		})
 		.addTo(map);
 
@@ -106,16 +109,19 @@
 
 		// Click event for reverse geocode.
 		map.on('click', function(e) {
+
 			control.options.geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function(results) {
 				var result = results[0];
-				if(! result ) {
+				if(!result) {
 					result = { center: e.latlng, name: 'Nothing found' };
 				}
 				displayMarkGeocode(result);
-			})
+			});
+
 		});
 
 		function displayMarkGeocode(props) {
+
 			if( marker ) {
 				marker.setLatLng(props.center).setPopupContent(props.html || props.name).openPopup();
 			}
@@ -123,12 +129,16 @@
 				marker = L.marker(props.center).bindPopup(props.html || props.name).addTo(map).openPopup();
 			}
 
-			// Dump to console
-			console.clear();
-			if (typeof props.properties.DPA !== "undefined") {
-				console.table(props.properties.DPA);
-			} else if (typeof props.properties.LPI !== "undefined") {
-				console.table(props.properties.LPI);
+			if (props.name !== "Nothing found") {
+
+				// Dump to console
+				console.clear();
+
+				if (props.properties.hasOwnProperty('DPA')) {
+					console.table(props.properties.DPA);
+				} else if (props.properties.hasOwnProperty('LPI')) {
+					console.table(props.properties.LPI);
+				}
 			}
 
 		}
