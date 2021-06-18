@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-	<title>OS Maps API | EPSG:27700 | Leaflet</title>
+	<title>OS Maps API | OS Places API | Leaflet</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	<!-- Leaflet -->
@@ -90,6 +90,25 @@
 
 		var map = L.map('map', mapOptions);
 
+		// Set initial 'point', 'radius' and 'dataset' values.
+		var point = mapOptions.center,
+			radius = 1000,
+			dataset = 'DPA,LPI';
+
+		// Add a class for drawing circle overlays on a map.
+		var vulnerableCircle = L.circle(point, {
+			weight: 0,
+			radius: radius,
+			color: "#000000",
+			stroke: true,
+			weight: 5,
+			opacity: 1,
+			fillOpacity: 0.15
+		}).addTo(map);
+
+		var marker;
+		var vulnerableLocations;
+
 		// Add geocoder control to the map.
 		var control = L.Control.geocoder({
 			collapsed: false,
@@ -101,11 +120,19 @@
 		.on('markgeocode', function(e) {
 			var geocode = e.geocode;
 			displayMarkGeocode(geocode);
+			getFeatures(map.getBounds());
 			map.panTo(geocode.center);
 		})
 		.addTo(map);
 
-		var marker;
+		control.options.geocoder.reverse(map.getCenter(), map.options.crs.scale(map.getZoom()), function(results) {
+			var result = results[0];
+			if(!result) {
+				result = { center: map.getCenter(), name: 'Nothing found within 100m' };
+			}
+			displayMarkGeocode(result);
+			getFeatures(map.getBounds());
+		});
 
 		// Click event for reverse geocode.
 		map.on('click', function(e) {
@@ -116,6 +143,8 @@
 					result = { center: e.latlng, name: 'Nothing found within 100m' };
 				}
 				displayMarkGeocode(result);
+				getFeatures(e.target.getBounds());
+				map.panTo(e.latlng);
 			});
 
 		});
@@ -129,6 +158,10 @@
 				marker = L.marker(props.center).bindPopup(props.html || props.name).addTo(map).openPopup();
 			}
 
+			// Move circle
+			point = [ props.center.lat, props.center.lng ];
+			vulnerableCircle.setLatLng(point);
+
 			if (props.name !== "Nothing found within 100m") {
 
 				// Dump to console
@@ -140,6 +173,82 @@
 					console.table(props.properties.LPI);
 				}
 			}
+
+		}
+
+		/**
+		 * Get features
+		 */
+		function getFeatures(bounds) {
+
+			// Convert the bounds to a formatted string.
+			var sw = bounds.getSouthWest().lat + ',' + bounds.getSouthWest().lng,
+				ne = bounds.getNorthEast().lat + ',' + bounds.getNorthEast().lng;
+
+			var coords = sw + ',' + ne;
+
+			// Define request parameters.
+			var params = {
+				key: apiKey,
+				point: point.join(),
+            	radius: radius,
+            	dataset: dataset,
+				offset: 0,
+				output_srs: 'EPSG:4326',
+				srs: 'EPSG:4326',
+				fq: 'classification_code:CE* classification_code:RI* classification_code:CM* classification_code:CC03*'
+			};
+
+			// Create an empty GeoJSON FeatureCollection.
+			var geoJson = {
+				"type": "FeatureCollection",
+				"features": []
+			};
+
+			var queryString = Object.keys(params).map(function(key) {
+				return key + '=' + params[key];
+			}).join('&');
+
+			fetch(placeServiceUrl + '/radius?' + queryString)
+				.then(response => response.json())
+				.then(data => {
+					if (data.header.totalresults > 0) {
+						data.results.forEach(function(val, i) {
+							var dataset = val.hasOwnProperty('DPA') ? 'DPA' : 'LPI';
+							var result = val[ dataset ];
+
+							var feature = {
+								"type": "Feature",
+								"properties": {
+									"DATASET": dataset,
+									"UPRN": result.UPRN,
+									"ADDRESS": result.ADDRESS,
+									"CLASSIFICATION_CODE": result.CLASSIFICATION_CODE,
+									"CLASSIFICATION_CODE_DESCRIPTION": result.CLASSIFICATION_CODE_DESCRIPTION
+								},
+								"geometry": {
+									"type": "Point",
+									"coordinates": [ result.LNG, result.LAT ]
+								}
+							};
+
+							geoJson.features.push(feature);
+
+						});
+
+						if (typeof vulnerableLocations !== "undefined") {
+							vulnerableLocations.clearLayers();
+						}
+
+						vulnerableLocations = new L.geoJson(geoJson, {
+							onEachFeature: function(feature, layer) {
+								var props = feature.properties;
+								props.ADDRESS = props.ADDRESS.replace(/,/g, ",<br>")
+								layer.bindPopup(`<b>${props.CLASSIFICATION_CODE_DESCRIPTION}</b><br><br>${props.ADDRESS}</b>`);
+							}
+						}).addTo(map);
+					}
+			});
 
 		}
 
