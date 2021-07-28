@@ -1,6 +1,6 @@
 function initDemoMap () {
 	var Esri_WorldImagery = L.tileLayer(
-		"http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+		"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
 		{
 			attribution:
 				"Tiles &copy; Esri"
