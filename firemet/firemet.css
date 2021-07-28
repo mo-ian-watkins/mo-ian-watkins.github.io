@@ -1,0 +1,233 @@
+body {
+	margin: 0;
+	font-family: Arial;
+	box-sizing: border-box;
+	overflow: hidden;
+}
+
+header{
+	height:56px;
+	background-color: #333;
+	width: 100%;
+	display: block;
+	color:white;
+	box-sizing: border-box;
+}
+header h1 {
+	padding:1em 0.5em;
+	margin:0;
+	font-size: 1.2em;
+	font-weight: normal;
+}
+#heading {
+	text-align: center;
+	padding: 20px;
+	background: #333;
+	color: #CCC;
+}
+
+a {
+	color: #3388ff;
+}
+
+#map {
+	position: absolute;
+	height: calc(100% - 56px);
+	width: 100%;
+	background-color: #333;
+}
+
+.leaflet-canvas-layer {
+	opacity: 0.55;
+}
+
+#search {
+	background: #374e57;
+	color: white;
+	z-index: 99999;
+	position: absolute;
+	padding: 1em 1.5em 0.7em;
+	right: 0;
+	width: 100%;
+	display: grid;
+	grid-template-columns: auto 40px;
+	grid-template-rows: auto;
+	box-sizing: border-box;
+}
+
+#search label, .hint {
+	font-size: 0.6em;
+	display: block;
+}
+
+#search input[type='text'] {
+	padding: 0.5em;
+	border-radius: 4px;
+	border: none;
+	margin: 0.2em 0 0 0;
+	line-height: 1.5em;
+	height: 1.6em;
+	width:95%;
+}
+
+#search span {
+	display: grid;
+	grid-template-columns: 100%;
+	grid-template-rows: auto auto auto;
+}
+#geoLocate {
+	top: calc(1.6em + 56px);
+	right: 0.5em;
+	background-image: url("geolocate.svg");
+}
+#searchButton {
+	top: calc(1.6em + 56px);
+	right: 4.5em;
+	background-image: url("search.svg");
+}
+.roundButton {
+	position: absolute;
+	width: 36px;
+	height: 36px;
+	text-align: center;
+	margin: 0.5em;
+	background: #374e57;
+	border-radius: 50%;
+	box-shadow: 0 0 11px -1px #000;
+	border: none;
+	z-index: 99999;
+	background-position: 8px 8px;
+	background-size: 20px;
+	background-repeat: no-repeat;
+
+}
+.roundButton:hover {
+	background-color: #485155!important;
+	cursor: pointer!important;;
+}
+#data {
+	position: absolute;
+	display: block;
+	z-index: 9999;
+	bottom: -285px;/* -100px;*/
+	background: white;
+	border-radius: 5px 5px 0 0;
+	font-size: 0.9em;
+	width:100%;
+	box-sizing: border-box;
+	padding-top:0.5em;
+}
+.expanded {
+	bottom: 0!important;
+}
+#data h1 {
+	font-size: 1.2em;
+	margin:0.1em;
+	padding: 0;
+}
+#data .top {
+	padding:0.5em;
+	display: grid;
+	grid-template-columns: auto 75px;
+	grid-template-rows: auto;
+	align-content: center;
+}
+#dragHandle {
+	display: block;
+	width:40px;
+	height:5px;
+	border-radius: 15px;
+	background-color: #666;
+	cursor: grab;
+	position: absolute;
+	left: calc(50% - 20px);
+}
+#data table {
+	border-collapse: collapse;
+	width: 100%;
+	font-size: 0.75em;
+}
+#data table th, #data table td {
+	padding:0.3em 0.1em;
+}
+#data table td img {
+	width: 30px;
+}
+#data table th {
+	background-color: #CCCCCC;
+	text-align: left;
+	font-weight: normal;
+}
+#data table th:not(:first-of-type), #data table td:not(:first-of-type) {
+	border-left: 1px solid #ccc;
+	text-align: center;
+}
+.step-temp {
+	-moz-box-align: baseline;
+	-webkit-box-align: baseline;
+	vertical-align: bottom;
+	height: 45px;
+}
+#data table [data-max-temperature="24"] td {
+	padding-top: 58px;
+}
+.step-temp [data-temp="21"] > * {
+	margin-top: -21px;
+	padding-top: 21px;
+}
+.step-temp [data-temp="22"] > * {
+	margin-top: -22px;
+	padding-top: 22px;
+}
+.step-temp [data-temp="23"] > * {
+	margin-top: -23px;
+	padding-top: 23px;
+}
+.step-temp [data-temp="24"] > * {
+	margin-top: -24px;
+	padding-top: 24px;
+}
+.step-temp [data-temp="21"] > * {
+	margin-top: -21px;
+	padding-top: 21px;
+}
+.step-temp [data-temp="20"] > * {
+	margin-top: -20px;
+	padding-top: 20px;
+}
+[data-temp="20"] > * {
+	background: #fda049;
+	color: #000;
+}
+[data-temp="21"] > * {
+	background: #ff9e44;
+	color: #000;
+}
+[data-temp="22"] > * {
+	background: #ff9e44;
+	color: #000;
+}
+[data-temp="23"] > * {
+	background: #ff943e;
+	color: #000;
+}
+[data-temp="24"] > * {
+	 background: #ff8f3b;
+	 color: #000;
+ }
+#share {
+	height: 30px;
+	width: 75px;
+	border: none;
+	background-color: inherit;
+	background-size: 20px;
+	background-image: url("share.svg");
+	background-repeat: no-repeat;
+	background-position: 47px 2px;
+	text-align: left;
+	padding: 0.2em 0.5em;
+}
+#share:hover {
+	background-color: #CCCCCC;
+	cursor: pointer;
+}

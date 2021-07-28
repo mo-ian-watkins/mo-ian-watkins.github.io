@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+<head>
+	<title>Firemet protoype</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!--vendor-->
+	<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+	<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.7.0/proj4.js"></script>
+	<script src="os-transform.js"></script>
+	<script src="http://hammerjs.github.io/dist/hammer.min.js"></script>
+	<!--demo-->
+	<link rel="stylesheet" href="firemet.css"/>
+</head>
+<body>
+<header><h1>FireMet Prototype - test data</h1></header>
+<div id="map"></div>
+<div id="search">
+	<span>
+		<form id="searchForm">
+			<label for="searchBox">Location search</label>
+			<input type="text" id="searchBox">
+			<span class="hint">Search types: Postcode, OS Grid, What3Words</span>
+		</form>
+	</span>
+</div>
+<button id="geoLocate" class="roundButton"></button>
+<button id="searchButton" class="roundButton" style="display: none"></button>
+<div id="data">
+	<span id="dragHandle"></span>
+	<div class="top">
+		<h1>Location - TEST DATA</h1>
+		<button id="share">Share</button>
+	</div>
+	<table data-max-temperature="24">
+		<tr>
+			<th>Time</th>
+			<th>13:00</th>
+			<th>14:00</th>
+			<th>15:00</th>
+			<th>Now</th>
+			<th>17:00</th>
+			<th>18:00</th>
+			<th>19:00</th>
+		</tr>
+		<tr>
+			<td>Risk sectors</td>
+			<td>CDE <img src="CDE.PNG"></td>
+			<td>CDE <img src="CDE.PNG"></td>
+			<td>CDE <img src="CDE.PNG"></td>
+			<td>CDE <img src="CDE.PNG"></td>
+			<td>ALL <img src="ALL.PNG"></td>
+			<td>ALL <img src="ALL.PNG"></td>
+			<td>ALL <img src="ALL.PNG"></td>
+		</tr>
+		<tr>
+			<td>Wind from</td>
+			<td>SSE</td>
+			<td>SSE</td>
+			<td>SSE</td>
+			<td>SSE</td>
+			<td>?</td>
+			<td>?</td>
+			<td>?</td>
+		</tr>
+		<tr>
+			<td>Speed</td>
+			<td>21</td>
+			<td>20</td>
+			<td>15</td>
+			<td>10</td>
+			<td>5</td>
+			<td>5</td>
+			<td>2</td>
+		</tr>
+		<tr>
+			<td>Precip</td>
+			<td>1mm</td>
+			<td>3mm</td>
+			<td>5mm</td>
+			<td>0mm</td>
+			<td>5mm</td>
+			<td>5mm</td>
+			<td>2mm</td>
+		</tr>
+		<tr>
+			<td>Precip type</td>
+			<td>Wet</td>
+			<td>Wet</td>
+			<td>Wet</td>
+			<td>Dry</td>
+			<td>Dry</td>
+			<td>Dry</td>
+			<td>Dry</td>
+		</tr>
+		<tr class="step-temp">
+			<td>Temperature</td>
+			<td data-temp="23"><div data-value="23">23&deg;</div></td>
+			<td data-temp="24"><div data-value="24">24&deg;</div></td>
+			<td data-temp="23"><div data-value="23">23&deg;</div></td>
+			<td data-temp="23"><div data-value="23">23&deg;</div></td>
+			<td data-temp="22"><div data-value="22">22&deg;</div></td>
+			<td data-temp="21"><div data-value="21">21&deg;</div></td>
+			<td data-temp="20"><div data-value="20">20&deg;</div></td>
+		</tr>
+		<tr>
+			<td>Humidity</td>
+			<td>68%</td>
+			<td>69%</td>
+			<td>70%</td>
+			<td>68%</td>
+			<td>65%</td>
+			<td>65%</td>
+			<td>63%</td>
+		</tr>
+		<tr>
+			<td colspan="8">Retrieved 14:49 on 20 July 2021</td>
+		</tr>
+	</table>
+</div>
+
+<script src="firemet.js"></script>
+</body>
+</html>
