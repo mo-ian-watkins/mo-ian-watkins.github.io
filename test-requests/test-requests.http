@@ -1,0 +1,6 @@
+GET https://mustang.hub.metoffice.cloud/v2/datasets/ea-rain/features/area?bbox=-1,50,0,51 HTTP/1.1
+x-api-key: 0A6Ye2V40v1ZgsUG3Y31g6IPxrqTycoB4LfwJqf7
+
+###
+
+// More info here: https://marketplace.visualstudio.com/items?itemName=humao.rest-client
