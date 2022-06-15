@@ -24,7 +24,7 @@ Making a request
 <details>
 <summary>Successful response with some latest warnings</summary>
 
-```json
+~~~json
 {
     "type": "FeatureCollection",
     "features": [
@@ -310,7 +310,8 @@ Making a request
         }
     ]
 }
-```
+~~~
+
 </details>
 
 <details>
