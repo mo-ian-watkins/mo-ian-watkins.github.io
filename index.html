@@ -70,10 +70,15 @@
             dataLayer.push(arguments);
         }
         gtag('js', new Date());
-        gtag('config', 'UA-106984584-2');
+        gtag('config', 'UA-106984584-2', { 'groups': 'agency' });
 
 
-        gtag('event', 'testevent', { 'send_to': 'pages' });
+        setTimeout(alertFunc, 10000);
+
+        function alertFunc() {
+            console.log("Sending test event");
+            gtag('event', 'sign_in', { 'send_to': 'agency' });
+        }
 
     </script>
 
