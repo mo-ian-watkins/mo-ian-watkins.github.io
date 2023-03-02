@@ -1,0 +1,853 @@
+<html>
+<!-- This document was created from RTF source by rtftohtml version 2.7.1 -->
+<head>
+<title>
+Fortran90 Standards
+</title>
+</head>
+<body bgcolor=#ffffff>
+<nobr>
+<img align=middle src="../../pics/sec5big.gif">
+<img align=middle src="../../pics/sec5text.gif" alt="Research">
+<img align=middle src="../../pics/frlogo.gif"><p>
+</nobr>
+<h2>European Standards For Writing and Documenting Exchangeable Fortran 90 Code</h2>
+<hr>
+<h3>Phillip Andrews (UKMO), Gerard Cats (KNMI/HIRLAM), David Dent (ECMWF),
+Michael Gertz (DWD), Jean Louis Ricard (Meteo France)</h3>
+<pre>
+Modification History:
+23/03/94:  Draft Version 0.1  Phillip Andrews (UKMO)
+22/04/94:  Draft Version 0.2  Phillip Andrews (UKMO)
+ 7/06/94:  Draft Version 0.3  Phillip Andrews (UKMO)
+31/07/94:  Draft Version 0.4  Phillip Andrews (UKMO)
+29/09/94:  Draft Version 0.5  Phillip Andrews (UKMO)
+14/10/94:  Draft Version 0.6  Phillip Andrews (UKMO)
+           Renumbered Version 1.0
+23/5/95:   Version 1.1  Phillip Andrews (UKMO)
+</pre>
+
+<tt></tt><b>Contents</b><tt></tt><br>
+<tt></tt>1.0 Introduction	2<br>
+2.0 Documentation	2<br>
+2.1 External Documentation 	2<br>
+2.2 Internal Documentation 	2<br>
+3.0 Coding Rules For Packages	3<br>
+4.0 Guidance For The Use Of Dynamic Memory	5<br>
+5.0 Coding Rules For Routines	6<br>
+5.1 Banned Fortran Features	6<br>
+5.2 General Style Rules	7<br>
+5.3 Use Of New Fortran Features	9<br>
+6.0 Enforcing These Standards	11<br>
+7.0 References	11<p>
+Appendix A: Standard Headers	12<br>
+A.1) Program Header 	12<br>
+A.2) Subroutine header	14<br>
+A.3) Function header	16<br>
+A.4) Module header 	18<br>
+<p>
+<b>1.0 Introduction</b><p>
+<b></b>The aim of this document is to provide a framework for the use of
+Fortran 90 in European meteorological organizations and thereby to facilitate
+the exchange of code between these centres. In order to achieve this goal we
+set standards for the documentation of code, both internal and external to the
+software itself, as well as setting standards for writing the code.  The latter
+standards are designed to improve code readability and maintainability as well
+as to ensure, as far as possible,  its portability and the efficient use of
+computer resources. <p>
+<p>
+<p>
+<b>2.0 Documentation</b><p>
+<b></b>Documentation may be split into two categories: external documentation,
+outside the code; and internal documentation, inside the code. These are
+described in sections 2.1 and 2.2 respectively. In order for the documentation
+to be useful it needs to be both up to date and readable at centres other than
+that at which the code was originally produced. Since these other centres may
+wish or need to modify the imported code we specify that all documentation,
+both internal and external, must be available in English. <p>
+<p>
+<b>2.1 External Documentation </b><p>
+<b></b>In most cases this will be provided at the package level, rather than
+for each individual routine. It must include the following:<tt></tt><p>
+<tt></tt><p>
+<tt></tt>a) Top Level Scientific documentation: this sets out the problem being
+solved by the package and the scientific rationale for the solution method
+adopted. This documentation should be independent of (i.e. not refer to) the
+code itself.<p>
+<p>
+b) Implementation documentation: this documents a particular implementation of
+the solution method described in the scientific documentation. All routines
+(subroutines, functions, modules etc...) in the package should be listed by
+name together with a brief description of what they do. A calling tree for
+routines within the package must be included.<p>
+<p>
+c) A User Guide: this describes in detail all inputs into the package. This
+includes both subroutine arguments to the package and any switches or
+'tuneable' variables within the package. Where appropriate default values;
+sensible value ranges; etc should be given. Any files or namelists read should
+be described in detail.<p>
+<p>
+<p>
+<b>2.2 Internal Documentation </b><p>
+<b></b>This is to be applied at the individual routine level. There are four
+types of internal documentation, all of which must be present.<tt></tt><p>
+<tt></tt><p>
+a) Procedure headers: every  subroutine, function, module etc must have a
+header. The purpose of the header is to describe the function of the routine,
+probably by referring to external documentation, and to document the variables
+used within the routine. All variables used within a routine must be declared
+in the header  and commented as to their purpose. It is a requirement of this
+standard that the headers listed in Appendix A be used and completed fully.
+Centres are allowed to add extra sections to these headers if they so wish. <p>
+<p>
+b) Section comment: these  divide the code into numbered logical sections and
+may refer to the external documentation. These comments must be placed on their
+own lines at the start of the section they are defining. The recommended format
+for section coments is: <p>
+<p>
+!----------------------------------------------------------------------------------------------------<p>
+! &lt;Section number&gt; &lt;Section title&gt;<p>
+!----------------------------------------------------------------------------------------------------<p>
+<p>
+where the text in &lt;&gt; is to be replaced appropriately.<p>
+<p>
+c) Other comments: these are aimed at a programmer reading the code and are
+intended to simplify the task of understanding what is going on. These comments
+must be placed either immediately before or on the same line as the code they
+are commenting. The recommended format for these coments is:<p>
+<p>
+! &lt;Comment&gt;<p>
+<p>
+where the text in &lt;&gt; is to be replaced appropriately.<p>
+<p>
+d) Meaningful names: code is much more readable if meaningful words are used to
+construct variable &amp; subprogram names. <p>
+<p>
+It is recommended that all internal documentation be written in English.
+However, it is recognised that this may not always be possible, so alternative
+rules for native language comments with duplicate English comments are
+provided.<p>
+<p>
+i) Meaningful names may be written in native language.<p>
+<p>
+ii) Comments of type b) above written in native language must be duplicated in
+English.<p>
+<p>
+iii) Comments of type c) above written in native language should preferably be
+duplicated in English.<p>
+<p>
+iv) Description and method sections of the header written in native language
+must be duplicated in English.<p>
+<p>
+v) Comments describing the declared variables in the header section may be
+written in native language. A duplicate declaration with an English language
+comment  should be placed in a separate file (containing all such duplicate
+declarations for the package). Since repeated use of the same variable name for
+different purposes with a given package is forbidden, a simple tool can be
+provided to replace the native language declarations with English language
+declarations in the source files of ported code.<p>
+<tt></tt><p>
+<tt></tt><p>
+<tt></tt><b>3.0 Coding Rules For Packages</b><p>
+<b></b>These rules are loosely based on the "plug compatibility" rules of
+Kalnay et al. (1989). Rules which appear elsewhere in this document have not
+been duplicated in this section.<tt></tt><p>
+<tt></tt><p>
+<tt></tt><b>3.1</b> A package shall refer only to its own modules and
+subprograms and to those intrinsic  routines included in the Fortran 90
+standard.<tt></tt><p>
+<tt></tt><p>
+<tt></tt><i>There may well be a need to extend this to include named (in this
+document) libraries such as the NAG library. We could even have a joint Met.
+utilities library which could contain things such as multigrid p.d.e. solvers
+or routines to calculate saturated vapour pressure...</i><tt></tt><p>
+<tt></tt><p>
+<tt></tt><b>3.2</b>  A package shall provide separate set up and running
+procedures, each with a single entry point. All initialization of static data
+must be done in the set up procedure and this data must not be altered by the
+running procedure. <i>A posix shell unix script may be used to e.g. create the
+NAMELIST of section 4.4. This would allow the passing of environment variables
+to the package as Fortran variables.</i><tt></tt><p>
+<tt></tt><p>
+<tt></tt><b>3.3</b> Internally the package may use MODULEs - for example the
+set up and running procedures may communicate in this way.<tt></tt><p>
+<tt></tt><p>
+<tt></tt><b>3.4</b> External communication with the package must either be via
+the argument lists of the entry and set up routines or via a NAMELIST file read
+by the set up routine.<i> We could also allow the use of standard modules, to
+be defined in  this document, containing information on the grid type and
+resolution etc... The package may need to open other files. To be portable this
+would have to be done in a machine independent way.</i><tt></tt><p>
+<tt></tt><p>
+<tt></tt><b>3.5</b> Interface blocks must be provided for the set up and
+running procedures (possibly via module(s)). This allows the use of assumed
+shape arrays, optional arguments, etc as well as allowing the compiler to check
+that the actual and dummy arguments types match. If variables in these external
+argument lists are of derived type, a module must be supplied which contains
+the  type definition statements required to make these derived types available
+to the routine calling the package.<tt></tt><p>
+<tt></tt><p>
+<tt></tt><b>3.6</b> The package shall not terminate program execution. If any
+error occurs within the package it should gracefully exit, externally reporting
+the error via an integer variable in its argument list (+ve = fatal error).
+Packages should also write a diagnostic message describing the problem, using
+fortran I/O,  to an 'error stream' unit number selectable via the package's set
+up routine.<tt></tt><p>
+<tt></tt><p>
+<tt></tt>Note that if the package starts at the unix script, rather than
+Fortran, level making a graceful exit includes returning control to the
+package's script level by using a STOP statement in the Fortran part of the
+package.<tt></tt><p>
+<tt></tt><p>
+<tt></tt><b>3.7</b> The package should be written so that it is as resolution
+independent as possible. The resolution must be adjustable via the set up
+routine for the package.<tt></tt><p>
+<tt></tt><p>
+<tt></tt><b>3.8</b>  Precompilers: these are used, for example,  to provide a
+means of selecting (or deselecting) parts of the code for compilation. Clearly
+to simplify portability of code we need to all use the same precompiler, and
+this needs to be available to every centre. The  C precompiler is probably the
+best option since it will be found on all machines using the unix operating
+system.<tt></tt><p>
+<tt></tt><p>
+<tt></tt><i>Adopting this as the standard precompiler will have some problems
+as different centres are currently committed to different precompilers.
+However, it may not be too big a task for each centre to convert from their
+current precompiler to the C precompiler. </i><tt></tt><p>
+<tt></tt><p>
+<tt></tt><b>3.9</b>  All unix scripts must be written using the posix shell.
+This is a standardised shell, available on all POSIX compliant unix systems,
+with many useful features.<tt></tt><p>
+<tt></tt><p>
+<tt></tt><b>3.10 </b>Each program unit should be stored in a separate
+file.<tt></tt><p>
+<tt></tt><p>
+<tt></tt><p>
+<tt></tt><b>4.0 Guidance For The Use Of Dynamic Memory</b><p>
+<b></b>The use of dynamic memory is highly desirable as, in principle, it
+allows one set of compiled code to work for any specified resolution (or at
+least up to hardware memory limits); and allows the efficient reuse of work
+space memory. Care must be taken, however, as there is potential for
+inefficient memory usage, particularly in parallelized code. For example heap
+fragmentation can occur if space is allocated by a lower level routine and then
+not freed before control is passed back up the calling tree. There are three
+ways of obtaining dynamic memory in Fortran 90:<tt></tt><p>
+<tt></tt><p>
+<tt></tt>a) Automatic arrays: These are arrays initially declared within a
+subprogram whose extents depend upon  variables known at runtime e.g. variables
+passed into the subprogram via its argument list.<p>
+<p>
+b) Pointer arrays: Array variables declared with the POINTER attribute may be
+allocated space at run time by using the ALLOCATE command. <p>
+<p>
+c) Allocatable arrays: Array variables declared with the ALLOCATABLE attribute
+may be allocated space at run time by using the ALLOCATE command. However,
+unlike pointers, allocatables are not allowed inside derived data types.<p>
+<p>
+<b>4.1</b> Use automatic arrays in preference to the other forms of dynamic
+memory allocation.<tt></tt><p>
+<tt></tt><p>
+<tt></tt><b>4.2 </b>Space allocated using b) and c) above must be explicitly
+freed using the DEALLOCATE statement.<tt></tt><p>
+<tt></tt><p>
+<tt></tt><b>4.3</b> In a given program unit do not repeatedly ALLOCATE space,
+DEALLOCATE it and then ALLOCATE a larger block of space. This will almost
+certainly generate large amounts of  unusable memory.<tt></tt><p>
+<tt></tt><p>
+<tt></tt><b>4.4</b> Always test the sucess of a dynamic memory allocation and
+deallocation. The ALLOCATE and DEALLOCATE statements have an optional argument
+to let you do this.<tt></tt><p>
+<tt></tt><p>
+<tt></tt><p>
+<tt></tt><b>5.0 Coding Rules For Routines</b><p>
+<b></b>By routines we mean any fortran program unit such as a subroutine,
+function, module or program. These rules are designed to encourage good
+structured programming practice, to simplify maintenance tasks, and to ease
+readability of exchanged code by establishing some basic common style rules.<p>
+<p>
+<b>5.1 Banned Fortran Features</b><p>
+<b></b>Some of the following sections detail features deprecated in or made
+redundant by Fortran 90. Others ban features whose use is deemed to be bad
+programming practice as they can degrade the maintainability of code.<p>
+<p>
+<b>5.1.1</b> COMMON blocks - use MODULEs instead.<p>
+<p>
+<b>5.1.2</b> EQUIVALENCE  - use POINTERs or derived data types instead.<p>
+<p>
+<b>5.1.3</b> Assigned and computed GO TOs - use the CASE construct instead.<p>
+<p>
+<b>5.1.4</b> Arithmetic IF statements - use the block IF construct instead.<p>
+<p>
+<b>5.1.5</b> Labels (one recommended use: see 3.5.4).<p>
+<p>
+<b>5.1.5.1</b> Labelled DO constructs - use END DO instead.<p>
+<p>
+<b>5.1.5.2</b> I/O routine's END = and ERR = use IOSTAT instead.<p>
+<p>
+<b>5.1.5.3</b> FORMAT statements: use CHARACTER parameters or explicit format
+specifiers  inside the READ or WRITE statement instead.<p>
+<p>
+<b>5.1.5.4</b> GO TO <p>
+<b>5.1.5.4.1 </b>The only recognised use of GO TO, indeed of labels, is to jump
+to the error handling section at the end of a routine on detection of an error.
+The jump must be to a  CONTINUE statement and the label used must be 9999.
+Evens so, it is recommended that this practice be avoided.<p>
+<p>
+<b>5.1.5.4.2</b> Any other use of GO TO can probably be avoided by making use
+of IF, CASE, DO WHILE, EXIT or CYCLE statements. If a GO TO really has to be
+used, then clearly comment it to explain what is going on and terminate the
+jump on a similarly commented CONTINUE statement.<p>
+<p>
+<b>5.1.6</b> PAUSE<p>
+<p>
+<b>5.1.7</b> ENTRY statements:  - a subprogram may only have one entry point.<p>
+<p>
+<b>5.1.8</b> FUNCTIONs with side effects i.e. functions that alter variables in
+their argument list or in modules used by the function; or one that performs
+I/O operations. <i>This is very common in C programming, but can be  confusing.
+Also, efficiencies can be made if the compiler knows that functions have no
+side effects. High Performance Fortran, a variant of Fortran 90 designed for
+massively parallel computers, will allow such instructions.</i> <p>
+<p>
+<b>5.1.9</b> Implicitly changing the shape of an array when passing it  into a
+subroutine. Although actually forbidden in the standard it was very common
+practice in FORTRAN 77 to pass 'n' dimensional arrays into a subroutine where
+they would, say, be treated as a 1 dimensional array. This practice, though
+banned in Fortran 90, is still possible with external routines for which no
+INTERFACE block has been supplied. This only works because of assumptions made
+about how the data is stored: it is therefore unlikely to work on a massively
+parallel computer. Hence the practice is banned.<p>
+<p>
+<b>5.2 General Style Rules</b><p>
+<b></b>The general ethos is to write portable code that is easily readable and
+maintainable. Code should be written in as general a way as possible to allow
+for unforseen modifications. In practice this means that coding will take a
+little longer. This extra effort is well spent, however, as maintenance costs
+will be reduced over the lifetime of the software.<p>
+<tt></tt><p>
+<tt></tt><b>5.2.1</b> Use free format syntax.<p>
+<p>
+<b>5.2.2</b> The maximum line length permitted is 80 characters. Fortran 90
+allows a line length of up to 132 characters, however this could cause problems
+when viewed on  older terminals, or if print outs have to be obtained on A4
+paper. <p>
+<p>
+<b>5.2.3</b> IMPLICIT NONE must be used in all program units. This ensures that
+all variables must be explicitly declared, and hence documented. It also allows
+the compiler to detect typographical errors in variable names.<p>
+<p>
+<b>5.2.4</b> Use meaningful variable names, perferably in English.<p>
+<p>
+<b>5.2.5</b> Fortran statements must be written in upper case only or with
+initial letter capitalization and the rest in lower case. Names, of variables,
+parameters, subroutines etc may be written in mixed, mostly lower, case.<p>
+<p>
+<b>5.2.6</b> To improve readability indent code within DO; DO WHILE; block IF;
+CASE; INTERFACE; etc constructs by 2 characters. <p>
+<p>
+<b>5.2.7</b> Indent continuation lines to ensure that e.g. parts of a multi
+line equation line up in a readable manner.<p>
+<p>
+<b>5.2.8</b> Where they occur on separate lines indent type c) internal
+comments to reflect the structure of the code. If this is done by one character
+less than the code indentation comments are clearly separated from the code yet
+do not break up its structure.<p>
+<p>
+<b>5.2.9</b> Use blank space, in the horizontal and vertical, to improve
+readability. In particular leave blank space between variables and operators,
+and try to line up related code into columns. For example,<p>
+<p>
+instead of:<p>
+<p>
+! Initialize Variables<p>
+x=1<p>
+MEANINGFUL_NAME=3.0<p>
+SILLY_NAME=2.0<p>
+<p>
+write:<p>
+<p>
+! Initialize variables<p>
+ x              = 1<p>
+ MeaningfulName = 3.0<p>
+ SillyName      = 2.0<p>
+<p>
+<p>
+Similarly, try to make equations recognisable and readable as equations.
+Readability is greatly enhanced by starting a continuation line with an
+operator placed in an appropriate column rather than ending the continued line
+with an operator.<p>
+<p>
+<b>5.2.10</b> Do not use tab characters in your code: this will ensure that the
+code looks as intended when ported.<p>
+<p>
+<b>5.2.11</b> Separate the information to be output from the formatting
+information on how to output it on I/O statements. That is don't put text
+inside the brackets of the I/O statement.<p>
+<p>
+<b>5.2.12</b> Delete unused header components.<p>
+<p>
+<b>5.2.13</b> There was a strong desire by many of the authors of this document
+to include a recommended naming convention for variables. It was decided
+however that Fortran 77 convensions were unsuitable, and that more experience
+of Fortran 90 was required before an appropriate convention could be specified.
+It is intended that such a convention be included in a revised version of this
+document.<p>
+<tt></tt><p>
+<tt></tt><b>5.3 Use Of New Fortran Features</b><p>
+<b></b>It is inevitable that there will be 'silly' ways to use the new features
+introduced into Fortran 90. Clearly we may want to ban such uses and to
+recommend certain practices over others. However, there will have to be a
+certain amount of experimentation with the new language until we gain enough
+experience to make a complete list of such recommendations. The following rules
+will have to be ammended and expanded in the light of such experience.<p>
+<tt></tt><p>
+<tt></tt><b>5.3.1</b> We recommend the use of USE, ONLY to specify which of the
+variables, type definitions etcdefined in a module are to be made available to
+the USEing routine.<p>
+<p>
+<b>5.3.2</b> Discussion of the use of Interface Blocks<p>
+<b>5.3.2.0</b> Introduction<p>
+Explicit interface blocks are required between f90 routines if optional or
+keyword arguments are to be used. They also allow the compiler to check that
+the type, shape and number of arguments specified in the CALL are the same as
+those specified in the subprogram itself. In addition some compilers (e.g. the
+Cray f90 compiler)  use the presence of an interface block in order to
+determine if the subprogram being called is written in f90 (this alters how
+array information is passed to the subroutine). Thus, in general it is
+desireable to provide explicit interface blocks between f90 routines.There are
+several ways to to do this, each of which has implications for program design;
+code management; and even configuration control. The three main options are
+discussed in the following sections:<p>
+<p>
+<b>5.3.2.1</b> Option I: Explicitly Coded Interface Blocks<p>
+Interface blocks may be explicitly written into the calling routine,
+essentially by copying the argument list declaration section from the called
+routine. This direct approach has, however, some disadvantages. Firstly, it
+creates an undesirable increase in the work required to maintain the calling
+routine, as if the argument list of the called routine changes the INTERFACE
+block must be updated as well as the CALL. Further, there is no gaurantee that
+the INTERFACE block in the calling routine is actually uptodate and the same as
+the actual interface to the called routine.<p>
+<p>
+<b>5.3.2.2</b> Option II: Explicitly Coded Interface Blocks in a Module<p>
+Interface blocks for all routines in a package may be explicitly written into a
+module, and this module used by all routines in the package. This has the
+advantage of having one routine to examine to find the interface specification
+for all routines - which may be easier than individually examining  the source
+code for all called routines. However, an INTERFACE block must still be
+maintained in addition to the routine itself and CALLs to it, though a program
+or e.g. a unix script could be written to automatically generate the module
+containinng the interface blocks.<p>
+<p>
+<b>5.3.2.2</b> Option III: Automatic Interface Blocks<p>
+Fortran 90 compilers can automatically provide explicit interface blocks
+between routines following a CONTAINS statement. The interface blocks are also
+supplied to any routine USEing the module. Thus, it is possible to design a
+system where no INTERFACE blocks are actually coded and yet explicit interface
+blocks are provided between all routines by the compiler. One way to do this
+would be to 'modularise' the code at the f90 module level, i.e. to place
+related code together in one module after the CONTAINS statement. Routine a, in
+module A calling routine b in module B would then only have to USE module B to
+be automatically provided with an explicit interface to routine b. Obviously if
+routine b was in module a instead then no USE would be required. One
+consequence of this approach is that a module and all the routines contained
+within it make up a single compilation unit. This may be a disadvantage if
+modules are large or if each module in a package contains routines which USE
+many other modules within the package (in which case changing one routine in
+one module would necessitate the recompilation of virtually the entire
+package). On the other hand the number of compilation units is greatly reduced,
+simplifying the compilation and configuration control systems.<p>
+<p>
+<b>5.3.2.4</b> Conclusion<p>
+Options II) and III) above both provide workable solutions to the problem of
+explicit interface blocks. Option III is probably preferable as the compiler
+does the work of providing the interface blocks, reducing programming
+overheads,  and at the same time gauranteeing that the interface blocks used
+are correct. Which ever option is chosen will have significcant impact on code
+management and configuration control as well as program design.<p>
+<p>
+<b>5.3.3</b> Array notation should be used whenever possible. This should help
+optimization and will reduce the number of lines of code required. To improve
+readability show the array's shape in brackets, e.g.:<p>
+<p>
+	1dArrayA(:) 	= 1dArrayB(:) + 1dArrayC(:)<p>
+	2dArray(:, :)	= scalar * Another2dArray(:, :)<p>
+<p>
+<b>5.3.4</b> Always name 'program units' and always use  the END PROGRAM; END
+SUBROUTINE; END INTERFACE; END MODULE; etc constructs, again specifying the
+name of the 'program unit'. <p>
+<p>
+<b>5.3.5</b> Use &gt;, &gt;=, ==, &lt;, &lt;=, /= instead of .gt., .ge., .eq.,
+.lt., .le., .ne. in logical comparisons. The new syntax, being closer to
+standard mathematical notation, should be clearer.<p>
+<p>
+<b>5.3.6</b> Don't put multiple statements on one line: this will reduce code
+readability. <p>
+<p>
+<b>5.3.7</b> Variable declarations: it would improve understandability if we
+all adopt the same conventions for declaring variables as Fortran 90 offers
+many different syntaxes to acheive the same result.<p>
+<p>
+<b>5.3.7.1</b> Don't use the DIMENSION statement or attribute: declare the
+shape and size of arrays inside brackets after the variable name on the
+declaration statement.<p>
+<p>
+<b>5.3.7.2</b> Always use the :: notation, even if their are no attributes.<p>
+<p>
+<b>5.3.7.3</b> Declare the  length of a character variable using the (len = )
+syntax.<p>
+<p>
+<b>5.3.8</b>  We may want to ban the use of recursive routines on efficiency
+grounds (they tend to be inefficient in their use of cpu and memory). <i>The
+use of operator overloads may also have efficiency implications.</i><p>
+<tt></tt><p>
+<tt></tt><p>
+<tt></tt><b>6.0 Enforcing These Standards</b><p>
+<b></b>It is obviously important to ensure that these standards are adhered to
+- particularly that the documentation is kept up to date with the software; and
+that the software is written in as portable a manner as possible. If these
+standards are not adhered to exchangeability of the code will suffer. It may be
+that software tools, such as QA fortran, could be tailored to test for
+compliancy to these standards. This needs investigation.<tt></tt><p>
+<tt></tt><p>
+<tt></tt><i>One option would be to set up a central database for exchangeable
+code and its external documentation. The acceptance criteria would be that the
+standards set out in this document are met. This would of course require
+funding to provide hardware, software and personnel to maintain the data
+base... </i><tt></tt><p>
+<tt></tt><p>
+<tt></tt><i>At the other extreme each centre could adopt it's own enforcement
+strategy, and distribute lists of it's own exchangeable software to the other
+centres...</i><tt></tt><p>
+<tt></tt><p>
+<tt></tt><i>The best solution may well be to design a distributed system making
+use of Mosaic and internet. </i><tt></tt><p>
+<tt></tt><p>
+<tt></tt><p>
+<tt></tt><b>7.0 References</b><p>
+<b></b>Kalnay et al. (1989) "Rules for Interchange of Physical
+Parameterizations" Bull. A.M.S., 70 No. 6, p 620.<tt></tt><p><hr>
+<tt></tt><b>Appendix A: Standard Headers</b><p>
+<b></b>The standard headers are presented in this appendix. They are written as
+templates. Text inside &lt; &gt; brackets must be replaced by appropriate text.
+<tt></tt><br>
+<tt></tt> <tt></tt><br>
+<tt></tt><b>A.1) Program Header </b><br>
+<b></b><tt></tt><br>
+<tt>!+ &lt;A one line description of this program&gt;</tt><br>
+<tt>!</tt><br>
+<tt>Program &lt;NameOfProgram&gt;</tt><br>
+<tt></tt><br>
+<tt>! Description:</tt><br>
+<tt>!   &lt;Say what this program does&gt;</tt><br>
+<tt>!</tt><br>
+<tt>! Method:</tt><br>
+<tt>!   &lt;Say how it does it: include references to external
+documentation&gt;</tt><br>
+<tt>!   &lt;If this routine is divided into sections, be brief here, </tt><br>
+<tt>!        and put Method comments at the start of each section&gt;</tt><br>
+<tt>!</tt><br>
+<tt>! Input files:</tt><br>
+<tt>!   &lt;Describe these, and say in which routine they are read&gt;</tt><br>
+<tt></tt><br>
+<tt>! Output files:</tt><br>
+<tt>!   &lt;Describe these, and say in which routine they are
+written&gt;</tt><br>
+<tt></tt><br>
+<tt>! Current Code Owner: &lt;Name of person responsible for this
+code&gt;</tt><br>
+<tt></tt><br>
+<tt>! History:</tt><br>
+<tt>! Version   Date     Comment</tt><br>
+<tt>! -------   ----     -------</tt><br>
+<tt>! &lt;version&gt; &lt;date&gt;   Original code. &lt;Your name&gt;</tt><br>
+<tt></tt><br>
+<tt>! Code Description:</tt><br>
+<tt>!   Language:		Fortran 90.</tt><br>
+<tt>!   Software Standards: "European Standards for Writing and </tt><br>
+<tt>!     Documenting Exchangeable Fortran 90 Code".</tt><br>
+<tt></tt><br>
+<tt>! Declarations:</tt><br>
+<tt></tt><br>
+<tt>! Modules used:</tt><br>
+<tt></tt><br>
+<tt>Use, Only : &amp;</tt><br>
+<tt>! Imported Type Definitions:</tt><br>
+<tt></tt><br>
+<tt>! Imported Parameters:</tt><br>
+<tt></tt><br>
+<tt>! Imported Scalar Variables with intent (in):</tt><br>
+<tt></tt><br>
+<tt>! Imported Scalar Variables with intent (out):</tt><br>
+<tt></tt><br>
+<tt>! Imported Array Variables with intent (in):</tt><br>
+<tt></tt><br>
+<tt>! Imported Array Variables with intent (out):</tt><br>
+<tt></tt><br>
+<tt>! Imported Routines:</tt><br>
+<tt></tt><br>
+<tt>! &lt;Repeat from USE for each module...&gt;</tt><br>
+<tt> </tt><br>
+<tt>Implicit None</tt><br>
+<tt></tt><br>
+<tt>! Include statements </tt><br>
+<tt>! Declarations must be of the form:</tt><br>
+<tt>! &lt;type&gt;   &lt;VariableName&gt;      ! Description/ purpose of
+variable</tt><br>
+<tt></tt><br>
+<tt>! Local parameters:</tt><br>
+<tt>                                </tt><br>
+<tt>! Local scalars:</tt><br>
+<tt></tt><br>
+<tt>! Local arrays:</tt><br>
+<tt></tt><br>
+<tt>!- End of header
+---------------------------------------------------------------</tt><br>
+<tt></tt><br>
+<tt></tt><br>
+<tt></tt><br>
+<tt></tt><b>A.2) Subroutine header</b><br>
+<b></b><tt></tt><br>
+<tt>!+ &lt;A one line description of this subroutine&gt;</tt><br>
+<tt>!</tt><br>
+<tt>Subroutine &lt;SubroutineName&gt; &amp;</tt><br>
+<tt>!</tt><br>
+<tt>  (&lt;InputArguments, InOutArguments, OutputArguments&gt;)</tt><br>
+<tt></tt><br>
+<tt>! Description:</tt><br>
+<tt>!   &lt;Say what this routine does&gt;</tt><br>
+<tt>!</tt><br>
+<tt>! Method:</tt><br>
+<tt>!   &lt;Say how it does it: include references to external
+documentation&gt;</tt><br>
+<tt>!   &lt;If this routine is divided into sections, be brief here, </tt><br>
+<tt>!        and put Method comments at the start of each section&gt;</tt><br>
+<tt>!</tt><br>
+<tt>! Current Code Owner: &lt;Name of person responsible for this
+code&gt;</tt><br>
+<tt>!</tt><br>
+<tt>! History:</tt><br>
+<tt>! Version   Date     Comment</tt><br>
+<tt>! -------   ----     -------</tt><br>
+<tt>! &lt;version&gt; &lt;date&gt;   Original code. &lt;Your name&gt;</tt><br>
+<tt>!</tt><br>
+<tt>! Code Description:</tt><br>
+<tt>!   Language:		Fortran 90.</tt><br>
+<tt>!   Software Standards: "European Standards for Writing and </tt><br>
+<tt>!     Documenting Exchangeable Fortran 90 Code".</tt><br>
+<tt>!</tt><br>
+<tt>! Declarations:</tt><br>
+<tt>! Modules used:</tt><br>
+<tt>!</tt><br>
+<tt>Use, Only : &amp;</tt><br>
+<tt>! Imported Type Definitions:</tt><br>
+<tt></tt><br>
+<tt>! Imported Parameters:</tt><br>
+<tt></tt><br>
+<tt>! Imported Scalar Variables with intent (in):</tt><br>
+<tt></tt><br>
+<tt>! Imported Scalar Variables with intent (out):</tt><br>
+<tt></tt><br>
+<tt>! Imported Array Variables with intent (in):</tt><br>
+<tt></tt><br>
+<tt>! Imported Array Variables with intent (out):</tt><br>
+<tt></tt><br>
+<tt>! Imported Routines:</tt><br>
+<tt></tt><br>
+<tt>! &lt;Repeat from USE for each module...&gt;</tt><br>
+<tt></tt><br>
+<tt>Implicit None</tt><br>
+<tt></tt><br>
+<tt>! Include statements:</tt><br>
+<tt>! Declarations must be of the form:</tt><br>
+<tt>! &lt;type&gt;   &lt;VariableName&gt;      ! Description/ purpose of
+variable</tt><br>
+<tt></tt><br>
+<tt>! Subroutine arguments</tt><br>
+<tt>! Scalar arguments with intent(in):</tt><br>
+<tt></tt><br>
+<tt>! Array  arguments with intent(in):</tt><br>
+<tt></tt><br>
+<tt>! Scalar arguments with intent(InOut):</tt><br>
+<tt></tt><br>
+<tt>! Array  arguments with intent(InOut):</tt><br>
+<tt></tt><br>
+<tt>! Scalar arguments with intent(out):</tt><br>
+<tt></tt><br>
+<tt>! Array  arguments with intent(out):</tt><br>
+<tt></tt><br>
+<tt>! Local parameters:</tt><br>
+<tt></tt><br>
+<tt>! Local scalars:</tt><br>
+<tt></tt><br>
+<tt>! Local arrays:</tt><br>
+<tt></tt><br>
+<tt>!- End of header
+---------------------------------------------------------------</tt><br>
+<tt></tt><br>
+<tt></tt><br>
+<tt></tt><br>
+<tt></tt><br>
+<tt></tt><b>A.3) Function header</b><br>
+<b></b><tt></tt><br>
+<tt>!+ &lt;A one line description of this function&gt;</tt><br>
+<tt>!</tt><br>
+<tt>Function &lt;FunctionName&gt; &amp;</tt><br>
+<tt>  (&lt;InputArguments&gt;)    &amp;</tt><br>
+<tt>Result (&lt;ResultName&gt;) ! The use of RESULT is recommended</tt><br>
+<tt>                      ! but is not compulsory.</tt><br>
+<tt></tt><br>
+<tt>! Description:</tt><br>
+<tt>!   &lt;Say what this function does&gt;</tt><br>
+<tt>!</tt><br>
+<tt>! Method:</tt><br>
+<tt>!   &lt;Say how it does it: include references to external
+documentation&gt;</tt><br>
+<tt>!   &lt;If this routine is divided into sections, be brief here, </tt><br>
+<tt>!        and put Method comments at the start of each section&gt;</tt><br>
+<tt>!</tt><br>
+<tt>! Current Code Owner: &lt;Name of person responsible for this
+code&gt;</tt><br>
+<tt>!</tt><br>
+<tt>! History:</tt><br>
+<tt>! Version   Date     Comment</tt><br>
+<tt>! -------   ----     -------</tt><br>
+<tt>! &lt;version&gt; &lt;date&gt;   Original code. &lt;Your name&gt;</tt><br>
+<tt>!</tt><br>
+<tt>! Code Description:</tt><br>
+<tt>!   Language:		Fortran 90.</tt><br>
+<tt>!   Software Standards: "European Standards for Writing and </tt><br>
+<tt>!     Documenting Exchangeable Fortran 90 Code".</tt><br>
+<tt>!</tt><br>
+<tt>! Declarations:</tt><br>
+<tt>! Modules used:</tt><br>
+<tt></tt><br>
+<tt>Use, Only : &amp;</tt><br>
+<tt>! Imported Type Definitions:</tt><br>
+<tt></tt><br>
+<tt>! Imported Parameters:</tt><br>
+<tt></tt><br>
+<tt>! Imported Scalar Variables with intent (in):</tt><br>
+<tt></tt><br>
+<tt>! Imported Scalar Variables with intent (out):</tt><br>
+<tt></tt><br>
+<tt>! Imported Array Variables with intent (in):</tt><br>
+<tt></tt><br>
+<tt>! Imported Array Variables with intent (out):</tt><br>
+<tt></tt><br>
+<tt>! Imported Routines:</tt><br>
+<tt></tt><br>
+<tt>! &lt;Repeat from USE for each module...&gt;</tt><br>
+<tt></tt><br>
+<tt>Implicit None</tt><br>
+<tt></tt><br>
+<tt>! Declarations must be of the form:</tt><br>
+<tt>! &lt;type&gt;   &lt;VariableName&gt;      ! Description/ purpose of
+variable</tt><br>
+<tt></tt><br>
+<tt>! Include statements:</tt><br>
+<tt></tt><br>
+<tt>! Function arguments</tt><br>
+<tt>! Scalar arguments with intent(in):</tt><br>
+<tt></tt><br>
+<tt>! Array  arguments with intent(in):</tt><br>
+<tt></tt><br>
+<tt>! Local parameters:</tt><br>
+<tt></tt><br>
+<tt>! Local scalars:</tt><br>
+<tt></tt><br>
+<tt>! Local arrays:</tt><br>
+<tt></tt><br>
+<tt>!- End of header
+------------------------------------------------------------</tt><br>
+<tt></tt><br>
+<tt></tt><br>
+<tt></tt><br>
+<tt></tt><br>
+<tt></tt><b>A.4) Module header </b><br>
+<b></b><tt></tt><br>
+<tt>!+ &lt;A one line description of this module&gt;</tt><br>
+<tt>!</tt><br>
+<tt>MODULE &lt;ModuleName&gt;</tt><br>
+<tt></tt><br>
+<tt>!</tt><br>
+<tt>! Description:</tt><br>
+<tt>!   &lt;Say what this module is for&gt;</tt><br>
+<tt>!</tt><br>
+<tt>! Current Code Owner: &lt;Name of person responsible for this
+code&gt;</tt><br>
+<tt>!</tt><br>
+<tt>! History:</tt><br>
+<tt>! </tt><br>
+<tt>! Version   Date     Comment</tt><br>
+<tt>! -------   ----     -------</tt><br>
+<tt>! &lt;version&gt; &lt;date&gt;   Original code. &lt;Your name&gt;</tt><br>
+<tt>!</tt><br>
+<tt>! Code Description:</tt><br>
+<tt>!   Language:		Fortran 90.</tt><br>
+<tt>!   Software Standards: "European Standards for Writing and </tt><br>
+<tt>!     Documenting Exchangeable Fortran 90 Code".</tt><br>
+<tt>!</tt><br>
+<tt>! Modules used:</tt><br>
+<tt>!</tt><br>
+<tt>USE, ONLY : &amp;</tt><br>
+<tt>! Imported Type Definitions:</tt><br>
+<tt></tt><br>
+<tt>! Imported Parameters:</tt><br>
+<tt></tt><br>
+<tt>! Imported Scalar Variables with intent (in):</tt><br>
+<tt></tt><br>
+<tt>! Imported Scalar Variables with intent (out):</tt><br>
+<tt></tt><br>
+<tt>! Imported Array Variables with intent (in):</tt><br>
+<tt></tt><br>
+<tt>! Imported Array Variables with intent (out):</tt><br>
+<tt></tt><br>
+<tt>! Imported Routines:</tt><br>
+<tt></tt><br>
+<tt>! &lt;Repeat from USE for each module...&gt;</tt><br>
+<tt></tt><br>
+<tt>! Declarations must be of the form:</tt><br>
+<tt>! &lt;type&gt;   &lt;VariableName&gt;      ! Description/ purpose of
+variable</tt><br>
+<tt></tt><br>
+<tt> Imlicit none</tt><br>
+<tt>! Global (i.e. public) Declarations:</tt><br>
+<tt>! Global Type Definitions:</tt><br>
+<tt></tt><br>
+<tt>! Global Parameters:</tt><br>
+<tt></tt><br>
+<tt>! Global Scalars:</tt><br>
+<tt></tt><br>
+<tt>! Global Arrays:</tt><br>
+<tt></tt><br>
+<tt>! Local (i.e. private) Declarations:</tt><br>
+<tt>! Local Type Definitions:</tt><br>
+<tt></tt><br>
+<tt>! Local Parameters:</tt><br>
+<tt></tt><br>
+<tt>! Local Scalars:</tt><br>
+<tt></tt><br>
+<tt>! Local Arrays:</tt><br>
+<tt></tt><br>
+<tt>! Operator definitions:</tt><br>
+<tt>!   Define new operators or overload existing ones.</tt><br>
+<tt></tt><br>
+<tt>CONTAINS</tt><br>
+<tt>! Define procedures contained in this module.</tt><br>
+<tt></tt><br>
+<tt>END MODULE &lt;ModuleName&gt;</tt><br>
+<tt></tt><br>
+<tt>!- End of module header</tt><br>
+<tt></tt>
+<p><hr><nobr>
+<!-- Navigation Buttons -->
+<a href="About_SR.html"><img border=0 src="../../pics/left.gif" alt="[Left]"></a>
+<a href="../sec5pg2.html"><img border=0 src="../../pics/up.gif" alt="[Up]"></a>
+<a href="About_SR.html"><img border=0 src="../../pics/right.gif" alt="[Right]"></a>
+<a href="../../index.html"><img border=0 src="../../pics/home.gif" alt="[Home]"></a>
+<img border=0 src="../../pics/ukmet.gif">
+</nobr><hr>
+<address>Ian Watkins | iwatkins@meto.govt.uk | Last updated: 28 September 1995 | &copy Crown Copyright 1995</address>
+</body>
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+ <title>#3wordweather - Regional Words</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/32x32.png">
+
+    <!-- Turf.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
+
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="regionalwords.css" />
+
+    <!-- For regional boundary data -->
+    <script src="allRegions.geojson.js"></script>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="banner">
+            <img src="images/mo-green-white.svg" >
+            <div class="text">#3wordweather</div>
+        </div>
+
+        <div class="separator"></div>
+
+        <div id="preamble" class="preamble">Loading data...</div>
+
+        <div class="separator"></div>
+
+        <div>&nbsp;</div>
+
+    </div>
+
+    <script type="text/javascript">
+
+        // Set up
+        var dataRequestXHR = new XMLHttpRequest(),
+            data,
+            metrics = "";
+
+        //Data request listener
+        function successListener (e) {
+
+            // Store the data
+            data = JSON.parse(e.target.responseText);
+
+            // Clean the data
+            data = cleanData(data);
+
+            // UK data
+            if (data.length > 0) {
+                UKData(data);
+            }
+
+            // Regional data
+            if (data.length > 0) {
+                regionalData(data);
+            }
+
+        }
+
+        // Go get the data
+        dataRequestXHR.addEventListener("load", successListener);
+        dataRequestXHR.open("GET", "https://i2eilcm860.execute-api.eu-west-1.amazonaws.com/test/tweets");
+        dataRequestXHR.send();
+
+        // --------------------------------------------------------------------------------------------------
+
+        function cleanData(data) {
+
+            var validFlag = false,
+                count,
+                cleansedFeature = {},
+                cleansedData = [];
+
+            if (data) {
+
+                if (data.features && data.features.length > 0) {
+
+                    metrics = metrics + "<br><br>Tweets Total:   " + data.features.length + "<br>";
+
+                    data.features.forEach(function (feature) {
+
+                        // Resets
+                        validFlag = true;
+                        cleansedFeature = {};
+
+                        // Test weather_words is an array with 1 or more members
+                        if (feature._source.properties.weather_words && feature._source.properties.weather_words.length > 0 && validFlag) {
+
+                            cleansedFeature.weatherWords = [];
+
+                            // Up to three words
+                            for (count = 0; count < 3; count++) {
+
+                                if (feature._source.properties.weather_words[count]) {
+                                    cleansedFeature.weatherWords[count] = feature._source.properties.weather_words[count];
+                                }
+                            }
+
+                        } else {
+
+                            validFlag = false;
+
+                        }
+
+                        // Test coordinates is an array and has 2 members
+                        if (feature._source.geometry.coordinates && feature._source.geometry.coordinates.length === 2 && validFlag) {
+
+                            cleansedFeature.coordinates = [feature._source.geometry.coordinates[1], feature._source.geometry.coordinates[0]];
+
+                        } else {
+
+                            validFlag = false;
+
+                        }
+
+                        // Test Twitter username is usable
+                        if (feature._source.properties.tweet.user.screen_name.length > 0 && validFlag) {
+
+                            cleansedFeature.handle = feature._source.properties.tweet.user.screen_name;
+
+                        } else {
+
+                            validFlag = false;
+
+                        }
+
+                        // Test Tweet link is usable
+                        if (feature._source.properties.tweet.id_str.length > 0 && validFlag) {
+
+                            cleansedFeature.link = feature._source.properties.tweet.id_str;
+
+                            // Build the full link
+                            cleansedFeature.link = "https://twitter.com/" + cleansedFeature.handle + "/status/" + cleansedFeature.link;
+
+                        } else {
+
+                            validFlag = false;
+
+                        }
+
+                        // Test Tweet time in epoch milliseconds is usable
+                        if (feature._source.properties.tweet.timestamp_ms && validFlag) {
+
+                            cleansedFeature.epoch = feature._source.properties.tweet.timestamp_ms;
+
+                        }
+
+                        // Add cleansedFeature to cleansedData if valid
+                        if (validFlag) {
+
+                            cleansedData.push(cleansedFeature);
+
+                        }
+
+                    });
+
+                }
+
+            }
+
+            return cleansedData;
+
+        }
+
+        // --------------------------------------------------------------------------------------------------
+
+        function UKData(data) {
+
+            var allWords = [],
+                frequency = [],
+                strCloud = "",
+                bar;
+
+            // Now do a full frequency count on words
+            data.forEach(function (feature) {
+
+                allWords = allWords.concat(feature.weatherWords);
+
+            });
+
+            frequency = frequencyCount(allWords);
+
+            frequency.forEach(function (item) {
+
+                bar = '<table height="10px" bgcolor="#ccff33" width="' + (item.count * 2.5) + '"><tr></tr></table>';
+
+                strCloud = strCloud + '<tr><td>' + item.word + '</td><td align="right">' + item.count + '&nbsp;</td><td width="500">' + bar + '</td></tr>';
+
+            });
+
+            metrics = metrics + "Tweets Plotted: " + data.length + "<br><br><br>";
+
+            metrics = metrics + "<table>";
+            metrics = metrics + '<tr><td colspan="3"><div class="separator"></div></td></tr>';
+            metrics = metrics + '<tr><td colspan="3"><h3>Whole Of UK</h3></td></tr>';
+            metrics = metrics + '<tr><td><b>Word</b></td><td align="right"><b>Count</b>&nbsp;</td><td><b>Chart</b></td</tr>';
+            metrics = metrics + strCloud;
+
+        }
+
+        // --------------------------------------------------------------------------------------------------
+
+        function regionalData(data) {
+
+            var allWords = [],
+                frequency = [],
+                regionalFeatures = [],
+                strCloud = "",
+                i,
+                bar;
+
+            turf.featureEach(nutsLevel2, function (regionalFeature) {
+
+                metrics = metrics + '<tr><td colspan="3"><br><br><div class="separator"></div></td></tr>';
+                metrics = metrics + '<tr><td colspan="3"><h3>' + regionalFeature.properties.nuts218nm + '</h3></td></tr>';
+
+                console.log("Processing for: " + regionalFeature.properties.nuts218nm);
+
+                regionalFeatures = [];
+
+                data.forEach(function (tweetFeature) {
+
+                    if (turf.booleanPointInPolygon(turf.point([tweetFeature.coordinates[1], tweetFeature.coordinates[0]]), regionalFeature)) {
+                        regionalFeatures.push(tweetFeature);
+                    }
+
+                });
+
+                if (regionalFeatures.length === 0) {
+
+                    metrics = metrics + '<tr><td colspan="3"><h4>No reports from this region</h4></td></tr>';
+
+                } else {
+
+                    allWords = [];
+
+                    // Now do a full frequency count on words
+                    regionalFeatures.forEach(function (feature) {
+
+                        allWords = allWords.concat(feature.weatherWords);
+
+                    });
+
+                    frequency = [];
+
+                    frequency = frequencyCount(allWords);
+
+                    strCloud = "";
+
+                    frequency.forEach(function (item) {
+
+                        bar = '<table height="10px" bgcolor="#ccff33" width="' + (item.count * 2.5) + '"><tr></tr></table>';
+
+                        strCloud = strCloud + '<tr><td>' + item.word + '</td><td align="right">' + item.count + '&nbsp;</td><td>' + bar + '</td></tr>';
+
+                    });
+
+                    metrics = metrics + '<tr><td><b>Word</b></td><td align="right"><b>Count</b>&nbsp;</td><td><b>Chart</b></td</tr>';
+                    metrics = metrics + strCloud;
+
+                }
+
+            });
+
+            metrics = metrics + "</table>";
+
+            window.document.getElementById("preamble").innerHTML = metrics;
+
+        }
+
+        // -----------------------------------------------------------------------------------
+
+        function sortByFrequency(wordsArray) {
+
+            var frequency = {},
+                uniques;
+
+            // Set all initial frequencies for each word to zero
+            wordsArray.forEach(
+                function(value) {
+                    frequency[value] = 0;
+                }
+            );
+
+            // Create new array with words and their frequencies
+            uniques = wordsArray.filter(
+                function(value) {
+                    return ++frequency[value] == 1;
+                }
+            );
+
+            // Sort words by frequency, descending order
+            return uniques.sort(
+                function(a, b) {
+                    return frequency[b] - frequency[a];
+                }
+            );
+
+        };
+
+        // -----------------------------------------------------------------------------------
+
+        function frequencyCount(wordsArray) {
+
+            var frequency = {},
+                uniques,
+                counted = [];
+
+            // Set all initial frequencies for each word to zero
+            wordsArray.forEach(
+                function(value) {
+                    frequency[value] = 0;
+                }
+            );
+
+            // Create new array with words and their frequencies
+            uniques = wordsArray.filter(
+                function(value) {
+                    return ++frequency[value] == 1;
+                }
+            );
+
+            // Sort words by frequency, descending order
+            uniques = uniques.sort(
+                function(a, b) {
+                    return frequency[b] - frequency[a];
+                }
+            );
+
+            // Ditch words one char or less
+            uniques.forEach(function (item) {
+                if (item.length > 1) {
+                    counted.push({count: frequency[item], word: item});
+                }
+            });
+
+            return counted;
+
+        };
+
+        // -----------------------------------------------------------------------------------
+
+    </script>
+
+</body>
+
+</html>
+

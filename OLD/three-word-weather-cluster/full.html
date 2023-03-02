@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+ <title>#3wordweather</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/32x32.png">
+
+    <!-- Leaflet.js-->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
+        integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
+        integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+        crossorigin=""></script>
+
+    <!-- Leaflet.MarkerCluster -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.3.0/MarkerCluster.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.3.0/leaflet.markercluster.js"></script>
+
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="full.css" />
+
+</head>
+
+<body>
+
+    <div id="map"></div>
+
+    <script type="text/javascript">
+
+        // Set up map
+        var map,
+            initialZoom = 6,
+            minzoom = 6,
+            maxZoom = 12,
+            bounds = new L.LatLngBounds(new L.LatLng(48.5, -12.3), new L.LatLng(62.2, 3.5)),
+            initialMapCenter = bounds.getCenter(),
+            clusterRadius = 110,
+            baseLayer,
+            overlayLayer,
+            clusterLayer,
+            dataRequestXHR = new XMLHttpRequest(),
+            data;
+
+        // Create map
+        map = new L.Map("map", {
+            attributionControl: false,
+            zoomControl: false,
+            center: initialMapCenter,
+            zoom: initialZoom
+        });
+
+        // Create zoom control
+        map.addControl(L.control.zoom({
+            position: 'bottomright'
+        }));
+
+        // Create watermark control
+        L.Control.Watermark = L.Control.extend({
+
+            onAdd: function(map) {
+
+                var img = L.DomUtil.create('img');
+
+                img.src = 'images/mo-logo-black.svg';
+                img.style.width = '160px';
+                img.style.height = '22px';
+                img.style.opacity = '0.7';
+
+                return img;
+
+            },
+
+            onRemove: function(map) {
+                // Nothing to do here
+            }
+
+        });
+
+        L.control.watermark = function(opts) {
+            return new L.Control.Watermark(opts);
+        }
+
+        L.control.watermark({
+            position: 'topleft'
+        }).addTo(map);
+
+        // Set up base tile layer
+        baseLayer = new L.TileLayer('https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: maxZoom
+        }).addTo(map);
+
+        // Overlay
+        overlayLayer = new L.TileLayer('https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: maxZoom
+        }).addTo(map);
+
+        //Data request listener
+        function successListener (e) {
+
+            // Store the data
+            data = JSON.parse(e.target.responseText);
+
+            // Clean the data
+            data = cleanData(data);
+
+            // Plot the data
+            if (data.length > 0) {
+                plotData(data);
+            }
+
+            // Analyse the data
+            if (data.length > 0) {
+                analyseData(data);
+            }
+
+        }
+
+        // Go get the data
+        dataRequestXHR.addEventListener("load", successListener);
+        dataRequestXHR.open("GET", "https://i2eilcm860.execute-api.eu-west-1.amazonaws.com/test/tweets");
+        dataRequestXHR.send();
+
+        // --------------------------------------------------------------------------------------------------
+
+        function cleanData(data) {
+
+            var validFlag = false,
+                count,
+                cleansedFeature = {},
+                cleansedData = [];
+
+            if (data) {
+
+                if (data.features && data.features.length > 0) {
+
+                    console.log("Tweets Total:   " + data.features.length);
+
+                    data.features.forEach(function (feature) {
+
+                        // Resets
+                        validFlag = true;
+                        cleansedFeature = {};
+
+                        // Test weather_words is an array with 1 or more members
+                        if (feature._source.properties.weather_words && feature._source.properties.weather_words.length > 0 && validFlag) {
+
+                            cleansedFeature.weatherWords = [];
+
+                            // Up to three words
+                            for (count = 0; count < 3; count++) {
+
+                                if (feature._source.properties.weather_words[count]) {
+                                    cleansedFeature.weatherWords[count] = feature._source.properties.weather_words[count];
+                                }
+                            }
+
+                        } else {
+
+                            validFlag = false;
+
+                        }
+
+                        // Test coordinates is an array and has 2 members
+                        if (feature._source.geometry.coordinates && feature._source.geometry.coordinates.length === 2 && validFlag) {
+
+                            cleansedFeature.coordinates = [feature._source.geometry.coordinates[1], feature._source.geometry.coordinates[0]];
+
+                        } else {
+
+                            validFlag = false;
+
+                        }
+
+                        // Test Twitter username is usable
+                        if (feature._source.properties.tweet.user.screen_name.length > 0 && validFlag) {
+
+                            cleansedFeature.handle = feature._source.properties.tweet.user.screen_name;
+
+                        } else {
+
+                            validFlag = false;
+
+                        }
+
+                        // Test Tweet link is usable
+                        if (feature._source.properties.tweet.id_str.length > 0 && validFlag) {
+
+                            cleansedFeature.link = feature._source.properties.tweet.id_str;
+
+                            // Build the full link
+                            cleansedFeature.link = "https://twitter.com/" + cleansedFeature.handle + "/status/" + cleansedFeature.link;
+
+                        } else {
+
+                            validFlag = false;
+
+                        }
+
+                        // Test Tweet time in epoch milliseconds is usable
+                        if (feature._source.properties.tweet.timestamp_ms && validFlag) {
+
+                            cleansedFeature.epoch = feature._source.properties.tweet.timestamp_ms;
+
+                        }
+
+                        // Add cleansedFeature to cleansedData if valid
+                        if (validFlag) {
+
+                            cleansedData.push(cleansedFeature);
+
+                        }
+
+                    });
+
+                }
+
+            }
+
+            return cleansedData;
+
+        }
+
+        // --------------------------------------------------------------------------------------------------
+
+        function plotData(data) {
+
+            // Cluster layer
+            clusterLayer = L.markerClusterGroup({
+
+                maxClusterRadius: clusterRadius,
+                spiderfyOnMaxZoom: false,
+                showCoverageOnHover: false,
+                iconCreateFunction: function(cluster) {
+
+                    var clusterMarker,
+                        count,
+                        words = [],
+                        sortedWords = [],
+                        htmlString = "";
+
+                    // Get all the words for all child markers
+                    cluster.getAllChildMarkers().forEach(function (child) {
+                        sortedWords = sortedWords.concat(child.options.payload.weatherWords);
+                    });
+
+                    // Sort words by frequency
+                    sortedWords = sortByFrequency(sortedWords);
+
+                    // Get top 3 (or 2, or 1)
+                    for (count = 0; count < 3; count++) {
+
+                        if (sortedWords[count]) {
+                            words.push(sortedWords[count]);
+                        }
+
+                    }
+
+                    // Create cluster content
+                    htmlString = '<ul>' + '<img src="images/green-plus.svg">';
+
+                    words.forEach(function (word, wordIndex) {
+
+                        htmlString = htmlString + '<li class="cluster' + wordIndex + '">' + word + '</li>';
+
+                    });
+
+                    htmlString = htmlString + '</ul>';
+
+                    // Create cluster icon
+                    clusterMarker = new L.DivIcon({
+                        popupAnchor: [0, 0],
+                        iconSize: [80, 80],
+                        html: htmlString
+                    });
+
+                    cluster.on("add", function (e) {
+
+                        var icon;
+
+                        // Reposition popup anchor
+                        icon = e.target.options.icon;
+                        icon.options.popupAnchor = [0, -Math.round(e.target._icon.scrollHeight / 2)];
+                        e.target.setIcon(icon);
+
+                    });
+
+                    return clusterMarker;
+
+                }
+
+            });
+
+            // Cluster click handler
+            clusterLayer.on("clusterclick", function (e) {
+
+                if (e.layer._zoom >= maxZoom) {
+
+                    var popupContent = '<div>';
+
+                    // Loop over all children
+                    e.layer.getAllChildMarkers().forEach(function (child, childIndex, childArray) {
+
+                        popupContent = popupContent + '<a href=' + child.options.payload.link + ' target="_blank">';
+                        popupContent = popupContent + '@' + child.options.payload.handle + '</a><br>';
+
+                        child.options.payload.weatherWords.forEach(function (word) {
+
+                            popupContent = popupContent + word + " ";
+
+                        });
+
+                        if (childIndex === childArray.length - 1) {
+                            popupContent = popupContent + '</div>';
+                        } else {
+                            popupContent = popupContent + '<hr>';
+                        }
+
+                    });
+
+                    e.layer.bindPopup(popupContent, {
+                        closeButton: false,
+                        maxHeight: 200
+                    }).openPopup();
+
+                }
+
+            });
+
+            // Individual markers
+            data.forEach(function (feature) {
+
+                var markerContent = "",
+                    popupContent = "",
+                    marker;
+
+                // Create marker and popup content
+                markerContent = '<ul>';
+                popupContent = '<a href="' + feature.link + '" target="_blank">@' + feature.handle + '</a><br>';
+
+                feature.weatherWords.forEach(function (word, wordIndex) {
+
+                    markerContent = markerContent + '<li class="marker' + wordIndex + '">' + word + '</li>';
+                    popupContent = popupContent + word + " ";
+
+                });
+
+                // Closing tags
+                markerContent = markerContent + '</ul>';
+
+                // Create marker
+                marker = L.marker([feature.coordinates[0], feature.coordinates[1]], {
+
+                    payload: {
+                        weatherWords: feature.weatherWords,
+                        handle: feature.handle,
+                        link: feature.link,
+                        epoch: feature.epoch
+                    },
+                    icon: new L.DivIcon({
+                        popupAnchor: [0, -40],
+                        iconSize: [80, 80],
+                        html: markerContent
+                    })
+
+                });
+
+                marker.bindPopup(popupContent, {
+                    closeButton: false
+                });
+
+                clusterLayer.addLayer(marker);
+
+            });
+
+            map.addLayer(clusterLayer);
+
+        }
+
+        // --------------------------------------------------------------------------------------------------
+
+        function analyseData(data) {
+
+            var allWords = [],
+                frequency = {},
+                strCloud = "";
+
+            // Update tab title
+            window.document.title = "#3wordweather (" + data.length + ")";
+
+            // Now do a full frequency count on words
+            data.forEach(function (feature) {
+
+                allWords = allWords.concat(feature.weatherWords);
+
+            });
+
+            frequency = frequencyCount(allWords);
+
+            frequency.forEach(function (item) {
+
+                strCloud = strCloud + item.count + " " + item.word + "\r\n"
+
+            });
+
+            console.log("Tweets Plotted: " + data.length);
+            console.log(strCloud);
+
+        }
+
+        // -----------------------------------------------------------------------------------
+
+        function sortByFrequency(wordsArray) {
+
+            var frequency = {},
+                uniques;
+
+            // Set all initial frequencies for each word to zero
+            wordsArray.forEach(
+                function(value) {
+                    frequency[value] = 0;
+                }
+            );
+
+            // Create new array with words and their frequencies
+            uniques = wordsArray.filter(
+                function(value) {
+                    return ++frequency[value] == 1;
+                }
+            );
+
+            // Sort words by frequency, descending order
+            return uniques.sort(
+                function(a, b) {
+                    return frequency[b] - frequency[a];
+                }
+            );
+
+        };
+
+        // -----------------------------------------------------------------------------------
+
+        function frequencyCount(wordsArray) {
+
+            var frequency = {},
+                uniques,
+                counted = [];
+
+            // Set all initial frequencies for each word to zero
+            wordsArray.forEach(
+                function(value) {
+                    frequency[value] = 0;
+                }
+            );
+
+            // Create new array with words and their frequencies
+            uniques = wordsArray.filter(
+                function(value) {
+                    return ++frequency[value] == 1;
+                }
+            );
+
+            // Sort words by frequency, descending order
+            uniques = uniques.sort(
+                function(a, b) {
+                    return frequency[b] - frequency[a];
+                }
+            );
+
+            // Ditch words one char or less
+            uniques.forEach(function (item) {
+                if (item.length > 1) {
+                    counted.push({count: frequency[item], word: item});
+                }
+            });
+
+            return counted;
+
+        };
+
+        // -----------------------------------------------------------------------------------
+
+    </script>
+
+</body>
+
+</html>
+

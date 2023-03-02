@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+ <title>#3wordweather - Snow</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/32x32.png">
+
+    <!-- Leaflet.js-->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
+        integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
+        integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+        crossorigin=""></script>
+
+    <!-- Leaflet.MarkerCluster -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.3.0/MarkerCluster.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.3.0/leaflet.markercluster.js"></script>
+
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="snowfourhours.css" />
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="banner">
+            <img src="images/mo-green-white.svg" >
+            <div class="text">#3wordweather</div>
+        </div>
+
+        <div class="separator"></div>
+
+        <div id="preamble" class="preamble">
+
+            <h4>Data for past four hours and snow related words only (snow, snowing, snowy, sleety, flurries, blizzard, settling, lying, snowfall)</h4>
+
+        </div>
+
+        <div class="separator"></div>
+
+        <div id="map"></div>
+
+    </div>
+
+    <script type="text/javascript">
+
+        // Set up map
+        var map,
+            initialZoom = 6,
+            minzoom = 6,
+            maxZoom = 12,
+            bounds = new L.LatLngBounds(new L.LatLng(48.5, -12.3), new L.LatLng(62.2, 3.5)),
+            initialMapCenter = bounds.getCenter(),
+            clusterRadius = 110,
+            baseLayer,
+            clusterLayer,
+            dataRequestXHR = new XMLHttpRequest(),
+            data;
+
+        // Create map
+        map = new L.Map("map", {
+            attributionControl: false,
+            center: initialMapCenter,
+            zoom: initialZoom,
+            maxBounds: bounds,
+            maxBoundsViscosity: 1.0
+        });
+
+        // Set up base tile layer
+        // DEV on GitHub Pages
+        baseLayer = new L.TileLayer('https://wwwpre.metoffice.gov.uk/public/tiles/nswws/v1/{z}/{x}/{y}.png', {
+        // PROD on S3 Bucket
+        // baseLayer = new L.TileLayer('tiles/{z}/{x}/{y}.png', {
+            minZoom: 6,
+            maxZoom: maxZoom
+        }).addTo(map);
+
+        //Data request listener
+        function successListener (e) {
+
+            // Store the data
+            data = JSON.parse(e.target.responseText);
+
+            // Clean the data
+            data = cleanData(data);
+
+            // Filter the data
+            data = filterData(data);
+
+            // Plot the data
+            if (data.length > 0) {
+                plotData(data);
+            }
+
+        }
+
+        // Go get the data
+        dataRequestXHR.addEventListener("load", successListener);
+        dataRequestXHR.open("GET", "https://i2eilcm860.execute-api.eu-west-1.amazonaws.com/test/tweets");
+        dataRequestXHR.send();
+
+        // --------------------------------------------------------------------------------------------------
+
+        function cleanData(data) {
+
+            var validFlag = false,
+                count,
+                cleansedFeature = {},
+                cleansedData = [];
+
+            if (data) {
+
+                if (data.features && data.features.length > 0) {
+
+                    data.features.forEach(function (feature) {
+
+                        // Resets
+                        validFlag = true;
+                        cleansedFeature = {};
+
+                        // Test weather_words is an array with 1 or more members
+                        if (feature._source.properties.weather_words && feature._source.properties.weather_words.length > 0 && validFlag) {
+
+                            cleansedFeature.weatherWords = [];
+
+                            // Up to three words
+                            for (count = 0; count < 3; count++) {
+
+                                if (feature._source.properties.weather_words[count]) {
+                                    cleansedFeature.weatherWords[count] = feature._source.properties.weather_words[count];
+                                }
+                            }
+
+                        } else {
+
+                            validFlag = false;
+
+                        }
+
+                        // Test coordinates is an array and has 2 members
+                        if (feature._source.geometry.coordinates && feature._source.geometry.coordinates.length === 2 && validFlag) {
+
+                            cleansedFeature.coordinates = [feature._source.geometry.coordinates[1], feature._source.geometry.coordinates[0]];
+
+                        } else {
+
+                            validFlag = false;
+
+                        }
+
+                        // Test Twitter username is usable
+                        if (feature._source.properties.tweet.user.screen_name.length > 0 && validFlag) {
+
+                            cleansedFeature.handle = feature._source.properties.tweet.user.screen_name;
+
+                        } else {
+
+                            validFlag = false;
+
+                        }
+
+                        // Test Tweet link is usable
+                        if (feature._source.properties.tweet.id_str.length > 0 && validFlag) {
+
+                            cleansedFeature.link = feature._source.properties.tweet.id_str;
+
+                            // Build the full link
+                            cleansedFeature.link = "https://twitter.com/" + cleansedFeature.handle + "/status/" + cleansedFeature.link;
+
+                        } else {
+
+                            validFlag = false;
+
+                        }
+
+                        // Test Tweet time in epoch milliseconds is usable
+                        if (feature._source.properties.tweet.timestamp_ms && validFlag) {
+
+                            cleansedFeature.epoch = feature._source.properties.tweet.timestamp_ms;
+
+                        }
+
+                        // Add cleansedFeature to cleansedData if valid
+                        if (validFlag) {
+
+                            cleansedData.push(cleansedFeature);
+
+                        }
+
+                    });
+
+                }
+
+            }
+
+            return cleansedData;
+
+        }
+
+        // --------------------------------------------------------------------------------------------------
+
+        function filterData(data) {
+
+            var flag = false,
+                timeNow = new Date(),
+                timeFourHoursAgo = timeNow.setHours(timeNow.getHours() - 4),
+                filteredData = [];
+
+            if (data) {
+
+                if (data && data.length > 0) {
+
+                    data.forEach(function (feature) {
+
+                        if (feature.epoch >= timeFourHoursAgo) {
+
+                            // Tweet is less than four hours ago
+
+                            if (feature.weatherWords.includes('snow') ||
+                                feature.weatherWords.includes('snowing') ||
+                                feature.weatherWords.includes('snowy') ||
+                                feature.weatherWords.includes('sleety') ||
+                                feature.weatherWords.includes('flurries') ||
+                                feature.weatherWords.includes('blizzard') ||
+                                feature.weatherWords.includes('lying') ||
+                                feature.weatherWords.includes('settling') ||
+                                feature.weatherWords.includes('snowfall')) {
+
+                                filteredData.push(feature);
+
+                            }
+
+                        }
+
+                    });
+
+                }
+
+            }
+
+            return filteredData;
+
+        }
+
+        // --------------------------------------------------------------------------------------------------
+
+        function plotData(data) {
+
+            // Cluster layer
+            clusterLayer = L.markerClusterGroup({
+
+                maxClusterRadius: clusterRadius,
+                spiderfyOnMaxZoom: false,
+                showCoverageOnHover: false,
+                iconCreateFunction: function(cluster) {
+
+                    var clusterMarker,
+                        count,
+                        words = [],
+                        sortedWords = [],
+                        htmlString = "";
+
+                    // Get all the words for all child markers
+                    cluster.getAllChildMarkers().forEach(function (child) {
+                        sortedWords = sortedWords.concat(child.options.payload.weatherWords);
+                    });
+
+                    // Sort words by frequency
+                    sortedWords = sortByFrequency(sortedWords);
+
+                    // Get top 3 (or 2, or 1)
+                    for (count = 0; count < 3; count++) {
+
+                        if (sortedWords[count]) {
+                            words.push(sortedWords[count]);
+                        }
+
+                    }
+
+                    // Create cluster content
+                    htmlString = '<ul>' + '<img src="images/green-plus.svg">';
+
+                    words.forEach(function (word, wordIndex) {
+
+                        htmlString = htmlString + '<li class="cluster' + wordIndex + '">' + word + '</li>';
+
+                    });
+
+                    htmlString = htmlString + '</ul>';
+
+                    // Create cluster icon
+                    clusterMarker = new L.DivIcon({
+                        popupAnchor: [0, 0],
+                        iconSize: [80, 80],
+                        html: htmlString
+                    });
+
+                    cluster.on("add", function (e) {
+
+                        var icon;
+
+                        // Reposition popup anchor
+                        icon = e.target.options.icon;
+                        icon.options.popupAnchor = [0, -Math.round(e.target._icon.scrollHeight / 2)];
+                        e.target.setIcon(icon);
+
+                    });
+
+                    return clusterMarker;
+
+                }
+
+            });
+
+            // Cluster click handler
+            clusterLayer.on("clusterclick", function (e) {
+
+                if (e.layer._zoom >= maxZoom) {
+
+                    var popupContent = '<div>';
+
+                    // Loop over all children
+                    e.layer.getAllChildMarkers().forEach(function (child, childIndex, childArray) {
+
+                        popupContent = popupContent + '<a href=' + child.options.payload.link + ' target="_blank">';
+                        popupContent = popupContent + '@' + child.options.payload.handle + '</a><br>';
+
+                        child.options.payload.weatherWords.forEach(function (word) {
+
+                            popupContent = popupContent + word + " ";
+
+                        });
+
+                        if (childIndex === childArray.length - 1) {
+                            popupContent = popupContent + '</div>';
+                        } else {
+                            popupContent = popupContent + '<hr>';
+                        }
+
+                    });
+
+                    e.layer.bindPopup(popupContent, {
+                        closeButton: false,
+                        maxHeight: 200
+                    }).openPopup();
+
+                }
+
+            });
+
+            // Individual markers
+            data.forEach(function (feature) {
+
+                var markerContent = "",
+                    popupContent = "",
+                    marker;
+
+                // Create marker and popup content
+                markerContent = '<ul>';
+                popupContent = '<a href="' + feature.link + '" target="_blank">@' + feature.handle + '</a><br>';
+
+                feature.weatherWords.forEach(function (word, wordIndex) {
+
+                    markerContent = markerContent + '<li class="marker' + wordIndex + '">' + word + '</li>';
+                    popupContent = popupContent + word + " ";
+
+                });
+
+                // Closing tags
+                markerContent = markerContent + '</ul>';
+
+                // Create marker
+                marker = L.marker([feature.coordinates[0], feature.coordinates[1]], {
+
+                    payload: {
+                        weatherWords: feature.weatherWords,
+                        handle: feature.handle,
+                        link: feature.link,
+                        epoch: feature.epoch
+                    },
+                    icon: new L.DivIcon({
+                        popupAnchor: [0, -40],
+                        iconSize: [80, 80],
+                        html: markerContent
+                    })
+
+                });
+
+                marker.bindPopup(popupContent, {
+                    closeButton: false
+                });
+
+                clusterLayer.addLayer(marker);
+
+            });
+
+            map.addLayer(clusterLayer);
+
+        }
+
+        // -----------------------------------------------------------------------------------
+
+        function sortByFrequency(wordsArray) {
+
+            var frequency = {},
+                uniques;
+
+            // Set all initial frequencies for each word to zero
+            wordsArray.forEach(
+                function(value) {
+                    frequency[value] = 0;
+                }
+            );
+
+            // Create new array with words and their frequencies
+            uniques = wordsArray.filter(
+                function(value) {
+                    return ++frequency[value] == 1;
+                }
+            );
+
+            // Sort words by frequency, descending order
+            return uniques.sort(
+                function(a, b) {
+                    return frequency[b] - frequency[a];
+                }
+            );
+
+        };
+
+        // -----------------------------------------------------------------------------------
+
+        function togglePreamble() {
+
+            var preamble = document.getElementById("preamble"),
+                secondSeparator = document.getElementById("secondSeparator"),
+                map = document.getElementById("map"),
+                toggleButton = document.getElementById("toggleButton");
+
+
+            // Toggle display
+            if (preamble.style.display === "none") {
+
+                // Hidden so show, update
+                preamble.style.display = "block";
+                secondSeparator.style.display = "block";
+                toggleButton.innerHTML = "Hide instructions";
+                map.style.height = "600px";
+
+            } else {
+
+                // Showing, so hide
+                preamble.style.display = "none";
+                secondSeparator.style.display = "none";
+                toggleButton.innerHTML = "Show instructions";
+                map.style.height = "700px";
+
+            }
+
+        }
+
+        // -----------------------------------------------------------------------------------
+
+    </script>
+
+</body>
+
+</html>

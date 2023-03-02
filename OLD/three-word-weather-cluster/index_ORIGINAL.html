@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+ <title>#3wordweather</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/32x32.png">
+
+    <!-- Leaflet.js-->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
+        integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
+        integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+        crossorigin=""></script>
+
+    <!-- Leaflet.MarkerCluster -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.3.0/MarkerCluster.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.3.0/leaflet.markercluster.js"></script>
+
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="index.css" />
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="banner">
+            <img src="images/mo-green-white.svg" >
+            <div class="text">#3wordweather</div>
+        </div>
+
+        <div class="separator"></div>
+
+        <div class="preamble">
+
+            <p>Zoom and pan the map to see the area of your choice and everybody’s favourite weather words.  All the boxes show the most popular weather words for that moment at that location.</p>
+
+            <p>Click on the grey words and you can drill down to see the weather words from your local area, right down to your own tweet.</p>
+
+            <p>Keep checking the map to see how the weather changes through the day! &nbsp; <a href="https://www.metoffice.gov.uk/barometer/features/3-word-weather" target="_blank">Find out more about the project.</a></p>
+
+            <p>To get involved, tweet a description of the weather in three words followed by your nearest town, using the hashtag #3wordweather.</p>
+
+            <p>1. #3wordweather<br>
+               2. Add your words<br>
+               3. Include your nearest town</p>
+
+        </div>
+
+        <div class="separator"></div><br>
+
+        <div id="map"></div>
+
+    </div>
+
+    <script type="text/javascript">
+
+        // Set up map
+        var map,
+            initialZoom = 6,
+            minzoom = 6,
+            maxZoom = 12,
+            bounds = new L.LatLngBounds(new L.LatLng(48.5, -12.3), new L.LatLng(62.2, 3.5)),
+            initialMapCenter = bounds.getCenter(),
+            clusterRadius = 110,
+            baseLayer,
+            clusterLayer,
+            dataRequestXHR = new XMLHttpRequest();
+
+        map = new L.Map("map", {
+            attributionControl: false,
+            center: initialMapCenter,
+            zoom: initialZoom,
+            maxBounds: bounds,
+            maxBoundsViscosity: 1.0
+        });
+
+        // Set up base tile layer
+        // DEV on GitHub Pages
+        baseLayer = new L.TileLayer('https://wwwpre.metoffice.gov.uk/public/tiles/nswws/v1/{z}/{x}/{y}.png', {
+        // PROD on S3 Bucket
+        // baseLayer = new L.TileLayer('tiles/{z}/{x}/{y}.png', {
+            minZoom: 6,
+            maxZoom: maxZoom
+        }).addTo(map);
+
+        // Go get the data
+        function successListener () {
+            plotData(JSON.parse(this.responseText));
+        }
+
+        dataRequestXHR.addEventListener("load", successListener);
+        dataRequestXHR.open("GET", "https://i2eilcm860.execute-api.eu-west-1.amazonaws.com/test/tweets");
+        dataRequestXHR.send();
+
+        // --------------------------------------------------------------------------------------------------
+
+        function plotData(data) {
+
+            // Cluster layer
+            clusterLayer = L.markerClusterGroup({
+
+                maxClusterRadius: clusterRadius,
+                spiderfyOnMaxZoom: false,
+                showCoverageOnHover: false,
+                iconCreateFunction: function(cluster) {
+
+                    var i,
+                        len,
+                        children = cluster.getAllChildMarkers(),
+                        words = [],
+                        htmlString = "";
+
+                    for (i = 0, len = children.length; i < len; i += 1) {
+                        words = words.concat(children[i].options.payload.threeWords);
+                    }
+
+                    // Sort by frequency
+                    words = sortByFrequency(words);
+
+                    if (words.length === 1) {
+                        htmlString = "<ul>" + '<img src="images/green-plus.svg">' +
+                                         "<li class='freq1'>" + words[0] + "</li>" +
+                                     "</ul>"
+                    }
+
+                    if (words.length === 2) {
+                        htmlString = "<ul>" + '<img src="images/green-plus.svg">' +
+                                         "<li class='freq1'>" + words[0] + "</li>" +
+                                         "<li class='freq2'>" + words[1] + "</li>" +
+                                     "</ul>"
+                    }
+
+                    if (words.length >= 3) {
+                        htmlString = "<ul>" + '<img src="images/green-plus.svg">' +
+                                         "<li class='freq1'>" + words[0] + "</li>" +
+                                         "<li class='freq2'>" + words[1] + "</li>" +
+                                         "<li class='freq3'>" + words[2] + "</li>" +
+                                     "</ul>"
+                    }
+
+                    divIcon = new L.DivIcon({
+                        popupAnchor: [0, 0],
+                        iconSize: [80, 80],
+                        html: htmlString
+                    });
+
+                    return divIcon;
+
+                }
+
+            });
+
+            // Cluster click and popup handler
+            clusterLayer.on("clusterclick", function (e) {
+
+                if (e.target._zoom >= maxZoom) {
+
+                    var icon,
+                        popupContent = '<div>',
+                        popupOptions = {
+                            maxHeight: 250,
+                            minWidth: 200,
+                            closeButton: false
+                        };
+
+                    // Loop over all children
+                    e.layer.getAllChildMarkers().forEach(function (child, index, array) {
+
+                        popupContent = popupContent + '<a href=' + child.options.payload.link + ' target="_blank">';
+                        popupContent = popupContent + '@' + child.options.payload.handle + '</a><br>';
+
+                        // Get correct number of words for popup content
+                        if (child.options.payload.threeWords[1] === "null") {
+
+                            popupContent = popupContent + child.options.payload.threeWords[0];
+
+                        } else if (child.options.payload.threeWords[2] === "null") {
+
+                            popupContent = popupContent + child.options.payload.threeWords[0] + " " + child.options.payload.threeWords[1];
+
+                        } else {
+
+                            popupContent = popupContent + child.options.payload.threeWords[0] + " " + child.options.payload.threeWords[1] + " " + child.options.payload.threeWords[2];
+
+                        }
+
+                        if (index === array.length - 1) {
+                            popupContent = popupContent + '</div>';
+                        } else {
+                            popupContent = popupContent + '<hr>';
+                        }
+
+                    });
+
+                    // Reposition popup anchor
+                    icon = e.layer.options.icon;
+                    icon.options.popupAnchor = [0, -Math.round(e.layer._icon.scrollHeight / 2)];
+                    e.layer.setIcon(icon);
+
+                    e.layer.bindPopup(popupContent, popupOptions).openPopup();
+
+                }
+
+            });
+
+            // Individual markers
+            for (var i = 0; i < data.features.length; i++) {
+
+                var marker,
+                    payload,
+                    tweetThreeWords,
+                    tweetHandle,
+                    tweetLink,
+                    tweetCoordinates,
+                    popupContent,
+                    popupOptions = {
+                        closeButton: false
+                    },
+                    htmlString = "";
+
+                tweetThreeWords = dataClean(data.features[i]._source.properties.weather_words);    // Can be an array of 1, 2 or 3 words
+
+                if (tweetThreeWords.length !== 0  && data.features[i]._source.geometry.coordinates !== null) {
+
+                    tweetHandle = data.features[i]._source.properties.tweet.user.screen_name;
+                    tweetLink = "https://twitter.com/" + tweetHandle + "/status/" + data.features[i]._source.properties.tweet.id_str;
+                    tweetCoordinates = [data.features[i]._source.geometry.coordinates[1], data.features[i]._source.geometry.coordinates[0]];
+
+                    // Get correct number of words for html and popup content
+                    if (tweetThreeWords[1] === "null") {
+
+                        htmlString = "<ul>" +
+                                        "<li class='word1'>" + tweetThreeWords[0] + "</li>" +
+                                     "</ul>";
+
+                        popupContent = '<a href="' + tweetLink + '" target="_blank">@' + tweetHandle + '</a><br>' +
+                                       tweetThreeWords[0];
+
+                    } else if (tweetThreeWords[2] === "null") {
+
+                        htmlString = "<ul>" +
+                                        "<li class='word1'>" + tweetThreeWords[0] + "</li>" +
+                                        "<li class='word2'>" + tweetThreeWords[1] + "</li>" +
+                                     "</ul>";
+
+                        popupContent = '<a href="' + tweetLink + '" target="_blank">@' + tweetHandle + '</a><br>' +
+                                       tweetThreeWords[0] + " " + tweetThreeWords[1];
+
+                    } else {
+
+                        htmlString = "<ul>" +
+                                        "<li class='word1'>" + tweetThreeWords[0] + "</li>" +
+                                        "<li class='word2'>" + tweetThreeWords[1] + "</li>" +
+                                        "<li class='word3'>" + tweetThreeWords[2] + "</li>" +
+                                     "</ul>";
+
+                        popupContent = '<a href="' + tweetLink + '" target="_blank">@' + tweetHandle + '</a><br>' +
+                                       tweetThreeWords[0] + " " + tweetThreeWords[1] + " " + tweetThreeWords[2];
+
+                    }
+
+                    marker = L.marker(tweetCoordinates, {
+
+                        payload: {
+                            threeWords: tweetThreeWords,
+                            handle: tweetHandle,
+                            link: tweetLink
+                        },
+                        icon: new L.DivIcon({
+                            popupAnchor: [0, -40],
+                            iconSize: [80, 80],
+                            html: htmlString
+                        })
+
+                    });
+
+                    marker.bindPopup(popupContent, popupOptions);
+
+                    clusterLayer.addLayer(marker);
+
+                }
+
+            }
+
+            map.addLayer(clusterLayer);
+
+        }
+
+        // -----------------------------------------------------------------------------------
+
+        function dataClean(wordsArray) {
+
+            if (wordsArray.length === 1) {
+                wordsArray.push("null");
+            }
+            if (wordsArray.length === 2) {
+                wordsArray.push("null");
+            }
+
+            return wordsArray;
+
+        }
+
+        // -----------------------------------------------------------------------------------
+
+        function sortByFrequency(wordsArray) {
+
+            var removedNulls,
+                frequency = {},
+                uniques;
+
+            // Remove all "null" string values
+            removedNulls = wordsArray.filter(
+                function(value) {
+                    if (value !== "null") {
+                        return value;
+                    }
+                }
+            );
+
+            // Set all initial frequencies for each word to zero
+            removedNulls.forEach(
+                function(value) {
+                    frequency[value] = 0;
+                }
+            );
+
+            // Create new array with words and their frequencies
+            uniques = removedNulls.filter(
+                function(value) {
+                    return ++frequency[value] == 1;
+                }
+            );
+
+            // Sort words by frequency, descending order
+            return uniques.sort(
+                function(a, b) {
+                    return frequency[b] - frequency[a];
+                }
+            );
+
+        };
+
+        // -----------------------------------------------------------------------------------
+
+    </script>
+
+</body>
+
+</html>
+

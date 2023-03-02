@@ -1,0 +1,160 @@
+<html>
+<!-- Created by Ian Watkins | iwatkins@meto.govt.uk -->
+<!-- Last Updated 28 September 1995                 -->
+<head>
+<title>
+External Use Of The Unified Model
+</title>
+</head>
+
+<body bgcolor=#ffffff>
+<nobr>
+<img align=middle src="../../pics/sec5big.gif">
+<img align=middle src="../../pics/sec5text.gif" alt="Research">
+<img align=middle src="../../pics/frlogo.gif"><p>
+</nobr>
+<h2>External Use Of The Unified Model</h2>
+<hr>
+<p>
+<h3>1. Introduction</h3>
+<p>
+The atmosphere and ocean modelling code used by the
+Meteorological Office is freely available for use by other
+research groups and meteorological centres. The code exists
+within a single software system known as the Unified Model and
+covers both data assimilation and prediction for global or
+regional domains. It is the code used by the Meteorological
+Office in carrying out its operational numerical weather
+forecasting activities. It is also used by the Hadley Centre
+for Climate Prediction and Research.
+<p>
+<h3>2. Unified Model Software</h3>
+<p>
+The code is written in FORTRAN 77 and ANSI C and runs under
+the Bourne shell of the UNIX operating system. The Unified
+Model is normally run on a Cray C90 computer and the code is
+designed to use the automatic multitasking and vectorization
+facilities available on Cray computers. A workstation version
+of the code is also available. This runs on computer systems
+using the IEEE standard for representing floating point
+numbers. 
+<p>
+The dynamics routines and physical parametrizations are
+written in the plug-compatible form agreed for the
+international exchange of meteorological subroutines.
+<p>
+The main model components are:
+<ul>
+<p><li><b>User Interface</b>
+<p>An X-Windows application for setting
+up model integrations. It comprises
+over 200 separate windows and may
+be customised by the user.
+
+<p><li><b>Reconfiguration</b>
+     <p>A generalised interpolation package
+     used to convert model data files to
+     new resolutions and areas.
+
+<p><li><b>Data Assimilation</b>
+     <p>Analysis correction scheme using
+     repeated insertion of observations.
+
+<p><li><b>Atmosphere Model</b>
+     <p>Grid point split-explicit dynamics and
+     physical parametrizations.
+
+<p><li><b>Ocean Model</b>
+     <p>Based on the code of Bryan and Cox
+     developed at GFDL.
+
+<p><li><b>Atmosphere-Ocean Coupling</b>
+     <p>Software to run atmosphere and ocean
+     models in coupled mode, including a
+     dynamic sea-ice model.
+
+<p><li><b>Diagnostics and Output</b>
+<p> Internal model package to output a
+     range of diagnosed and derived
+     quantities over arbitrary time periods,
+     sub-areas and levels.
+</ul>
+<p>
+<h3>3. Access and Availability</h3>
+<p>
+New releases of the model are made available once they have
+been accepted by internal users. The data and software are
+available on tape in the following formats:
+
+<ul>
+<li> QIC 150 format on a DL6150 or DL6250 1/4" cartridge
+<li> DDS format on a 60m or 90m DAT cartridge.
+</ul>
+<p>
+Both the Cray compatible and workstation versions of the
+code are available and include the following features:
+
+<ul>
+<li>Conversion software to pass output to workstations (Cray
+version only).
+<li>On-line documentation covering both technical and
+scientific aspects of the model in Wordperfect 6.0 and
+Postscript formats. A Mosaic based hypertext browser is also
+available linking source code viewing and documentation.
+<li> A small archive of model analyses
+and all ancillary files needed to run the
+system.
+<li>A facility to run the atmosphere model from ECMWF GRIB
+coded data.
+</ul>
+<p>
+<h3>4. Future Developments</h3>
+<p>
+It is planned to provide information on software
+upgrades via an Internet WWW server connected to the Meteorological
+Office. This service will be introduced during 1995.
+<p>
+A message passing version of the code is under development
+using PVM and MPI. This will allow the code to be run on distributed
+memory parallel computer systems or on networks of
+workstations. The messaging passing version of the atmosphere
+component will be available in the second half of 1995.
+<p>
+<h3>5. Contacts</h3>
+<p>
+Two full time members of staff support external use of the
+model. They provide initial help and advice on installation
+procedures. If you have an agreed joint research project with
+the Meteorological Office, you may qualify for further free
+support. Support may also be available on a repayment basis. 
+<p>
+Please note that a small fee will be charged to cover administration costs.
+<p>
+If you are interested in having access to the code, please
+contact
+
+<dl>
+<p>Nicola Farnon,
+<dt>NWP Division,
+<dt>Meteorological Office,
+<dt>London Rd,
+<dt>Bracknell, 
+<dt>Berks,
+<dt>UK 
+<dt>RG12 2SZ
+
+<p>Fax: +44 (0)1344 854026
+<dt>Tel: +44 (0)1344 854993
+<dt>Email: nfarnon@email.meto.govt.uk
+
+</dl>
+<p><hr><nobr>
+<!-- Navigation Buttons -->
+<a href="../sec5pg2.html"><img border=0 src="../../pics/up.gif" alt="[Up]"></a>
+<a href="../../index.html"><img border=0 src="../../pics/home.gif" alt="[Home]"></a>
+<img border=0 src="../../pics/ukmet.gif">
+</nobr><hr>
+<address>Ian Watkins | iwatkins@meto.govt.uk | Last updated: 28 September 1995 | &copy Crown Copyright 1995</address>
+</body>
+</html>
+
