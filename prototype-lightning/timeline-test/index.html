@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>mo-timeline Test</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<link rel="shortcut icon" type="image/x-icon" href="/resources/images/favicon.png" />
+	<script type="module" src="../mo-timeline/mo-timeline/mo-timeline.js"></script>
+	<script nomodule="" src="../mo-timeline/mo-timeline/mo-timeline.js"></script>
+	<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+
+	<style>
+
+		html,
+		body {
+			background-color: #ccc;
+			font-family: Inter, Arial, Helvetica, sans-serif;
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			height: 100vh;
+		}
+
+	</style>
+
+</head>
+
+<body>
+
+	<mo-timeline
+		id="timeline" 
+		timesteps='[
+			"2019-07-18T22:00:00Z",
+			"2019-07-18T23:00:00Z",
+			"2019-07-19T00:00:00Z",
+			"2019-07-19T01:00:00Z"
+		]'>
+	</mo-timeline>
+
+	<script>
+
+		window.timeline.addEventListener("forwardClicked", function (myTimeline) {
+			console.log(myTimeline.timeStepIndex);
+		});
+
+		window.timeline.addEventListener("backClicked", function (e) {
+			console.log(e.target.timeStepIndex);
+		});		
+
+
+	</script>
+
+</body>
+
+</html>

@@ -12,6 +12,8 @@
 	<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.2/dist/leaflet.js"
 		integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin="anonymous"></script>
 	<!-- <script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script> -->
+	<script type="module" src="../mo-timeline/mo-timeline/mo-timeline.js"></script>
+	<script nomodule="" src="../mo-timeline/mo-timeline/mo-timeline.js"></script>	
 	<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
 
 	<style>
@@ -23,7 +25,7 @@
 			margin: 0;
 			padding: 0;
 			width: 100%;
-			height: 100vh;
+			height: calc(100vh - 128px);
 		}
 
 		.info {
@@ -44,6 +46,42 @@
 <body>
 
 	<div id="map"></div>
+	<mo-timeline
+		id="timeline"
+		disable-play-button = "true"
+		time-step-index = "28"
+		timesteps='[
+			"2023-02-24T02:00:00Z",
+			"2023-02-24T03:00:00Z",
+			"2023-02-24T04:00:00Z",
+			"2023-02-24T05:00:00Z",
+			"2023-02-24T06:00:00Z",
+			"2023-02-24T07:00:00Z",
+			"2023-02-24T08:00:00Z",
+			"2023-02-24T09:00:00Z",
+			"2023-02-24T10:00:00Z",
+			"2023-02-24T10:15:00Z",
+			"2023-02-24T10:30:00Z",
+			"2023-02-24T10:45:00Z",
+			"2023-02-24T11:00:00Z",
+			"2023-02-24T11:15:00Z",
+			"2023-02-24T11:30:00Z",
+			"2023-02-24T11:45:00Z",
+			"2023-02-24T12:00:00Z",
+			"2023-02-24T12:05:00Z",
+			"2023-02-24T12:10:00Z",
+			"2023-02-24T12:15:00Z",
+			"2023-02-24T12:20:00Z",
+			"2023-02-24T12:25:00Z",
+			"2023-02-24T12:30:00Z",
+			"2023-02-24T12:35:00Z",
+			"2023-02-24T12:40:00Z",
+			"2023-02-24T12:45:00Z",
+			"2023-02-24T12:50:00Z",
+			"2023-02-24T12:55:00Z",
+			"2023-02-24T13:00:00Z"
+		]'>
+	</mo-timeline>
 
 	<script>
 
@@ -153,6 +191,42 @@
 
 		}
 
+		var drawNextStep = function () {
+
+			if (fileCounter === fileList.files.length - 1) {
+				fileCounter = 0;
+			} else {
+				fileCounter++;
+			}
+
+			this.timeStepDuration = fileList.files[fileCounter].duration;
+			this.timeStepStart = fileList.files[fileCounter].startMinute;
+
+			console.log("Drawing time step", fileList.files[fileCounter].dateTime, "(" + this.timeStepDuration + " minutes)");
+			this.info.update(fileList.files[fileCounter].dateTime +" (" + this.timeStepDuration + " minutes)");
+
+			getSferics(fileList.files[fileCounter].file);
+
+		}
+
+		var drawPreviousStep = function () {
+
+			if (fileCounter === 0) {
+				fileCounter = fileList.files.length - 1;
+			} else {
+				fileCounter--;
+			}
+
+			this.timeStepDuration = fileList.files[fileCounter].duration;
+			this.timeStepStart = fileList.files[fileCounter].startMinute;
+
+			console.log("Drawing time step", fileList.files[fileCounter].dateTime, "(" + this.timeStepDuration + " minutes)");
+			this.info.update(fileList.files[fileCounter].dateTime +" (" + this.timeStepDuration + " minutes)");
+
+			getSferics(fileList.files[fileCounter].file);
+
+		}		
+
 		var toggleAnimation = function () {
 
 			if (!this.animating) {
@@ -174,6 +248,18 @@
 
 		getSferics(fileList.files[fileCounter].file);
 
+		window.timeline.addEventListener("forwardClicked", function () {
+			drawNextStep();
+		});
+
+		window.timeline.addEventListener("backClicked", function () {
+			drawPreviousStep();
+		});
+		
+		map.on("click", function (e) {
+			toggleAnimation();
+		});		
+
 		var info = L.control();
 
 		info.onAdd = function (map) {
@@ -187,10 +273,6 @@
 		};
 
 		info.addTo(map);
-
-		map.on("click", function (e) {
-			toggleAnimation();
-		});
 
 	</script>
 

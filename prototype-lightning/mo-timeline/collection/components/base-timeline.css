@@ -1,0 +1,61 @@
+.timelineContainer_normalView {
+  background-color: #384F56;
+  display: grid;
+  display: -ms-grid;
+  justify-content: stretch;
+  color: #b9dc0c;
+  font-size: 16px;
+  height: 8rem;
+  grid-template-areas: "controlBar" "timeline";
+  grid-template-columns: 1fr;
+  grid-template-rows: 0.5fr 1fr;
+  -ms-grid-columns: 1fr;
+  -ms-grid-rows: 0.5fr 1fr;
+}
+.timelineContainer_normalView .timelineContainer__controlBar {
+  grid-area: controlBar;
+  display: -ms-grid;
+  display: grid;
+  text-align: center;
+  grid-template-areas: "play date slot";
+  grid-template-columns: 1fr 4fr 1fr;
+  -ms-grid-columns: 1fr 4fr 1fr;
+}
+.timelineContainer_normalView .timelineContainer__controlBar__playButtons {
+  grid-area: play;
+  text-align: left;
+  width: min-content;
+  white-space: nowrap;
+  -ms-grid-row: 1;
+  -ms-grid-column: 1;
+}
+.timelineContainer_normalView .timelineContainer__controlBar__dateLabel {
+  grid-area: date;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  white-space: nowrap;
+  -ms-grid-row: 1;
+  -ms-grid-column: 2;
+}
+.timelineContainer_normalView .timelineContainer__controlBar__slot {
+  grid-area: slot;
+  text-align: right;
+  -ms-grid-row: 1;
+  -ms-grid-column: 3;
+}
+.timelineContainer_normalView .timelineContainer__timeline {
+  grid-area: timeline;
+  -ms-grid-row: 2;
+  padding: 0 3rem;
+}
+
+@media only screen and (max-width: 720px) {
+  .timelineContainer__timeline {
+    padding: 0 !important;
+  }
+
+  .timelineContainer_normalView {
+    height: 5.5rem;
+  }
+}
