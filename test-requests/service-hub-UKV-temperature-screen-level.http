@@ -1,0 +1,69 @@
+
+// MDDA Maps API
+
+// Docs: https://metoffice.sharepoint.com/sites/technologyservicehubservice/SitePages/Map%20Layers%20Template.aspx
+
+// UKV Short/Medium/Long Capabilities
+
+###
+
+GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
+x-api-key: 1234
+
+
+// UKV Short/Medium/Long Temperature Screen Level - 5 possible styles
+
+###
+
+GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+    &LAYERS=temperature_at_screen_level
+    &STYLES=iso_fill_wh_gn_bk_ms50_ps50_c_line_bk_10
+    &CRS=CRS:84
+    &BBOX=-25,44,16,64
+    &WIDTH=1800
+    &HEIGHT=1200
+x-api-key: 1234
+
+###
+
+GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+    &LAYERS=temperature_at_screen_level
+    &STYLES=iso_fill_wh_gn_bk_ms100_ps50_c_line_bk_10
+    &CRS=CRS:84
+    &BBOX=-25,44,16,64
+    &WIDTH=1800
+    &HEIGHT=1200
+x-api-key: 1234
+
+###
+
+GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+    &LAYERS=temperature_at_screen_level
+    &STYLES=iso_fill_bk_bu_rd_ms30_ps36_c
+    &CRS=CRS:84
+    &BBOX=-25,44,16,64
+    &WIDTH=1800
+    &HEIGHT=1200
+x-api-key: 1234
+
+###
+
+GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+    &LAYERS=temperature_at_screen_level
+    &STYLES=iso_fill_bu_gn_rd_ms40_ps40_c
+    &CRS=CRS:84
+    &BBOX=-25,44,16,64
+    &WIDTH=1800
+    &HEIGHT=1200
+x-api-key: 1234
+
+###
+
+GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+    &LAYERS=temperature_at_screen_level
+    &STYLES=num_bu_rd_c
+    &CRS=CRS:84
+    &BBOX=-25,44,16,64
+    &WIDTH=1800
+    &HEIGHT=1200
+x-api-key: 1234

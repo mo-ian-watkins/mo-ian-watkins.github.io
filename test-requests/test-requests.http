@@ -49,3 +49,142 @@ GET https://observation.hub.metoffice.cloud/observed_lightning/collections/obser
 ###
 GET https://gateway.ci.api-management.metoffice.cloud/mo-uk-spot-probabilities-feature-service/1.0.0/collections/feature-collection/position?coords=POINT%28-2.4%2C51%29&datetime=2022-07-18T12%3A00%3A00Z%2F2022-07-18T12%3A00%3A00Z
 apiKey: eyJ4NXQiOiJaR1JqTkdJd1lXUmtOREF3TVdNM01EVTFOekkyT0RWa09EYzRaV0kzWkdZM1lUazRPR1kzTnpNM09EazRPRFppTnpsa1kyUmhNbU5qWldGaU1EVmpNUSIsImtpZCI6ImdhdGV3YXlfY2VydGlmaWNhdGVfYWxpYXMiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJpYW4ud2F0a2luc0BtZXRvZmZpY2UuZ292LnVrQGNhcmJvbi5zdXBlciIsImFwcGxpY2F0aW9uIjp7Im93bmVyIjoiaWFuLndhdGtpbnNAbWV0b2ZmaWNlLmdvdi51ayIsInRpZXJRdW90YVR5cGUiOm51bGwsInRpZXIiOiJVbmxpbWl0ZWQiLCJuYW1lIjoiRGVmYXVsdEFwcGxpY2F0aW9uIiwiaWQiOjE2MiwidXVpZCI6ImYyMzI4MjI2LWZkOWUtNGNjOS05ZTEwLTUwODVmNDBiYzg3ZSJ9LCJpc3MiOiJodHRwczpcL1wvYXBpLW1hbmFnZXIuY2kuYXBpLW1hbmFnZW1lbnQubWV0b2ZmaWNlLmNsb3VkOjQ0M1wvb2F1dGgyXC90b2tlbiIsInRpZXJJbmZvIjp7IjUwMGtQZXJEYXkyazVQZXJNaW5CdXJzdCI6eyJ0aWVyUXVvdGFUeXBlIjoicmVxdWVzdENvdW50IiwiZ3JhcGhRTE1heENvbXBsZXhpdHkiOjAsImdyYXBoUUxNYXhEZXB0aCI6MCwic3RvcE9uUXVvdGFSZWFjaCI6dHJ1ZSwic3Bpa2VBcnJlc3RMaW1pdCI6MjUwMCwic3Bpa2VBcnJlc3RVbml0IjoibWluIn19LCJrZXl0eXBlIjoiUFJPRFVDVElPTiIsInN1YnNjcmliZWRBUElzIjpbeyJzdWJzY3JpYmVyVGVuYW50RG9tYWluIjoiY2FyYm9uLnN1cGVyIiwibmFtZSI6Ikdsb2JhbF9TcG90X1BlcmNlbnRpbGVzX0ZlYXRfU3ZjIiwiY29udGV4dCI6IlwvbW8tZ2xvYmFsLXNwb3QtcGVyY2VudGlsZXMtZmVhdHVyZS1zZXJ2aWNlXC8xLjAuMCIsInB1Ymxpc2hlciI6Imx1a2UuYmVubmV0dEBtZXRvZmZpY2UuZ292LnVrIiwidmVyc2lvbiI6IjEuMC4wIiwic3Vic2NyaXB0aW9uVGllciI6IjUwMGtQZXJEYXkyazVQZXJNaW5CdXJzdCJ9LHsic3Vic2NyaWJlclRlbmFudERvbWFpbiI6ImNhcmJvbi5zdXBlciIsIm5hbWUiOiJVS19TcG90X1Byb2JhYmlsaXRpZXNfRmVhdF9TdmMiLCJjb250ZXh0IjoiXC9tby11ay1zcG90LXByb2JhYmlsaXRpZXMtZmVhdHVyZS1zZXJ2aWNlXC8xLjAuMCIsInB1Ymxpc2hlciI6Imx1a2UuYmVubmV0dEBtZXRvZmZpY2UuZ292LnVrIiwidmVyc2lvbiI6IjEuMC4wIiwic3Vic2NyaXB0aW9uVGllciI6IjUwMGtQZXJEYXkyazVQZXJNaW5CdXJzdCJ9LHsic3Vic2NyaWJlclRlbmFudERvbWFpbiI6ImNhcmJvbi5zdXBlciIsIm5hbWUiOiJVS19TcG90X1BlcmNlbnRpbGVzX0ZlYXRfU3ZjIiwiY29udGV4dCI6IlwvbW8tdWstc3BvdC1wZXJjZW50aWxlcy1mZWF0dXJlLXNlcnZpY2VcLzEuMC4wIiwicHVibGlzaGVyIjoibHVrZS5iZW5uZXR0QG1ldG9mZmljZS5nb3YudWsiLCJ2ZXJzaW9uIjoiMS4wLjAiLCJzdWJzY3JpcHRpb25UaWVyIjoiNTAwa1BlckRheTJrNVBlck1pbkJ1cnN0In1dLCJpYXQiOjE2NTgzMTQ4MjMsImp0aSI6IjU4NDVmYmE4LTE2ZjgtNDQ2NS1hNzEwLTdjYjYxNGE0YzRkOCJ9.dgGo81GvfdlGxS-fSMzz3n8eMtGpfQdw5Qzw7VeUam9X73vX-tPIOFNWT3NnKMer4pw8kCidDf-bl13l9KpGEwOHBir1eY2foa4XrNL-2HbjyjFiwtv-Q0OFZPaCZKSlp3BWsD3IZwD6ukRQevHXu4Ja53AiYZ2wSM9rqX5UEr_XztNmhS2OtPCtRQB7FyMAvaiRTSm9TTH9tukRtD6EtYgQJjGRo-jYCkZl715sUN1p4GVuBCbucTFATVTVBt_20-RhCaEFKBLCRoT-KSb-jzmjo_eQ0STdXgZTh0V7HFpQYgkWAAzdoGcsWmEDplgWMtvlTy8VRKhUp8K8rud3Nw==
+
+###
+
+// EDR API
+
+GET https://edr-access.dev.mdda.hub.metoffice.cloud/mo-global/os45/edr/collections/mo-global-agl-2/cube
+    ?f=CoverageJSON
+    &bbox=-10,40,10,60
+    &z=1.5
+    &parameter-name=dewpoint-temperature
+    &resolution-x=30
+    &resolution-y=30 
+//  &datetime=2023-05-24T06:00:00Z
+
+###
+
+GET https://edr-access.dev.mdda.hub.metoffice.cloud/mo-global/os45/edr/collections/mo-global-agl-2/cube
+    ?f=CoverageJSON
+    &bbox=-15.42,48,9.40,61
+    &z=1.5
+    &parameter-name=dewpoint-temperature
+    &resolution-x=50
+    &resolution-y=50
+    &datetime=2023-06-14T18:00:00Z
+
+###
+
+GET https://edr-access.dev.mdda.hub.metoffice.cloud/mo-uk/os45/edr/collections
+
+
+###
+
+GET https://edr-access.dev.mdda.hub.metoffice.cloud/mo-uk/os45/edr/collections/mo-uk-zeroisotherm/instances/20230524T120000Z/cube
+    ?f=CoverageJSON
+    &bbox=-15.42,48,9.40,61
+    &parameter-name=geometric-height-above-ground-level
+    &datetime=2023-05-23T15:00:00Z
+    &resolution-x=50
+    &resolution-y=50
+    &crs=CRS:84
+
+###
+
+GET https://edr-access.dev.mdda.hub.metoffice.cloud/mo-uk/os45/edr/collections/mo-uk-isbl/instances/20230526T090000Z/cube
+    ?f=CoverageJSON
+    &bbox=-15.42,48,9.40,61
+    &parameter-name=wind-speed
+    &datetime=2023-05-26T09:00:00Z
+    &crs=CRS:84
+    &z=1000
+    //&resolution-x=100
+    //&resolution-y=100
+
+
+###
+
+// CDP API
+
+// Docs: https://metoffice.sharepoint.com/sites/TechnologyAtlasTeamExt/SitePages/CDP-CC-Maps-Service.aspx
+
+    // Observations Capabilties returns following observations layers:
+
+    // radar_rainfall - 2 days worth of 5 minute data
+    // radar_rainfall_acessible - 2 days worth of 5 minute data
+
+GET https://maps.consumer-digital.api.metoffice.gov.uk/v1/config/get-capabilities/ob.xml
+
+###
+
+    // Forecast Capabilties returns following forecast layers with multiple runs available plus short/long versions:
+
+    // Short, run every hour, T+0 to T+12, 15 minute steps
+    // Long, run every 12 hours, T+0 to T+54, 15 minute steps, then T+54 to T+120, hourly steps
+
+    // rainfall_rate
+    // total_precipitation_rate
+    // total_precipitation_rate_accessible
+    // cloud_amount_total
+    // hail_fall_rate
+    // snowfall_rate
+    // temperature
+
+GET https://maps.dev.consumer-digital.api.metoffice.gov.uk/v1/config/get-capabilities/fc.xml
+
+
+###
+
+// MDDA Maps API
+
+// Docs: https://metoffice.sharepoint.com/sites/technologyservicehubservice/SitePages/Map%20Layers%20Template.aspx
+
+    // GLOBAL Capabilities
+
+GET https://dev.mdda.hub.metoffice.cloud/wms/glm/long?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
+x-api-key: 1234
+
+###
+
+    // GLOBAL WMS Request
+GET https://dev.mdda.hub.metoffice.cloud/wms/glm/short
+    ?SERVICE=WMS
+    &VERSION=1.3.0
+    &REQUEST=GetMap
+    &STYLES=iso_fill_pl_gn_rd_0_7000_jkg1
+    &LAYERS=CAPE_mixed_layer_lowest_500m
+    &CRS=CRS:84
+    &BBOX=-180,-90,180,90
+    &WIDTH=1200
+    &HEIGHT=800
+    &FORMAT=image/png
+    &TRANSPARENT=TRUE
+x-api-key: 1234
+
+###
+
+    // UKV Capabilities
+
+GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/long?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
+x-api-key: 1234
+
+###
+
+    // UKV WMS Request
+
+GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short
+    ?SERVICE=WMS
+    &VERSION=1.3.0
+    &REQUEST=GetMap
+    &STYLES=brb_wh_pk_rd_0_64_kt
+    &LAYERS=wind_speed_and_direction_on_height_levels
+    &ELEVATION=10
+    &CRS=CRS:84
+    &BBOX=-25,44,16,64
+    &WIDTH=2400
+    &HEIGHT=1600
+    &FORMAT=image/png
+    &TRANSPARENT=TRUE
+x-api-key: 1234
+

@@ -1,0 +1,91 @@
+
+// MDDA Maps API
+
+// Docs: https://metoffice.sharepoint.com/sites/technologyservicehubservice/SitePages/Map%20Layers%20Template.aspx
+
+// UKV Short/Medium/Long Capabilities
+
+###
+
+GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
+x-api-key: 1234
+
+
+// UKV Short/Medium/Long Wind Gust - 7 possible styles
+
+###
+
+GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+    &LAYERS=wind_gust_10m
+    &STYLES=iso_fill_bk_pk_0_80_kt
+    &CRS=CRS:84
+    &BBOX=-25,44,16,64
+    &WIDTH=1800
+    &HEIGHT=1200
+x-api-key: 1234
+
+###
+
+GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+    &LAYERS=wind_gust_10m
+    &STYLES=iso_fill_og_36_kt_or_greater
+    &CRS=CRS:84
+    &BBOX=-25,44,16,64
+    &WIDTH=1800
+    &HEIGHT=1200
+x-api-key: 1234
+
+###
+
+GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+    &LAYERS=wind_gust_10m
+    &STYLES=iso_fill_wh_bu_0_120_mph
+    &CRS=CRS:84
+    &BBOX=-25,44,16,64
+    &WIDTH=1800
+    &HEIGHT=1200
+x-api-key: 1234
+
+###
+
+GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+    &LAYERS=wind_gust_10m
+    &STYLES=iso_fill_yl_gn_og_0_80_kt
+    &CRS=CRS:84
+    &BBOX=-25,44,16,64
+    &WIDTH=1800
+    &HEIGHT=1200
+x-api-key: 1234
+
+###
+
+GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+    &LAYERS=wind_gust_10m
+    &STYLES=iso_fill_rd_41_kt_or_greater
+    &CRS=CRS:84
+    &BBOX=-25,44,16,64
+    &WIDTH=1800
+    &HEIGHT=1200
+x-api-key: 1234
+
+###
+
+GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+    &LAYERS=wind_gust_10m
+    &STYLES=iso_fill_bk_cross_hatched_41_kt_or_greater
+    &CRS=CRS:84
+    &BBOX=-25,44,16,64
+    &WIDTH=1800
+    &HEIGHT=1200
+x-api-key: 1234
+
+###
+
+GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+    &LAYERS=wind_gust_10m
+    &STYLES=iso_fill_gn_og_pk_0_50_kt
+    &CRS=CRS:84
+    &BBOX=-25,44,16,64
+    &WIDTH=1800
+    &HEIGHT=1200
+x-api-key: 1234
