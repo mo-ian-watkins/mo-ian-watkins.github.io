@@ -3,19 +3,19 @@
 
 // Docs: https://metoffice.sharepoint.com/sites/technologyservicehubservice/SitePages/Map%20Layers%20Template.aspx
 
-// UKV Short/Medium/Long Capabilities
+// GLOBAL Long Capabilities
 
 ###
 
-GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
+GET https://dev.mdda.hub.metoffice.cloud/wms/glm/long?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
 x-api-key: 1234
 
 
-// UKV Short/Medium/Long Wind Speed and Direction (Surface adjusted) - 6 possible styles
+// GLOBAL Long Wind Speed and Direction (Surface adjusted) - 6 possible styles
 
 ###
 
-GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+GET https://dev.mdda.hub.metoffice.cloud/wms/glm/long?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
     &LAYERS=wind_speed_and_direction_from_which_blowing_surface_adjusted
     &STYLES=brb_wh_gn_rd_0_58_kt
     &CRS=CRS:84
@@ -26,7 +26,7 @@ x-api-key: 1234
 
 ###
 
-GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+GET https://dev.mdda.hub.metoffice.cloud/wms/glm/long?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
     &LAYERS=wind_speed_and_direction_from_which_blowing_surface_adjusted
     &STYLES=str_wh_gn_rd_0_58_kt
     &CRS=CRS:84
@@ -37,7 +37,7 @@ x-api-key: 1234
 
 ###
 
-GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+GET https://dev.mdda.hub.metoffice.cloud/wms/glm/long?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
     &LAYERS=wind_speed_and_direction_from_which_blowing_surface_adjusted
     &STYLES=arr_wh_gn_rd_0_58_kt
     &CRS=CRS:84
@@ -48,7 +48,7 @@ x-api-key: 1234
 
 ###
 
-GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+GET https://dev.mdda.hub.metoffice.cloud/wms/glm/long?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
     &LAYERS=wind_speed_and_direction_from_which_blowing_surface_adjusted
     &STYLES=iso_fill_wh_gn_rd_0_58_kt
     &CRS=CRS:84
@@ -59,7 +59,7 @@ x-api-key: 1234
 
 ###
 
-GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+GET https://dev.mdda.hub.metoffice.cloud/wms/glm/long?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
     &LAYERS=wind_speed_and_direction_from_which_blowing_surface_adjusted
     &STYLES=brb_bk_kt
     &CRS=CRS:84
@@ -70,7 +70,7 @@ x-api-key: 1234
 
 ###
 
-GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+GET https://dev.mdda.hub.metoffice.cloud/wms/glm/long?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
     &LAYERS=wind_speed_and_direction_from_which_blowing_surface_adjusted
     &STYLES=str_bk_kt
     &CRS=CRS:84
