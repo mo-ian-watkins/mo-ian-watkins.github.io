@@ -194,3 +194,16 @@ x-api-key: 1234
 
 GET https://dev.mdda.hub.metoffice.cloud/wms/radar?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
 x-api-key: 1234
+
+
+###
+
+    // NSWWS API
+
+GET https://ian.dev.nswws.api.metoffice.gov.uk/v1.0/objects/feed
+x-api-key: ly7xLREkc12jiDxbMYhh28NQQof09Cyp8Cx9J8HX
+
+###
+
+GET https://ian.dev.nswws.api.metoffice.gov.uk/v1.0/objects/updated/7281c527-63df-48b2-ba36-bca76c74e6c0/
+x-api-key: ly7xLREkc12jiDxbMYhh28NQQof09Cyp8Cx9J8HX
