@@ -3,66 +3,66 @@
 
 // Docs: https://metoffice.sharepoint.com/sites/technologyservicehubservice/SitePages/Map%20Layers%20Template.aspx
 
-// UKV Short/Medium/Long Capabilities
+// UKV Short/Medium Capabilities
 
 ###
 
-GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
-x-api-key: 1234
+GET https://mdda.hub.metoffice.cloud/wms/ukv?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
+x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
 
 
-// UKV Short/Medium/Long Mean Sea Level Pressure - 5 possible styles
+// UKV Short/Medium Mean Sea Level Pressure - 5 possible styles
 
 ###
 
-GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+GET https://mdda.hub.metoffice.cloud/wms/ukv?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
     &LAYERS=mean_sea_level_pressure
     &STYLES=iso_bk_2_hpa
     &CRS=CRS:84
     &BBOX=-25,44,16,64
     &WIDTH=1800
     &HEIGHT=1200
-x-api-key: 1234
+x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
 
 ###
 
-GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+GET https://mdda.hub.metoffice.cloud/wms/ukv?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
     &LAYERS=mean_sea_level_pressure
     &STYLES=iso_bk_large_label_2_hpa
     &CRS=CRS:84
     &BBOX=-25,44,16,64
     &WIDTH=1800
     &HEIGHT=1200
-x-api-key: 1234
+x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
 
 ###
 
-GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+GET https://mdda.hub.metoffice.cloud/wms/ukv?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
     &LAYERS=mean_sea_level_pressure
     &STYLES=iso_bk_4_hpa
     &CRS=CRS:84
     &BBOX=-25,44,16,64
     &WIDTH=1800
     &HEIGHT=1200
-x-api-key: 1234
+x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
 
 ###
 
-GET https://dev.mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+GET https://mdda.hub.metoffice.cloud/wms/ukv?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
     &LAYERS=mean_sea_level_pressure
     &STYLES=iso_bk_large_label_4_hpa
     &CRS=CRS:84
     &BBOX=-25,44,16,64
     &WIDTH=1800
     &HEIGHT=1200
-x-api-key: 1234
+x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
 
 
 
 
 ### // Pressure out to 7 days
 
-GET https://mdda.hub.metoffice.cloud/wms/ukv/short?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
+GET https://mdda.hub.metoffice.cloud/wms/ukv?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
 x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
 
 ###
@@ -72,12 +72,12 @@ x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
 
 ###
 
-GET https://mdda.hub.metoffice.cloud/wms/ukv/long?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
+GET https://mdda.hub.metoffice.cloud/wms/ukv?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
 x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
 
 ###
 
-GET https://mdda.hub.metoffice.cloud/wms/glm/long?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
+GET https://mdda.hub.metoffice.cloud/wms/glm?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
 x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
 
 ###
@@ -93,3 +93,15 @@ x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
 
 GET https://mdda.hub.metoffice.cloud/wms/glm?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
 x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
+
+###
+
+
+
+// UPDATESEQUENCE
+
+
+GET https://mdda.hub.metoffice.cloud/wms/ukv?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities&UPDATESEQUENCE=1697623549714
+x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
+
+###
