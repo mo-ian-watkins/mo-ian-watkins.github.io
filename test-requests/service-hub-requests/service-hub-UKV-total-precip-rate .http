@@ -78,3 +78,27 @@ GET https://mdda.hub.metoffice.cloud/wms/ukv?SERVICE=WMS&VERSION=1.3.0&REQUEST=G
     &WIDTH=1800
     &HEIGHT=1200
 x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
+
+###
+
+// TEST TEST COMBO OBSERVATIONS/PRECIP RATE
+
+GET https://mdda.hub.metoffice.cloud/wms/radar?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+    &LAYERS=radar_uk_and_ireland_500_m_rain_rate_composite
+    &STYLES=bmp_fill_bu_yl_wh_001_32_mmh1_no_mask
+    &CRS=CRS:84
+    &BBOX=-14,48,7,61
+    &WIDTH=955
+    &HEIGHT=1030
+x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
+
+###
+
+GET https://mdda.hub.metoffice.cloud/wms/ukv?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+    &LAYERS=total_precipitation_rate
+    &STYLES=iso_fill_bu_or_wh_001_32_mmh1
+    &CRS=CRS:84
+    &BBOX=-14,48,7,61
+    &WIDTH=955
+    &HEIGHT=1030
+x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
