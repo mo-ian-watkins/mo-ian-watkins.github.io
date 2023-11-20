@@ -95,3 +95,16 @@ GET https://rob-091023.mdda.hub.metoffice.cloud/wms/commercial/ukv?SERVICE=WMS&V
     &WIDTH=1800
     &HEIGHT=1200
 x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
+
+###
+
+GET https://mdda.hub.metoffice.cloud/wms/ukv?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+    &LAYERS=temperature_at_screen_level
+    &CRS=EPSG:3857
+    &BBOX=-1558472.87110583,6106854.834885074,779236.435552915,8625823.200203594
+    &WIDTH=1910
+    &HEIGHT=2060
+    &STYLES=iso_fill_bk_bu_rd_ms30_ps36_c
+    //&REFERENCE_TIME=2023-11-10T14:00:00Z
+    //&TIME=2023-11-12T08:00:00Z
+x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
