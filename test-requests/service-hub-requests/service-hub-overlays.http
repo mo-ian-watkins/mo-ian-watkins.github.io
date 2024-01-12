@@ -1,0 +1,11 @@
+
+// MDDA Maps API
+
+// Docs: https://metoffice.sharepoint.com/sites/technologyservicehubservice/SitePages/Map%20Layers%20Template.aspx
+
+// UKV Short/Medium Capabilities
+
+###
+
+GET https://mdda.hub.metoffice.cloud/wms/overlays??SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
+x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
