@@ -12,15 +12,34 @@ x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
 
 ###
 
-// PROD 
+// PROD Procssed
 GET https://mdda.hub.metoffice.cloud/wms/ukv/processed?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
 x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
 
+###
 
+// PROD Commercial
+GET https://mdda.hub.metoffice.cloud/wms/custom/ukv?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
+x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
 
 // UKV Short/Medium Temperature Screen Level - 5 possible styles
 
 ###
+
+GET https://mdda.hub.metoffice.cloud/wms/custom/ukv?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
+    &LAYERS=temperature_at_screen_level
+    &STYLES=iso_fill_bk_bu_rd_ms20_ps36_c_2_c
+    &CRS=CRS:84
+    &BBOX=-25,44,16,64
+    &WIDTH=1800
+    &HEIGHT=1200
+x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
+
+###
+
+
+
+
 
 GET https://mdda.hub.metoffice.cloud/wms/ukv?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=FALSE
     &LAYERS=temperature_at_screen_level

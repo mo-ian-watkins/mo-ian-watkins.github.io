@@ -1,0 +1,33 @@
+name: Merge to DEVELOP branch
+
+###############################################################################
+#
+# 
+
+on:
+    push:
+        branches:
+            - 'develop'
+
+    workflow_dispatch:
+
+permissions:
+    id-token: write
+    contents: read
+
+jobs:
+    TEST:
+        name: Deploy to TEST
+        runs-on: ubuntu-latest
+        timeout-minutes: 20
+        environment: Test
+        env:
+            STACK_NAME: "${{vars.STACK_NAME}}"
+        steps:
+
+            ### TODO - Remove this step once previous steps are uncommented
+            - name: Message
+              run: echo "${{env.STACK_NAME}}"
+
+            - name: Message
+              run: echo "${{vars.STACK_NAME}}"

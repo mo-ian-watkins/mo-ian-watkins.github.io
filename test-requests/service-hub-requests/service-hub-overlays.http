@@ -7,5 +7,10 @@
 
 ###
 
-GET https://mdda.hub.metoffice.cloud/wms/overlays??SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
+GET https://mdda.hub.metoffice.cloud/wms/overlays?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
+x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
+
+###
+
+https://mdda.hub.metoffice.cloud/wms/overlays?SERVICE=WMS&REQUEST=GetMap&LAYERS=coastlines_black&STYLES=coastlines_black&FORMAT=image%2Fpng&TRANSPARENT=TRUE&VERSION=1.3.0&WIDTH=256&HEIGHT=256&CRS=EPSG%3A3857&BBOX=-313086.06785608194,6887893.492833805,0,7200979.560689886
 x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
