@@ -22,7 +22,7 @@ jobs:
         timeout-minutes: 20
         environment: Test
         env:
-            STACK_NAME: "${{vars.STACK_NAME}}"
+            STACK_NAME: ${{vars.STACK_NAME}}
         steps:
 
             ### TODO - Remove this step once previous steps are uncommented
