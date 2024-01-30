@@ -24,10 +24,6 @@ jobs:
         env:
             STACK_NAME: ${{vars.STACK_NAME}}
         steps:
-
-            ### TODO - Remove this step once previous steps are uncommented
             - name: Message
-              run: echo "${{env.STACK_NAME}}"
+              run: echo "Deploying to ${{env.STACK_NAME}}"
 
-            - name: Message
-              run: echo "${{vars.STACK_NAME}}"
