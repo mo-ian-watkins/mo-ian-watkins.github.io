@@ -7,7 +7,7 @@ name: Merge to DEVELOP branch
 on:
     push:
         branches:
-            - 'master'
+            - '**'
 
     workflow_dispatch:
 
