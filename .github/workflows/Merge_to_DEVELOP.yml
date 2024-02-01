@@ -27,3 +27,8 @@ jobs:
             - name: Message
               run: echo "Deploying to ${{env.STACK_NAME}}"
 
+            - name: Test
+              run: echo ${{env.STACK_NAME}}Warnings-Manager-Stack
+
+            - name: Another
+              run: echo "${{env.STACK_NAME}}Warnings-Manager-Stack"              
