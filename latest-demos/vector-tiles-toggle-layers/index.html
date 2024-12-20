@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display a map legend control to toggle layers visualization</title>
+    <script src="https://cdn.maptiler.com/maptiler-sdk-js/v2.5.1/maptiler-sdk.umd.js"></script>
+    <link href="https://cdn.maptiler.com/maptiler-sdk-js/v2.5.1/maptiler-sdk.css" rel="stylesheet" />
+    <link href='https://www.unpkg.com/@watergis/maplibre-gl-legend@latest/dist/maplibre-gl-legend.css'
+        rel='stylesheet' />
+    <script src="https://www.unpkg.com/@watergis/maplibre-gl-legend@latest/dist/maplibre-gl-legend.umd.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <script>
+        maptilersdk.config.apiKey = 'F65ZCbIb7laWEQAxKmVZ';
+        const map = new maptilersdk.Map({
+            container: 'map',
+            style: "d8d32d93-c1c9-4929-b307-8cc23d17a0d4",
+            center: [-3, 55],
+            zoom: 5,
+        });
+        map.on('load', () => {
+            const targets = {
+                "contour": "Contour Lines",
+                "hillshade": "Hill Shade",
+                "road_motorway": "Motorway",
+                "place_town": "Town",
+                "place_city": "City",
+                "place_city_capital": "City Capital",
+                "place_region": "Region",
+                "place_state": "State",
+                "country_other": "Country (Other)",
+                "country_3": "Country (3)",
+                "country_2": "Country (2)",
+                "country_1": "Country (1)",
+            };
+            const options = {
+                showDefault: true,
+                showCheckbox: true,
+                onlyRendered: false,
+                reverseOrder: false
+            };
+            map.addControl(new MaplibreLegendControl.MaplibreLegendControl(targets, options), "top-left");
+        });
+
+    </script>
+</body>
+
+</html>
