@@ -70,7 +70,11 @@
 
                 height = (pixel.r * 256 + pixel.g + pixel.b / 256) - 32768;
 
-                value = bisectRight(lookupTable, height);
+                if (height < 200) {
+                    value = bisectRight(lookupTable, height);
+                } else {
+                    value = 0;
+                }
 
                 return {r: colorTable[value][0], g: colorTable[value][1], b: colorTable[value][2], a: 255};
 
