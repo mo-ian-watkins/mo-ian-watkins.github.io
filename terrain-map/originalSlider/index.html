@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Leaflet</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <!-- Leaflet -->
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.4.0/leaflet.css" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.4.0/leaflet.js"></script>
+    <!-- https://github.com/hnrchrdl/leaflet-tilelayer-colorizr -->
+    <script src="leaflet-tilelayer-colorizer.js"></script>
+
+    <style>
+        html,
+        body,
+        #map {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+        }
+
+        #floating-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            background-color: #ddd;
+            padding: 10px;
+            opacity: 0.85;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <div id="floating-panel">
+        <input type="range" min="0" max="1400" value="200" step="50" class="slider" id="slider">
+        <p>Elevation: <output id="value"></output>m</p>
+    </div>
+
+    <script type="text/javascript">
+
+        var baseLayer = new L.tileLayer('https://api.mapbox.com/styles/v1/metoffice/ckawmymow0my71ipne2g3k0xt/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWV0b2ZmaWNlIiwiYSI6ImNqZXk1dWZqcDBicWUzM2xudzNscnJ0eGIifQ.KLd57F34srWHY9wv-pXkQA', {
+            maxZoom: 15
+        });
+
+        const value = document.querySelector("#value");
+        const input = document.querySelector("#slider");
+        value.textContent = input.value;
+        input.addEventListener("input", (event) => {
+            value.textContent = event.target.value;
+            updateMap(value.textContent);
+        });
+
+        // https://github.com/tilezen/joerd/blob/master/docs/use-service.md
+        var terrainLayer = new L.tileLayer.colorizr('https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png', {
+            //var baseLayer = new L.tileLayer.colorizr('https://s3.amazonaws.com/elevation-tiles-prod/normal/{z}/{x}/{y}.png', {
+            colorize: function (pixel) {
+                // pixel is an object with red, green, blue and alpha channel like this {r, g, b, a}.
+                var height;
+
+                height = (pixel.r * 256 + pixel.g + pixel.b / 256) - 32768;
+
+                if (height < value.textContent) {
+                    return { r: 255, g: 255, b: 255, a: 0 };
+                } else {
+                    return { r: 0, g: 0, b: 0, a: 128 };
+                }
+
+            },
+            maxZoom: 15
+        });
+
+        var mapCenter = new L.LatLng(55, -3);
+
+        var map = new L.Map("map", {
+            center: mapCenter,
+            zoom: 6,
+            layers: [baseLayer, terrainLayer]
+        });
+
+        function updateMap(altitude) {
+            map.removeLayer(this.terrainLayer);
+
+            var terrainLayer = new L.tileLayer.colorizr('https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png', {
+                colorize: function (pixel) {
+                    var height;
+
+                    height = (pixel.r * 256 + pixel.g + pixel.b / 256) - 32768;
+
+                    if (height < altitude) {
+                        return { r: 255, g: 255, b: 255, a: 0 };
+                    } else {
+                        return { r: 0, g: 0, b: 0, a: 32 };
+                    }
+
+                },
+                maxZoom: 15
+            });
+
+            map.addLayer(this.terrainLayer);
+        }
+
+    </script>
+</body>
+
+</html>

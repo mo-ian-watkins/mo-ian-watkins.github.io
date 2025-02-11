@@ -27,6 +27,7 @@
 
 <body>
     <div id="map"></div>
+
     <script type="text/javascript">
 
         var mapCenter = new L.LatLng(0, 0);
@@ -70,11 +71,7 @@
 
                 height = (pixel.r * 256 + pixel.g + pixel.b / 256) - 32768;
 
-                if (height < 200) {
-                    value = bisectRight(lookupTable, height);
-                } else {
-                    value = 0;
-                }
+                value = bisectRight(lookupTable, height);
 
                 return {r: colorTable[value][0], g: colorTable[value][1], b: colorTable[value][2], a: 255};
 
