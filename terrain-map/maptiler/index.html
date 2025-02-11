@@ -31,19 +31,20 @@
 
         const map = new maptilersdk.Map({
             container: 'map',
-            style: 'Terrain RGB',
+            style: 'ocean',
             center: [0, 0],
             zoom: 2,
             terrain: false,
             terrainControl: true,
             projectionControl: true
         });
+
         map.on('load', function () {
-            map.addSource("Terrain RGB", {
+            map.addSource("terrain", {
                 type: 'raster-dem',
-                url: 'https://api.maptiler.com/tiles/terrain-rgb-v2/tiles.json',
+                url: 'https://api.maptiler.com/tiles/terrain-rgb-v2/tiles.json?key=F65ZCbIb7laWEQAxKmVZ',
             });
-            map.setTerrain({ source: 'Terrain RGB', exaggeration: 1.5 });
+            map.setTerrain({ source: 'terrain' });
         });
 
     </script>
