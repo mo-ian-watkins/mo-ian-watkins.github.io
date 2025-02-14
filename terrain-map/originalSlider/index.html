@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Leaflet</title>
+    <title>Elevation Demo</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <!-- Leaflet -->
@@ -39,8 +39,10 @@
     <div id="map"></div>
 
     <div id="floating-panel">
-        <input type="range" min="0" max="1400" value="200" step="50" class="slider" id="slider">
+        <input type="range" min="0" max="1400" value="200" step="10" class="slider" id="slider">
         <p>Elevation: <output id="value"></output>m</p>
+        <input type="checkbox" name="inverted" id="inverted">
+        <label for="inverted">Invert</label>
     </div>
 
     <script type="text/javascript">
@@ -49,31 +51,29 @@
             maxZoom: 15
         });
 
-        const value = document.querySelector("#value");
-        const input = document.querySelector("#slider");
-        value.textContent = input.value;
-        input.addEventListener("input", (event) => {
-            value.textContent = event.target.value;
-            updateMap(value.textContent);
-        });
-
         // https://github.com/tilezen/joerd/blob/master/docs/use-service.md
         var terrainLayer = new L.tileLayer.colorizr('https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png', {
-            //var baseLayer = new L.tileLayer.colorizr('https://s3.amazonaws.com/elevation-tiles-prod/normal/{z}/{x}/{y}.png', {
-            colorize: function (pixel) {
-                // pixel is an object with red, green, blue and alpha channel like this {r, g, b, a}.
-                var height;
-
-                height = (pixel.r * 256 + pixel.g + pixel.b / 256) - 32768;
-
-                if (height < value.textContent) {
-                    return { r: 255, g: 255, b: 255, a: 0 };
-                } else {
-                    return { r: 0, g: 0, b: 0, a: 128 };
-                }
-
-            },
             maxZoom: 15
+        });
+
+        const value = document.querySelector("#value");
+        const input = document.querySelector("#slider");
+        const checkbox = document.querySelector("#inverted");
+
+        console.log(checkbox.checked);
+
+        value.textContent = input.value;
+        updateMap(terrainLayer, value.textContent, inverted.checked);
+
+        // On slider change
+        input.addEventListener("input", (event) => {
+            value.textContent = event.target.value;
+            updateMap(terrainLayer, value.textContent, inverted.checked);
+        });
+
+        // On checkbox change
+        checkbox.addEventListener("change", (event) => {
+            updateMap(terrainLayer, value.textContent, event.target.checked);
         });
 
         var mapCenter = new L.LatLng(55, -3);
@@ -84,26 +84,24 @@
             layers: [baseLayer, terrainLayer]
         });
 
-        function updateMap(altitude) {
-            map.removeLayer(this.terrainLayer);
+        function updateMap(layer, altitude, inverted) {
+            layer.setColorizr(function (pixel) {
+                var height = (pixel.r * 256 + pixel.g + pixel.b / 256) - 32768;
 
-            var terrainLayer = new L.tileLayer.colorizr('https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png', {
-                colorize: function (pixel) {
-                    var height;
-
-                    height = (pixel.r * 256 + pixel.g + pixel.b / 256) - 32768;
-
+                if (inverted) {
                     if (height < altitude) {
                         return { r: 255, g: 255, b: 255, a: 0 };
                     } else {
-                        return { r: 0, g: 0, b: 0, a: 32 };
+                        return { r: 0, g: 0, b: 0, a: 96 };
                     }
-
-                },
-                maxZoom: 15
+                } else {
+                    if (height > altitude) {
+                        return { r: 255, g: 255, b: 255, a: 0 };
+                    } else {
+                        return { r: 0, g: 0, b: 0, a: 96 };
+                    }
+                }
             });
-
-            map.addLayer(this.terrainLayer);
         }
 
     </script>
