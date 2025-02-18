@@ -31,6 +31,10 @@
             padding: 10px;
             opacity: 0.85;
         }
+
+        #slider {
+            width: 300px;
+        }
     </style>
 
 </head>
@@ -41,8 +45,8 @@
     <div id="floating-panel">
         <input type="range" min="0" max="1400" value="200" step="10" class="slider" id="slider">
         <p>Elevation: <output id="value"></output>m</p>
-        <input type="checkbox" name="inverted" id="inverted">
-        <label for="inverted">Invert</label>
+        <input type="checkbox" name="inverted" id="mask">
+        <label for="inverted">Mask?</label>
     </div>
 
     <script type="text/javascript">
@@ -58,17 +62,15 @@
 
         const value = document.querySelector("#value");
         const input = document.querySelector("#slider");
-        const checkbox = document.querySelector("#inverted");
-
-        console.log(checkbox.checked);
+        const checkbox = document.querySelector("#mask");
 
         value.textContent = input.value;
-        updateMap(terrainLayer, value.textContent, inverted.checked);
+        updateMap(terrainLayer, value.textContent, mask.checked);
 
         // On slider change
         input.addEventListener("input", (event) => {
             value.textContent = event.target.value;
-            updateMap(terrainLayer, value.textContent, inverted.checked);
+            updateMap(terrainLayer, value.textContent, mask.checked);
         });
 
         // On checkbox change
@@ -89,13 +91,13 @@
                 var height = (pixel.r * 256 + pixel.g + pixel.b / 256) - 32768;
 
                 if (inverted) {
-                    if (height < altitude) {
+                    if (height > altitude) {
                         return { r: 255, g: 255, b: 255, a: 0 };
                     } else {
                         return { r: 0, g: 0, b: 0, a: 96 };
                     }
                 } else {
-                    if (height > altitude) {
+                    if (height < altitude) {
                         return { r: 255, g: 255, b: 255, a: 0 };
                     } else {
                         return { r: 0, g: 0, b: 0, a: 96 };
