@@ -2,23 +2,29 @@
 <html>
 
 <head>
-    <title>Elevation Demo</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Sea Level Rise Simulation (All Tiles) – MapTiler Maps & Data</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
     <!-- MapTiler SDK CSS and JS -->
     <link href="https://cdn.maptiler.com/maptiler-sdk-js/v3.0.1/maptiler-sdk.css" rel="stylesheet" />
     <script src="https://cdn.maptiler.com/maptiler-sdk-js/v3.0.1/maptiler-sdk.umd.min.js"></script>
     <style>
-        html,
         body,
-        #map {
+        html {
             margin: 0;
             padding: 0;
-            width: 100%;
             height: 100%;
-            background-color: #fff;
         }
 
+        #map {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        /* Container for overlay tile canvases */
         #tileOverlayContainer {
             position: absolute;
             top: 0;
@@ -26,50 +32,51 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            overflow: hidden;
         }
 
-        #floating-panel {
+        .map-overlay {
+            font: bold 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
             position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 10000;
-            background-color: #ddd;
+            width: 260px;
+            top: 5px;
+            left: 5px;
             padding: 10px;
-            opacity: 0.85;
+            background-color: #fff;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+            z-index: 10;
         }
 
-        #elevation-slider {
-            padding: 10px;
-            width: 200px;
+        .map-overlay label {
+            display: block;
+            margin-bottom: 5px;
         }
     </style>
 </head>
 
 <body>
     <div id="map"></div>
+    <!-- Container for the processed tile canvases overlay -->
     <div id="tileOverlayContainer"></div>
-
-    <div id="floating-panel">
-        <label>Elevation: <span id="elevation-slider-value">200m</span></label><br>
-        <input id="elevation-slider" type="range" min="0" max="1400" step="10" value="200">
-        <!--         <input type="checkbox" name="inverted" id="mask">
-        <label for="inverted">Mask?</label> -->
+    <div class="map-overlay">
+        <h2>Sea Level Rise Simulation</h2>
+        <label>Sea Level: <span id="elevation-slider-value">0m</span></label>
+        <!-- Slider now ranges from 0 to 1000 meters -->
+        <input id="elevation-slider" type="range" min="0" max="1000" step="1" value="0">
+        <input id="disclaimer-button" type="button" value="Disclaimer" onclick="showDisclaimer();">
     </div>
-
     <script>
         // Set your MapTiler API key 
         maptilersdk.config.apiKey = 'F65ZCbIb7laWEQAxKmVZ';
 
-        // Initialize the MapTiler map
+        // Initialize the MapTiler map with 3D terrain enabled 
         const map = new maptilersdk.Map({
             container: 'map',
-            //style: maptilersdk.MapStyle.STREETS,
-            style: `e17909d7-9393-4287-bea0-027985fd4786`,
-            center: [-3, 55], // [lng, lat] 
-            zoom: 6,
-            terrain: false,
-            terrainControl: false
+            style: maptilersdk.MapStyle.STREETS,
+            center: [140.048, 35.828], // [lng, lat] 
+            zoom: 8.26,
+            terrain: true,
+            terrainControl: true,
         });
 
         // Global variables 
@@ -95,8 +102,14 @@
             return (180 / Math.PI) * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)));
         }
 
+        // Show disclaimer alert 
+        function showDisclaimer() {
+            const disclaimerText = "This simulator fills in areas below a certain sea level with blue based on terrain data. It does not account for flood defenses or other factors. Please refer to local hazard maps for real risks.";
+            alert(disclaimerText);
+        }
+
         // Process a tile’s original image data with the given threshold, 
-        // and draw the processed result onto the provided canvas. 
+        // and draw the processed result (blue overlay) onto the provided canvas. 
         function processTileCanvas(canvas, originalImgData, threshold) {
             const ctx = canvas.getContext("2d");
             const processedData = new ImageData(originalImgData.width, originalImgData.height);
@@ -106,12 +119,12 @@
                 const b = originalImgData.data[i + 2];
                 // Decode elevation using the provided formula: 
                 const elevation = -10000 + ((r * 256 * 256 + g * 256 + b) * 0.1);
-                if (elevation > threshold) {
+                if (elevation < threshold) {
                     // Color pixel blue (with some transparency) 
                     processedData.data[i] = 0;
                     processedData.data[i + 1] = 0;
-                    processedData.data[i + 2] = 0;
-                    processedData.data[i + 3] = 96;
+                    processedData.data[i + 2] = 255;
+                    processedData.data[i + 3] = 150;
                 } else {
                     // Otherwise, leave it transparent 
                     processedData.data[i] = 0;
