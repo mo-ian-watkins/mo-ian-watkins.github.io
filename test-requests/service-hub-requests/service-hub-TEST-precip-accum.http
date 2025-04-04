@@ -1,0 +1,39 @@
+
+// MDDA Maps API
+
+// Docs: https://metoffice.sharepoint.com/sites/technologyservicehubservice/SitePages/Map%20Layers%20Template.aspx
+
+###
+
+GET https://rob260723.mdda.hub.metoffice.cloud/wms/commercial/ukv/processed?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
+x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
+
+###
+
+GET https://rob260723.mdda.hub.metoffice.cloud/wms/commercial/ukv/processed?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMapService&FORMAT=image/png&TRANSPARENT=FALSE
+    &LAYERS=total_precipitation_rate_acc_36h
+    &STYLES=iso_fill_bu_yl_pk_01_300_mm
+    &CRS=CRS:84
+    &BBOX=-25,44,16,64
+    &WIDTH=1800
+    &HEIGHT=1200
+x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311
+
+###
+
+GET https://rob260723.mdda.hub.metoffice.cloud/wms/commercial/ukv/processed?
+    &VERSION=1.3.0
+    &REQUEST=GetMap
+    &SERVICE=WMS
+    &EXCEPTIONS=XML
+    &FORMAT=image/png
+    &LAYERS=total_precipitation_rate_acc_36h
+    &STYLES=iso_fill_bu_yl_pk_01_300_mm
+    &TRANSPARENT=FALSE
+    &DIM_REFERENCE_TIME=2023-07-26T00:00:00Z
+    &DIM_TIME=2023-07-26T00:00:00Z
+    &CRS=CRS:84
+    &BBOX=-25,44,16,64
+    &WIDTH=1800
+    &HEIGHT=1200
+x-api-key: 88647c448e04edb1ff218b72ebe4ec24c8ef0e7e389b33398b57ef3250732311

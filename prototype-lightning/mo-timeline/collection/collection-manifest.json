@@ -1,0 +1,19 @@
+{
+  "entries": [
+    "./components/base-timeline.js",
+    "./components/timeline/time-step/time-step.js",
+    "./components/mobile-timeline/mobile-timeline.js",
+    "./components/play-buttons/play-buttons.js",
+    "./components/timeline/time-line.js",
+    "./components/timeline/time-slider/time-slider.js",
+    "./components/timeline/timeline-warnings/timeline-warnings.js"
+  ],
+  "compiler": {
+    "name": "@stencil/core",
+    "version": "1.17.3",
+    "typescriptVersion": "3.9.7"
+  },
+  "collections": [],
+  "bundles": [],
+  "global": "./global/app.js"
+}

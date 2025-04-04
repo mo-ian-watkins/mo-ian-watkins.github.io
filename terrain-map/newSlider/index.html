@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Elevation Demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <!-- MapTiler SDK CSS and JS -->
+    <link href="https://cdn.maptiler.com/maptiler-sdk-js/v3.0.1/maptiler-sdk.css" rel="stylesheet" />
+    <script src="https://cdn.maptiler.com/maptiler-sdk-js/v3.0.1/maptiler-sdk.umd.min.js"></script>
+    <style>
+        html,
+        body,
+        #map {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+        }
+
+        #tileOverlayContainer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        #floating-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10000;
+            background-color: #ddd;
+            padding: 10px;
+            opacity: 0.85;
+        }
+
+        #elevation-slider {
+            padding: 10px;
+            width: 200px;
+        }
+    </style>
+    <!-- Favicon ––––––––––––––––––––––––––––––––––––––––––– -->
+    <link rel="icon" type="image/png" href="/resources/images/favicon.png">
+</head>
+
+<body>
+    <div id="map"></div>
+    <div id="tileOverlayContainer"></div>
+
+    <div id="floating-panel">
+        <label>Elevation: <span id="elevation-slider-value">200m</span></label><br>
+        <input id="elevation-slider" type="range" min="0" max="1400" step="10" value="200">
+        <!--         <input type="checkbox" name="inverted" id="mask">
+        <label for="inverted">Mask?</label> -->
+    </div>
+
+    <script>
+        // Set your MapTiler API key 
+        maptilersdk.config.apiKey = 'F65ZCbIb7laWEQAxKmVZ';
+
+        // Initialize the MapTiler map
+        const map = new maptilersdk.Map({
+            container: 'map',
+            style: `e17909d7-9393-4287-bea0-027985fd4786`,
+            center: [-3, 55], // [lng, lat] 
+            zoom: 6,
+            terrain: false,
+            terrainControl: false
+        });
+
+        // Global variables 
+        let currentThreshold = parseFloat(document.getElementById('elevation-slider').value);
+        // tileCache stores data for each tile keyed by "z/x/y" 
+        let tileCache = {};
+        const tileSize = 512;
+        const tileOverlayContainer = document.getElementById('tileOverlayContainer');
+
+        // Utility functions to convert between geographic coordinates and tile numbers 
+        function lon2tileX(lon, zoom) {
+            return Math.floor((lon + 180) / 360 * Math.pow(2, zoom));
+        }
+        function lat2tileY(lat, zoom) {
+            const rad = lat * Math.PI / 180;
+            return Math.floor((1 - Math.log(Math.tan(rad) + 1 / Math.cos(rad)) / Math.PI) / 2 * Math.pow(2, zoom));
+        }
+        function tile2lon(x, zoom) {
+            return x / Math.pow(2, zoom) * 360 - 180;
+        }
+        function tile2lat(y, zoom) {
+            const n = Math.PI - 2 * Math.PI * y / Math.pow(2, zoom);
+            return (180 / Math.PI) * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)));
+        }
+
+        // Process a tile’s original image data with the given threshold, 
+        // and draw the processed result onto the provided canvas. 
+        function processTileCanvas(canvas, originalImgData, threshold) {
+            const ctx = canvas.getContext("2d");
+            const processedData = new ImageData(originalImgData.width, originalImgData.height);
+            for (let i = 0; i < originalImgData.data.length; i += 4) {
+                const r = originalImgData.data[i];
+                const g = originalImgData.data[i + 1];
+                const b = originalImgData.data[i + 2];
+                // Decode elevation using the provided formula: 
+                const elevation = -10000 + ((r * 256 * 256 + g * 256 + b) * 0.1);
+                if (elevation > threshold) {
+                    // Color pixel blue (with some transparency) 
+                    processedData.data[i] = 0;
+                    processedData.data[i + 1] = 0;
+                    processedData.data[i + 2] = 0;
+                    processedData.data[i + 3] = 96;
+                } else {
+                    // Otherwise, leave it transparent 
+                    processedData.data[i] = 0;
+                    processedData.data[i + 1] = 0;
+                    processedData.data[i + 2] = 0;
+                    processedData.data[i + 3] = 0;
+                }
+            }
+            ctx.putImageData(processedData, 0, 0);
+        }
+
+        // Create a canvas for a specific tile and load/process its image. 
+        function createTileCanvas(z, x, y) {
+            const tileKey = `${z}/${x}/${y}`;
+            // Create a canvas element for this tile 
+            const canvas = document.createElement("canvas");
+            canvas.width = tileSize;
+            canvas.height = tileSize;
+            canvas.style.position = "absolute";
+            tileOverlayContainer.appendChild(canvas);
+            // Store the canvas in the cache; the original imageData will be set after loading. 
+            tileCache[tileKey] = { canvas: canvas, original: null };
+            // Build the tile URL using your API key 
+            const tileUrl = `https://api.maptiler.com/tiles/terrain-rgb-v2/${z}/${x}/${y}.webp?key=F65ZCbIb7laWEQAxKmVZ`;
+            const img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.src = tileUrl;
+            img.onload = function () {
+                // Create an offscreen canvas to extract pixel data from the loaded tile image. 
+                const offscreen = document.createElement("canvas");
+                offscreen.width = tileSize;
+                offscreen.height = tileSize;
+                const offCtx = offscreen.getContext("2d");
+                offCtx.drawImage(img, 0, 0);
+                const imgData = offCtx.getImageData(0, 0, tileSize, tileSize);
+                tileCache[tileKey].original = imgData;
+                // Process this tile using the current sea level threshold. 
+                processTileCanvas(canvas, imgData, currentThreshold);
+            };
+            // Set the canvas position on the map. 
+            updateTileCanvasPosition(z, x, y, canvas);
+        }
+
+        // Update the CSS position and size of a tile canvas so it aligns with the map. 
+        function updateTileCanvasPosition(z, x, y, canvas) {
+            const nwLon = tile2lon(x, z);
+            const nwLat = tile2lat(y, z);
+            const seLon = tile2lon(x + 1, z);
+            const seLat = tile2lat(y + 1, z);
+            const nwPoint = map.project([nwLon, nwLat]);
+            const sePoint = map.project([seLon, seLat]);
+            canvas.style.left = nwPoint.x + "px";
+            canvas.style.top = nwPoint.y + "px";
+            canvas.style.width = (sePoint.x - nwPoint.x) + "px";
+            canvas.style.height = (sePoint.y - nwPoint.y) + "px";
+        }
+
+        // Rebuild all visible tile canvases based on the current map bounds and zoom. 
+        function updateTiles() {
+            // Clear previous tiles. 
+            tileOverlayContainer.innerHTML = "";
+            tileCache = {};
+
+            // Use the integer zoom level for tile addressing. 
+            const zoomInt = Math.floor(map.getZoom());
+            const bounds = map.getBounds();
+            const west = bounds.getWest();
+            const east = bounds.getEast();
+            const north = bounds.getNorth();
+            const south = bounds.getSouth();
+            const minX = lon2tileX(west, zoomInt);
+            const maxX = lon2tileX(east, zoomInt);
+            const minY = lat2tileY(north, zoomInt);
+            const maxY = lat2tileY(south, zoomInt);
+
+            // Loop through the visible tile range and create canvases. 
+            for (let x = minX; x <= maxX; x++) {
+                for (let y = minY; y <= maxY; y++) {
+                    createTileCanvas(zoomInt, x, y);
+                }
+            }
+        }
+
+        // Update the overlay (re-process each tile) using the current threshold. 
+        function updateAllTiles() {
+            for (const key in tileCache) {
+                if (tileCache.hasOwnProperty(key)) {
+                    const entry = tileCache[key];
+                    if (entry.original) {
+                        processTileCanvas(entry.canvas, entry.original, currentThreshold);
+                    }
+                }
+            }
+        }
+
+        // Update positions of all tile canvases (e.g., on map move/zoom). 
+        function updateTilePositions() {
+            const zoomInt = Math.floor(map.getZoom());
+            for (const key in tileCache) {
+                if (tileCache.hasOwnProperty(key)) {
+                    const parts = key.split("/");
+                    const z = parseInt(parts[0]);
+                    const x = parseInt(parts[1]);
+                    const y = parseInt(parts[2]);
+                    updateTileCanvasPosition(z, x, y, tileCache[key].canvas);
+                }
+            }
+        }
+
+        // When the map finishes moving or zooming, rebuild the tile overlay. 
+        map.on('moveend', updateTiles);
+        map.on('zoomend', updateTiles);
+
+        // Also update tile positions continuously when the map is moving. 
+        map.on('move', updateTilePositions);
+
+        // Update sea level threshold when the slider value changes. 
+        const slider = document.getElementById('elevation-slider');
+        slider.addEventListener('input', function (e) {
+            currentThreshold = parseFloat(e.target.value);
+            document.getElementById('elevation-slider-value').innerText = currentThreshold + 'm';
+            updateAllTiles();
+        });
+
+        // Initialize the tile overlay once the map loads. 
+        map.on('load', updateTiles); 
+    </script>
+</body>
+
+</html>

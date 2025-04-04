@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Test</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="shortcut icon" type="image/x-icon" href="/resources/images/favicon.png" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
+
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+
+    <style>
+        html,
+        body,
+        #map {
+            background-color: #fff;
+            font-family: Inter, Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div id="map"></div>
+
+    <script>
+
+        var baseLayer,
+            overlayLayer,
+            wmtsLayer,
+            mapCenter,
+            map;
+
+        mapCenter = new L.LatLng(50, 0);
+
+        map = new L.Map("map", {
+            center: mapCenter,
+            zoom: 3,
+            maxZoom: 10,
+            minZoom: 1,
+            crs: L.CRS.EPSG3857,
+            attributionControl: false
+        });
+
+        function getMetrics(thisMap) {
+
+            var metresPerPixel;
+
+            //console.log(thisMap.target);
+
+            metresPerPixel = 156543.03392 * Math.cos(thisMap.target.getCenter().lat * Math.PI / 180) / Math.pow(2, thisMap.target.getZoom());
+            console.log(1 / (10 / (metresPerPixel / 111.111)));
+
+            //console.log(591657550.500000 / Math.pow( 2, thisMap.target.getZoom()-1));
+
+        };
+
+        // Call this once map is ready
+        map.whenReady(getMetrics);
+
+        // Call this if map is moved or resized
+        map.on("moveend resize", function(event) {
+
+            getMetrics(event);
+
+        });
+
+        // Base map layer
+        baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-light-theme-base/{z}/{x}/{y}{r}.png").addTo(map);
+
+        // Overlay layer
+        map.createPane('overlay');
+        map.getPane('overlay').style.zIndex = 650;
+        map.getPane('overlay').style.pointerEvents = 'none';
+
+        overlayLayer = new L.tileLayer('https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-light-theme-overlay/{z}/{x}/{y}{r}.png', {
+            pane: "overlay"
+        }).addTo(map);
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>Sea Level Rise Simulation with Elevation on Click – MapTiler Maps & Data</title>
+	<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+	<!-- MapTiler SDK CSS and JS -->
+	<link href="https://cdn.maptiler.com/maptiler-sdk-js/v3.0.1/maptiler-sdk.css" rel="stylesheet" />
+	<script src="https://cdn.maptiler.com/maptiler-sdk-js/v3.0.1/maptiler-sdk.umd.min.js"></script>
+	<style>
+		body,
+		html {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			overflow: hidden;
+		}
+
+		#map {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			overflow: hidden;
+		}
+
+		#tileOverlayContainer {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			pointer-events: none;
+			overflow: hidden;
+		}
+
+		.map-overlay {
+			font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
+			position: absolute;
+			width: 280px;
+			top: 10px;
+			left: 10px;
+			padding: 15px;
+			background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(240, 245, 255, 0.98));
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+			border-radius: 10px;
+			z-index: 10;
+			border: 1px solid rgba(0, 120, 168, 0.2);
+			transition: transform 0.2s ease;
+		}
+
+		.map-overlay:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+		}
+
+		.map-overlay h2 {
+			margin: 0 0 12px;
+			font-size: 18px;
+			font-weight: 600;
+			color: #1a3c5e;
+			border-bottom: 1px solid rgba(0, 120, 168, 0.1);
+			padding-bottom: 5px;
+		}
+
+		.map-overlay label {
+			display: block;
+			margin-bottom: 10px;
+			font-size: 14px;
+			color: #444;
+			font-weight: 500;
+		}
+
+		.map-overlay input[type="range"] {
+			width: 100%;
+			margin: 5px 0;
+			accent-color: #0078A8;
+		}
+
+		.map-overlay input[type="range"]::-webkit-slider-thumb {
+			box-shadow: 0 0 5px rgba(0, 120, 168, 0.3);
+		}
+
+		.map-overlay input[type="button"] {
+			background: linear-gradient(to bottom, #0078A8, #005d82);
+			color: white;
+			border: none;
+			padding: 8px 14px;
+			border-radius: 5px;
+			cursor: pointer;
+			font-size: 14px;
+			font-weight: 500;
+			transition: background 0.2s ease;
+		}
+
+		.map-overlay input[type="button"]:hover {
+			background: linear-gradient(to bottom, #005d82, #004466);
+		}
+
+		.map-overlay input[type="number"] {
+			width: 100%;
+			padding: 5px;
+			font-size: 14px;
+			border: 1px solid rgba(0, 120, 168, 0.2);
+			border-radius: 4px;
+			box-sizing: border-box;
+			margin-bottom: 10px;
+		}
+
+		.map-overlay #elevation-info {
+			margin-top: 10px;
+			padding-top: 10px;
+			border-top: 1px solid rgba(0, 120, 168, 0.1);
+			font-size: 14px;
+			color: #333;
+			line-height: 1.4;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="map"></div>
+	<div id="tileOverlayContainer"></div>
+	<div class="map-overlay">
+		<h2>Sea Level Rise Simulation</h2>
+		<label>Sea Level: <span id="elevation-slider-value">0m</span></label>
+		<input id="elevation-slider" type="range" min="0" max="5000" step="0.25" value="0">
+		<label>Type Sea Level (m): <input id="elevation-input" type="number" min="0" max="5000" step="0.25"
+				value="0"></label>
+		<input id="disclaimer-button" type="button" value="Disclaimer" onclick="showDisclaimer();">
+		<div id="elevation-info">Click on the map to see elevation</div>
+	</div>
+
+	<script>
+		// Set MapTiler API key 
+		maptilersdk.config.apiKey = 'F65ZCbIb7laWEQAxKmVZ';
+
+		// Initialize the map 
+		const map = new maptilersdk.Map({
+			container: 'map',
+			style: `e17909d7-9393-4287-bea0-027985fd4786`,
+			center: [-3, 55], // [lng, lat] 
+			zoom: 6
+		});
+
+		// Disable map rotation 
+		map.dragRotate.disable();
+		map.touchZoomRotate.disableRotation();
+
+		// Set renderWorldCopies to false (no world copies) 
+		map.setRenderWorldCopies(false);
+
+		// Global variables for sea level simulation 
+		let currentThreshold = parseFloat(document.getElementById('elevation-slider').value);
+		let tileCache = {};
+		const tileSize = 512;
+		const tileOverlayContainer = document.getElementById('tileOverlayContainer');
+
+		// Utility functions for tile coordinate conversion 
+		function lon2tileX(lon, zoom) {
+			return Math.floor((lon + 180) / 360 * Math.pow(2, zoom));
+		}
+		function lat2tileY(lat, zoom) {
+			const rad = lat * Math.PI / 180;
+			return Math.floor((1 - Math.log(Math.tan(rad) + 1 / Math.cos(rad)) / Math.PI) / 2 * Math.pow(2, zoom));
+		}
+		function tile2lon(x, zoom) {
+			return x / Math.pow(2, zoom) * 360 - 180;
+		}
+		function tile2lat(y, zoom) {
+			const n = Math.PI - 2 * Math.PI * y / Math.pow(2, zoom);
+			return (180 / Math.PI) * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)));
+		}
+
+		// Show disclaimer 
+		function showDisclaimer() {
+			const disclaimerText = "This simulator fills in areas below a certain sea level with blue based on terrain data. It does not account for flood defenses or other factors. Please refer to local hazard maps for real risks.";
+			alert(disclaimerText);
+		}
+
+		// Process tile for sea level overlay 
+		function processTileCanvas(canvas, originalImgData, threshold) {
+			const ctx = canvas.getContext("2d");
+			const processedData = new ImageData(originalImgData.width, originalImgData.height);
+			for (let i = 0; i < originalImgData.data.length; i += 4) {
+				const r = originalImgData.data[i];
+				const g = originalImgData.data[i + 1];
+				const b = originalImgData.data[i + 2];
+				const elevation = -10000 + ((r * 256 * 256 + g * 256 + b) * 0.1);
+				if (elevation < threshold) {
+					processedData.data[i] = 0;
+					processedData.data[i + 1] = 0;
+					processedData.data[i + 2] = 255;
+					processedData.data[i + 3] = 150;
+				} else {
+					processedData.data[i] = 0;
+					processedData.data[i + 1] = 0;
+					processedData.data[i + 2] = 0;
+					processedData.data[i + 3] = 0;
+				}
+			}
+			ctx.putImageData(processedData, 0, 0);
+		}
+
+		// Create tile canvas for sea level overlay 
+		function createTileCanvas(z, x, y) {
+			const tileKey = `${z}/${x}/${y}`;
+			const canvas = document.createElement("canvas");
+			canvas.width = tileSize;
+			canvas.height = tileSize;
+			canvas.style.position = "absolute";
+			tileOverlayContainer.appendChild(canvas);
+			tileCache[tileKey] = { canvas: canvas, original: null };
+			const tileUrl = `https://api.maptiler.com/tiles/terrain-rgb-v2/${z}/${x}/${y}.webp?key=F65ZCbIb7laWEQAxKmVZ`;
+			const img = new Image();
+			img.crossOrigin = "Anonymous";
+			img.src = tileUrl;
+			img.onload = function () {
+				const offscreen = document.createElement("canvas");
+				offscreen.width = tileSize;
+				offscreen.height = tileSize;
+				const offCtx = offscreen.getContext("2d");
+				offCtx.drawImage(img, 0, 0);
+				const imgData = offCtx.getImageData(0, 0, tileSize, tileSize);
+				tileCache[tileKey].original = imgData;
+				processTileCanvas(canvas, imgData, currentThreshold);
+			};
+			updateTileCanvasPosition(z, x, y, canvas);
+		}
+
+		// Update tile canvas position 
+		function updateTileCanvasPosition(z, x, y, canvas) {
+			const nwLon = tile2lon(x, z);
+			const nwLat = tile2lat(y, z);
+			const seLon = tile2lon(x + 1, z);
+			const seLat = tile2lat(y + 1, z);
+			const nwPoint = map.project([nwLon, nwLat]);
+			const sePoint = map.project([seLon, seLat]);
+			canvas.style.left = nwPoint.x + "px";
+			canvas.style.top = nwPoint.y + "px";
+			canvas.style.width = (sePoint.x - nwPoint.x) + "px";
+			canvas.style.height = (sePoint.y - nwPoint.y) + "px";
+		}
+
+		// Update visible tiles 
+		function updateTiles() {
+			tileOverlayContainer.innerHTML = "";
+			tileCache = {};
+			const zoomInt = Math.floor(map.getZoom());
+			const bounds = map.getBounds();
+			const west = bounds.getWest();
+			const east = bounds.getEast();
+			const north = bounds.getNorth();
+			const south = bounds.getSouth();
+			const minX = lon2tileX(west, zoomInt);
+			const maxX = lon2tileX(east, zoomInt);
+			const minY = lat2tileY(north, zoomInt);
+			const maxY = lat2tileY(south, zoomInt);
+			for (let x = minX; x <= maxX; x++) {
+				for (let y = minY; y <= maxY; y++) {
+					createTileCanvas(zoomInt, x, y);
+				}
+			}
+		}
+
+		// Update all tiles with new threshold 
+		function updateAllTiles() {
+			for (const key in tileCache) {
+				if (tileCache.hasOwnProperty(key)) {
+					const entry = tileCache[key];
+					if (entry.original) {
+						processTileCanvas(entry.canvas, entry.original, currentThreshold);
+					}
+				}
+			}
+		}
+
+		// Update tile positions on move 
+		function updateTilePositions() {
+			const zoomInt = Math.floor(map.getZoom());
+			for (const key in tileCache) {
+				if (tileCache.hasOwnProperty(key)) {
+					const parts = key.split("/");
+					const z = parseInt(parts[0]);
+					const x = parseInt(parts[1]);
+					const y = parseInt(parts[2]);
+					updateTileCanvasPosition(z, x, y, tileCache[key].canvas);
+				}
+			}
+		}
+
+		// Elevation on click functions 
+		function lngLatToTile(lng, lat, zoom) {
+			const x = Math.floor(((lng + 180) / 360) * Math.pow(2, zoom));
+			const y = Math.floor(((1 - Math.log(Math.tan(lat * Math.PI / 180) + 1 / Math.cos(lat * Math.PI / 180)) / Math.PI) / 2) * Math.pow(2, zoom));
+			return { x, y, z: zoom };
+		}
+
+		function decodeElevation(r, g, b) {
+			return -10000 + ((r * 256 * 256 + g * 256 + b) * 0.1);
+		}
+
+		async function getElevation(lng, lat) {
+			const zoom = 12;
+			const { x, y, z } = lngLatToTile(lng, lat, zoom);
+			const tileUrl = `https://api.maptiler.com/tiles/terrain-rgb-v2/${z}/${x}/${y}.webp?key=F65ZCbIb7laWEQAxKmVZ`;
+			try {
+				const response = await fetch(tileUrl);
+				if (!response.ok) throw new Error(`Tile fetch failed: ${response.status}`);
+				const blob = await response.blob();
+				const img = new Image();
+				img.src = URL.createObjectURL(blob);
+				return new Promise((resolve, reject) => {
+					img.onload = () => {
+						const canvas = document.createElement('canvas');
+						canvas.width = 512;
+						canvas.height = 512;
+						const ctx = canvas.getContext('2d');
+						if (!ctx) throw new Error('Failed to get canvas context');
+						ctx.drawImage(img, 0, 0);
+						const tileX = ((lng + 180) / 360) * Math.pow(2, zoom) - x;
+						const tileY = ((1 - Math.log(Math.tan(lat * Math.PI / 180) + 1 / Math.cos(lat * Math.PI / 180)) / Math.PI) / 2) * Math.pow(2, zoom) - y;
+						const pixelX = Math.floor(tileX * 512);
+						const pixelY = Math.floor(tileY * 512);
+						if (pixelX < 0 || pixelX >= 512 || pixelY < 0 || pixelY >= 512) {
+							throw new Error('Pixel out of tile bounds');
+						}
+						const pixelData = ctx.getImageData(pixelX, pixelY, 1, 1).data;
+						const [r, g, b] = pixelData;
+						const elevation = decodeElevation(r, g, b);
+						resolve(elevation);
+					};
+					img.onerror = () => reject(new Error('Failed to load tile image'));
+				});
+			} catch (error) {
+				console.error('Error fetching elevation:', error.message);
+				return null;
+			}
+		}
+
+		// Map event listeners 
+		map.on('load', () => {
+			map.addSource('terrain', {
+				type: 'raster',
+				tiles: [`https://api.maptiler.com/tiles/terrain-rgb-v2/{z}/{x}/{y}.webp?key=F65ZCbIb7laWEQAxKmVZ`],
+				tileSize: 512,
+				maxzoom: 12
+			});
+			map.addLayer({
+				id: 'terrain-layer',
+				source: 'terrain',
+				type: 'raster',
+				layout: { visibility: 'visible' },
+				paint: { 'raster-opacity': 0.0 }
+			});
+			updateTiles();
+			map.on('click', async (e) => {
+				const { lng, lat } = e.lngLat;
+				document.getElementById('elevation-info').innerText = 'Fetching elevation...';
+				const elevation = await getElevation(lng, lat);
+				document.getElementById('elevation-info').innerText = elevation !== null
+					? `Elevation: ${elevation.toFixed(1)} m\nLat: ${lat.toFixed(4)}, Lng: ${lng.toFixed(4)}`
+					: 'Error fetching elevation data';
+			});
+		});
+
+		map.on('moveend', updateTiles);
+		map.on('zoomend', updateTiles);
+		map.on('move', updateTilePositions);
+
+		// Slider and input event for sea level 
+		const slider = document.getElementById('elevation-slider');
+		const input = document.getElementById('elevation-input');
+
+		// Sync slider and input values 
+		function updateSeaLevel(value) {
+			value = Math.max(0, Math.min(5000, parseFloat(value) || 0)); // Clamp value between 0 and 5000 
+			currentThreshold = value;
+			slider.value = value;
+			input.value = value;
+			document.getElementById('elevation-slider-value').innerText = `${value.toFixed(2)}m`; // Update display with 2 decimal places 
+			updateAllTiles();
+		}
+
+		// Slider event 
+		slider.addEventListener('input', function (e) {
+			updateSeaLevel(e.target.value);
+		});
+
+		// Input event (typing) 
+		input.addEventListener('input', function (e) {
+			updateSeaLevel(e.target.value);
+		});
+
+		// Initial sync 
+		updateSeaLevel(0); 
+	</script>
+</body>
+
+</html>

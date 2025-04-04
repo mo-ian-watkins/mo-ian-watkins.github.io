@@ -1,38 +1,84 @@
-<html>
-<!-- James Barrott | jdbarrott@meto.govt.uk -->
-<!-- Created 06 September 1995           -->
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<title>
-The Met.Office Home Page
-</title>
+
+    <!-- Basic Page Needs –––––––––––––––––––––––––––––––––– -->
+    <meta charset="utf-8">
+    <title>Ian Watkins - Github.io - Stuff</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Mobile Specific Metas –––––––––––––––––––––––––––– -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Twitter Card Metas –––––––––––––––––––––––––––– -->
+    <meta name="theme-color" content="#ffffff">
+    <meta name="twitter:site" content="@donotbeonfire">
+    <meta name="twitter:card" content="summary">
+    <meta property="og:site_name" content="Test">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mo-ian-watkins.github.io/">
+    <meta property="og:image" content="https://mo-ian-watkins.github.io/resources/images/twitter-card.png">
+    <meta property="og:image:width" content="315">
+    <meta property="og:image:height" content="315">
+    <meta property="og:title" content="Test">
+    <meta name="description" content="Here is some test bumpf">
+    <meta property="og:description" content="Here is some test bumpf.">
+
+    <!-- CSS –––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link rel="stylesheet" href="/resources/css/normalize.css">
+    <link rel="stylesheet" href="/resources/css/skeleton.css">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+
+    <!-- Favicon ––––––––––––––––––––––––––––––––––––––––––– -->
+    <link rel="icon" type="image/png" href="/resources/images/favicon.png">
+
 </head>
 
-<body background="pics/tilebgr2.gif"> 
-<img src="pics/cres_80.gif" height=27 width=531 alt="The Met.Office: Global Weather Services from the UK">
-<p>
-<nobr><center>
-<a href="sec1/sec1.html"><img border=0 src="pics/sec1.gif" height=104 width=139 alt=""></a>
-<a href="sec2/sec2.html"><img border=0 src="pics/sec2.gif" height=104 width=139 alt=""></a>
-<a href="sec3/sec3.html"><img border=0 src="pics/sec3.gif" height=104 width=139 alt=""></a>
-<a href="sec4/sec4.html"><img border=0 src="pics/sec4.gif" height=104 width=139 alt=""></a>
-</nobr><p><nobr>
-<a href="sec5/sec5.html"><img border=0 src="pics/sec5.gif" height=104 width=139 alt=""></a>
-<a href="sec6/sec6.html"><img border=0 src="pics/sec6.gif" height=104 width=139 alt=""></a>
-<a href="sec7/sec7.html"><img border=0 src="pics/sec7.gif" height=104 width=139 alt=""></a>
-<a href="sec8/sec8.html"><img border=0 src="pics/sec8.gif" height=104 width=139 alt=""></a>
-</nobr><p>
-<hr><center> <font size=2>
-<nobr><a href="sec1/sec1.html">[About The Met. Office]</a> </nobr>
-<nobr><a href="sec2/sec2.html">[The weather & how we forecast it]</a></nobr>
-<nobr><a href="sec3/sec3.html">[The latest weather]</a></nobr>
-<nobr><a href="sec4/sec4.html">[Weather services to help you...]</a></nobr>
-<nobr><a href="sec5/sec5.html">[Research, development & operations]</a></nobr>
-<nobr><a href="sec6/sec6.html">[Other weather sites]</a></nobr>
-<nobr><a href="sec7/sec7.html">[Enquiries & complaints]</a></nobr>
-<nobr><a href="sec8/sec8.html">[Comments about our site]</a></nobr>
-<br>
-WWW site manager: James Barrott - jdbarrott@meto.govt.uk
-<br>
-<img src="pics/caveat.gif" height=20 width=500 alt="">
+<body>
+
+    <!-- Primary Page Layout –––––––––––––––––––––––––––––– -->
+
+    <div class="container">
+        <div class="row" style="margin-top: 40px; margin-bottom: 10px;">
+            <div class="one-half column" >
+                <img src="/resources/images/noun_1248188_cc.svg">
+            </div>
+            <div class="one-half column">
+                <h1>Prototypes Page</h1>
+                <p>Here is a growing list of experiments, demos, prototypes and mockups. This page is hosted on GitHub Pages.</p>
+            </div>
+        </div>
+        <hr>
+        <div class="row" style="margin-top: 50px;">
+            <ul>
+                <li><a href="pollen-prototype/polygon-fill-only.html">Pollen - Polygon fill only</a></li>
+                <li><a href="terrain-map">Terrain render test</a> (Mapzen Terranium Tiles)</li>
+                <li><a href="map-texture-filled-polygons">Texture filled polygons</a> <a href="map-texture-filled-polygons/index2.html">(alternative)</a></li>
+                <li><a href="scaler-canvas-layer">Vector Animation (U/V Wind)</a> <a href="scaler-canvas-layer/index2.html">(alternative)</a> <a href="scaler-canvas-layer/docs/">(more)</a></li>
+                <li><a href="scratch/issued.md">A test page</a></li>
+            </ul>
+        </div>
+        <hr>
+    </div>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-106984584-2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+        gtag('config', 'UA-106984584-2');
+
+        // Send a test event
+        gtag('event', 'Site Loaded', {'method': 'Direct'});
+
+    </script>
+
+
+    <!-- End Document ––––––––––––––––––––––––––––––––––––– -->
+
 </body>
 </html>

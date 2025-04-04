@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Forecast Pseudo Tephigram for Now</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="shortcut icon" type="image/x-icon" href="/resources/images/favicon.png" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+
+    <style>
+        html,
+        body,
+        #main {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            font-family: Inter, Arial, Helvetica, sans-serif;
+        }
+
+        #map {
+            width: 50%;
+            height: 100%;
+            border: none;
+            margin: none;
+            padding: none;
+            float: left;
+            cursor: crosshair;
+            background-color: #94c1e2;
+        }
+
+        #chart {
+            width: 50%;
+            height: 100%;
+            border: none;
+            margin: none;
+            padding: none;
+            float: left;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div id="main">
+        <div id="map">
+            Hello
+        </div>
+        <div id="chart">
+            There
+        </div>
+    </div>
+
+    <script>
+
+        var baseLayer,
+            overlayLayer,
+            mapCenter,
+            _map,
+            _chart,
+            _chartOptions,
+            bounds,
+            marker,
+            data,
+            layers = [2, 10, 20, 30, 40, 50, 100, 200, 300, 400, 500, 1000, 1500, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000];
+
+        bounds = L.latLngBounds(L.latLng(-83, -180), L.latLng(83, 180));
+
+        // Base map layer
+        baseLayer = new L.tileLayer("https://betatest.metoffice.gov.uk/weather/maps-and-charts/enthusiast/tileserver/styles/dev-atlas-mountain-theme/{z}/{x}/{y}{r}.jpg");
+
+        mapCenter = new L.LatLng(51, -3);
+
+        _map = new L.Map("map", {
+            center: mapCenter,
+            zoom: 4,
+            minZoom: 2,
+            maxZoom: 12,
+            maxBounds: bounds,
+            crs: L.CRS.EPSG3857,
+            layers: [baseLayer],
+            attributionControl: false
+        });
+
+        var _chartOptions = {
+            chart: {
+                renderTo: 'chart',
+                type: 'line',
+                inverted: true,
+                animation: {
+                    duration: 300
+                },
+                zoomType: "xy"
+            },
+            title: {
+                text: "Pseudo Tephi"
+            },
+            xAxis: {
+                reversed: false,
+                title: {
+                    enabled: true,
+                    text: 'Height'
+                },
+                labels: {
+                    format: '{value} m'
+                },
+                maxPadding: 0.05,
+                showLastLabel: true
+            },
+            yAxis: {
+                title: {
+                    text: 'Temperatures'
+                },
+                labels: {
+                    format: '{value}°'
+                },
+                lineWidth: 2
+            },
+            tooltip: {
+                headerFormat: '<b>{series.name}</b><br/>',
+                pointFormat: '{point.x} m: {point.y}°C'
+            },
+            plotOptions: {
+                series: {
+                    marker: {
+                        enabled: true
+                    }
+                }
+            },
+            series: [{
+                name: "Dry Bulb",
+                color: "red"
+            },
+            {
+                name: "Dew Point",
+                color: "green"
+            }]
+        };
+
+        _chart = new Highcharts.Chart(_chartOptions);
+
+        _map.on("click", function(e) {
+
+            if (marker) {
+                marker.remove();
+            }
+            marker = new L.marker(e.latlng).addTo(_map);
+
+            data = getData(e.latlng, layers);
+
+            plotData(data, layers);
+
+        });
+
+        function getData (latLng, layers) {
+
+            // Get Data
+            var xhr = new XMLHttpRequest(),
+                parameters = "",
+                JSONString;
+
+            // Set up query
+            parameters = parameters + "/now/";
+
+            // Add layers
+            layers.forEach(function(element, index, array) {
+
+                parameters = parameters + "t_" + element + "m:C,dew_point_" + element + "m:C";
+
+                if (index < array.length - 1) {
+                    parameters = parameters + ","
+                }
+
+            });
+
+            // Finish
+            parameters = parameters + "/" + latLng.lat + "," + latLng.lng + "/json?model=mix";
+
+            // Get data from API via proxy
+            xhr.open("GET", "https://betatest.metoffice.gov.uk/enthusiast/api/proxy" + parameters, false);
+            xhr.onload = function() {
+                if (xhr.status !== 200) {
+                    alert(xhr.responseText);
+                } else {
+                    JSONString = JSON.parse(xhr.responseText);
+                }
+            };
+            xhr.send("");
+
+            return JSONString;
+
+        }
+        function plotData (data, layers) {
+
+            var temperatures = [],
+                dewPoints = [],
+                tempValue = [];
+
+            // Plot Data
+            data.data.forEach(function(element, index) {
+
+                if (index % 2 === 0) {
+
+                    // Temperatures
+                    temperatures.push([layers[Math.floor(index / 2)], element.coordinates[0].dates[0].value]);
+
+
+                } else {
+
+                    // Dew points
+                    dewPoints.push([layers[Math.floor(index / 2)], element.coordinates[0].dates[0].value]);
+
+                }
+
+            });
+
+            _chart.series[0].setData(temperatures);
+            _chart.series[1].setData(dewPoints);
+
+        }
+
+    </script>
+
+</body>
+
+</html>

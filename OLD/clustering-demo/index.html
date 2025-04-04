@@ -1,0 +1,350 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clustering Demo</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ==" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet-src.js" integrity="sha512-WXoSHqw/t26DszhdMhOXOkI7qCiv5QWXhH9R7CgvgZMHz1ImlkVQ3uNsiQKu5wwbbxtPzFXd1hK4tzno2VqhpA==" crossorigin=""></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="screen.css" />
+
+    <link rel="stylesheet" href="MarkerCluster.css" />
+    <link rel="stylesheet" href="MarkerCluster.Default.css" />
+    <script src="leaflet.markercluster-src.js"></script>
+
+</head>
+<body>
+
+    <div id="map"></div>
+
+    <script type="text/javascript">
+
+        // Proposed new NSWWS colours
+        //var baseTiles = new L.tileLayer("https://api.mapbox.com/styles/v1/iwatkins/cjaifkhph9uc22rnxhnaoa4zi/tiles/256/{z}/{x}/{y}" + "?access_token=" + "pk.eyJ1IjoiaXdhdGtpbnMiLCJhIjoiY2l5enlsM2luMDAwdDMzbHdmdTdwcWgwdCJ9.702dWAqdVD1MoRvd5fFXNg", {maxZoom: 10});
+
+        var baseTiles = new L.tileLayer("https://api.mapbox.com/styles/v1/iwatkins/ciyzz8d2700ap2rljnosn8w7m/tiles/256/{z}/{x}/{y}" + "?access_token=" + "pk.eyJ1IjoiaXdhdGtpbnMiLCJhIjoiY2l5enlsM2luMDAwdDMzbHdmdTdwcWgwdCJ9.702dWAqdVD1MoRvd5fFXNg", {maxZoom: 10});
+
+        //var baseTiles = new L.tileLayer("/public/tiles/world/all/{z}/{x}/{y}.png", {maxZoom: 7});
+
+        //var overlayTiles = new L.tileLayer("/public/tiles/world/countries/{z}/{x}/{y}.png", {maxZoom: 7});
+
+        var map = L.map('map', {center: L.latLng(55, 0), zoom: 6, layers: [baseTiles/*, overlayTiles*/]});
+
+        var markers = L.markerClusterGroup({
+            showCoverageOnHover: false,
+            spiderfyOnMaxZoom: false,
+            maxClusterRadius: 50,
+            disableClusteringAtZoom: 7,
+            zoomToBoundsOnClick: true,
+            chunkedLoading: true,
+            iconCreateFunction: function(cluster) {
+
+                var wxArray = [];
+
+                cluster.getAllChildMarkers().forEach(function (element) {
+                    wxArray.push(element.options.icon.options.wxType);
+                });
+
+                return L.icon({
+                    wxType: wxType,
+                    iconSize: [40, 40],
+                    popupAnchor: [0, -15],
+                    iconUrl: "images/" + String(getClusterSymbol(wxArray)) + ".svg"
+                });
+
+            }
+        });
+
+        for (var i = 0; i < 1000; i++) {
+
+            var wxType = Math.floor(Math.random() * (30 - 0 + 1) + 0);
+            var title = '<a href="">' + "This location has wxType: " + wxType + '</a>';
+
+            var x_min  = 10;
+            var x_max  = -10;
+            var y_min  = 50;
+            var y_max  = 60;
+
+            var lat = y_min + (Math.random() * (y_max - y_min));
+            var lng = x_min + (Math.random() * (x_max - x_min));
+
+            var marker = L.marker(new L.LatLng(lat, lng), {
+                riseOnHover: true,
+                icon: new L.icon({
+                    wxType: wxType,
+                    iconSize: [40, 40],
+                    popupAnchor: [0, -15],
+                    iconUrl: "images/" + String(wxType) + ".svg"
+                })
+            });
+
+            marker.bindPopup(title, {
+                closeButton: false,
+                minWidth: 5
+            });
+
+            markers.addLayer(marker);
+
+        }
+
+        // Zoom map to markers layer bounds
+        map.fitBounds(markers.getBounds(), {
+            padding: [25, 25]
+        });
+
+        markers.addTo(map);
+
+        // *****************************************************************************************
+
+        function getClusterSymbol(arrSymbols) {
+            return this.bestWeatherType(this.averagePoints(arrSymbols));
+        };
+
+        function averagePoints(arrSymbols) {
+
+            var averagePoints = [0, 0, 0, 0, 0, 0, 0, 0],
+                validSymbolCount = 0,
+                i,
+                theme,
+                weatherThemePointsTable = [
+                    //su,  cl,  fg,  rn,  sn,  hl,  th,  da
+                    [100,   0,   0,   0,   0,   0,   0,   0], //  0 clear
+                    [100,   0,   0,   0,   0,   0,   0, 100], //  1 sun
+                    [ 50,  25,   0,   0,   0,   0,   0,   0], //  2 partly clear
+                    [ 50,  25,   0,   0,   0,   0,   0, 100], //  3 partly cloudy
+                    [  0,   0,   0,   0,   0,   0,   0,  50], //  4 dust
+                    [  0, 100,  50,   0,   0,   0,   0,  50], //  5 mist
+                    [  0,  25, 100,   0,   0,   0,   0,  50], //  6 fog
+                    [  0,  50,   0,   0,   0,   0,   0,  50], //  7 cloud
+                    [  0, 100,   0,   0,   0,   0,   0,  50], //  8 overcast
+                    [ 50,  25,   0,  50,   0,   0,   0,   0], //  9 rain shower (night)
+                    [ 50,  25,   0,  50,   0,   0,   0, 100], // 10 rain shower
+                    [  0, 100,  25,  40,   0,   0,   0,  50], // 11 drizzle
+                    [  0,  50,   0,  50,   0,   0,   0,  50], // 12 rain
+                    [ 50,  50,   0, 100,   0,   0,   0,   0], // 13 heavy rain shower (night)
+                    [ 50,  50,   0, 100,   0,   0,   0, 100], // 14 heavy rain shower
+                    [  0, 100,   0, 100,   0,   0,   0,  50], // 15 heavy rain
+                    [ 50,  50,   0,  50,  50,  20,   0,   0], // 16 sleet shower (night)
+                    [ 50,  50,   0,  50,  50,  20,   0, 100], // 17 sleet shower
+                    [  0, 100,   0,  50,  50,  20,   0,  50], // 18 sleet
+                    [ 50,  50,   0,   0,  50, 100,   0,   0], // 19 hail shower (night)
+                    [ 50,  50,   0,   0,  50, 100,   0, 100], // 20 hail shower
+                    [  0, 100,   0,   0,  50, 100,   0,  50], // 21 hail
+                    [ 50,  50,   0,   0,  50,  20,   0,   0], // 22 snow shower (night)
+                    [ 50,  50,   0,   0,  50,  20,   0, 100], // 23 snow shower
+                    [  0, 100,   0,   0,  50,  20,   0,  50], // 24 snow
+                    [ 50,  50,   0,   0, 100,  20,   0,   0], // 25 heavy snow shower (night)
+                    [ 50,  50,   0,   0, 100,  20,   0, 100], // 26 heavy snow shower
+                    [  0, 100,   0,   0, 100,  20,   0,  50], // 27 heavy snow
+                    [ 50,  50,   0, 100,   0,   0, 100,   0], // 28 thunder shower (night)
+                    [ 50,  50,   0, 100,   0,   0, 100, 100], // 29 thunder shower
+                    [  0, 100,   0, 100,   0,   0, 100,  50]  // 30 thunder
+                ];
+
+            // Sum
+            for (i = 0; i < arrSymbols.length; i++) {
+                if (weatherThemePointsTable[arrSymbols[i]]) {
+                    validSymbolCount++;
+                    for (theme = 0; theme < averagePoints.length; theme++) {
+                        averagePoints[theme] += weatherThemePointsTable[arrSymbols[i]][theme];
+                    }
+                }
+            }
+
+            // Average
+            for (theme = 0; theme < averagePoints.length; theme++) {
+                averagePoints[theme] = averagePoints[theme] / validSymbolCount;
+
+            }
+
+            return averagePoints;
+
+        };
+
+        function bestWeatherType(average_points) {
+
+            // This function takes the average points table of weather 'themes' and
+            // uses it to pick one of the weather symbols.
+            // This version is designed to pick a symbol using data from multiple models
+            // Has less sensitivity to sig weather
+
+                // Best weather symbnol
+            var best_wx_type,
+
+                // Estimate if it is day or night by the average input symbols
+                sun_up = (average_points[day] >= 50),
+
+                // Themes
+                sun = 0,
+                cloud = 1,
+                fog = 2,
+                rain = 3,
+                snow = 4,
+                hail = 5,
+                thunder = 6,
+                day = 7,
+
+                // Weather symbols
+                wx_clear = 0,
+                wx_sun = 1,
+                wx_pt_clear = 2,
+                wx_pt_cloud = 3,
+                wx_dust = 4,
+                wx_mist = 5,
+                wx_fog = 6,
+                wx_cloud = 7,
+                wx_ocast = 8,
+                wx_rain_sh_n = 9,
+                wx_rain_sh = 10,
+                wx_drizzle = 11,
+                wx_rain = 12,
+                wx_h_rain_sh_n = 13,
+                wx_h_rain_sh = 14,
+                wx_h_rain = 15,
+                wx_sleet_sh_n = 16,
+                wx_sleet_sh = 17,
+                wx_sleet = 18,
+                wx_hail_sh_n = 19,
+                wx_hail_sh = 20,
+                wx_hail = 21,
+                wx_snow_sh_n = 22,
+                wx_snow_sh = 23,
+                wx_snow = 24,
+                wx_h_snow_sh_n = 25,
+                wx_h_snow_sh = 26,
+                wx_h_snow = 27,
+                wx_thunder_sh_n = 28,
+                wx_thunder_sh = 29,
+                wx_thunder = 30;
+
+            // Logic
+            // SNOW
+            if (average_points[snow] > 60.0) {
+                if (average_points[snow] > average_points[rain] * 2.0) {
+                    // Heavy Snow
+                    if (average_points[sun] > 30.0) {
+                        if (sun_up) {
+                            best_wx_type = wx_h_snow_sh;
+                        } else {
+                            best_wx_type = wx_h_snow_sh_n;
+                        }
+                    } else {
+                        best_wx_type = wx_h_snow;
+                    }
+                } else {
+                    // Sleet
+                    if (average_points[sun] > 30.0) {
+                        if (sun_up) {
+                            best_wx_type = wx_sleet_sh;
+                        } else {
+                            best_wx_type = wx_sleet_sh_n;
+                        }
+                    } else {
+                        best_wx_type = wx_sleet;
+                    }
+                }
+            } else if (average_points[snow] > 20.0 &&
+                (average_points[snow] * 1.5 > average_points[hail])
+            ) {
+                if (average_points[snow] > average_points[rain] * 2.0) {
+                    // Light Snow
+                    if (average_points[sun] > 30.0) {
+                        if (sun_up) {
+                            best_wx_type = wx_snow_sh;
+                        } else {
+                            best_wx_type = wx_snow_sh_n;
+                        }
+                    } else {
+                        best_wx_type = wx_snow;
+                    }
+                } else {
+                    // Sleet
+                    if (average_points[sun] > 30.0) {
+                        if (sun_up) {
+                            best_wx_type = wx_sleet_sh;
+                        } else {
+                            best_wx_type = wx_sleet_sh_n;
+                        }
+                    } else {
+                        best_wx_type = wx_sleet;
+                    }
+                }
+                // THUNDER
+            } else if (average_points[thunder] > 35.0) {
+                if (average_points[sun] > 42.0) {
+                    if (sun_up) {
+                        best_wx_type = wx_thunder_sh;
+                    } else {
+                        best_wx_type = wx_thunder_sh_n;
+                    }
+                } else {
+                    best_wx_type = wx_thunder;
+                }
+                // HAIL
+            } else if (average_points[hail] > 40.0) {
+                if (sun_up) {
+                    best_wx_type = wx_hail_sh;
+                } else {
+                    best_wx_type = wx_hail_sh_n;
+                }
+                // RAIN
+            } else if (average_points[rain] > 60.0) {
+                // Heavy Rain
+                if (average_points[sun] > 20.0) {
+                    if (sun_up) {
+                        best_wx_type = wx_h_rain_sh;
+                    } else {
+                        best_wx_type = wx_h_rain_sh_n;
+                    }
+                } else {
+                    best_wx_type = wx_h_rain;
+                }
+            } else if (average_points[rain] > 25.0) {
+                // Light Rain
+                if (average_points[fog] > 15.0) {
+                    best_wx_type = wx_drizzle;
+                } else {
+                    if (average_points[sun] > 20.0) {
+                        if (sun_up) {
+                            best_wx_type = wx_rain_sh;
+                        } else {
+                            best_wx_type = wx_rain_sh_n;
+                        }
+                    } else {
+                        best_wx_type = wx_rain;
+                    }
+                }
+                // FOG
+            } else if (average_points[fog] > 50.0) {
+                best_wx_type = wx_fog;
+            } else if (average_points[fog] > 35.0) {
+                best_wx_type = wx_mist;
+                // CLOUD
+            } else if (average_points[cloud] > 60.0) {
+                best_wx_type = wx_ocast;
+            } else if (average_points[cloud] > 17.0) {
+                if (average_points[sun] > 1.3 * average_points[cloud]) {
+                    if (sun_up) {
+                        best_wx_type = wx_pt_cloud;
+                    } else {
+                        best_wx_type = wx_pt_clear;
+                    }
+                } else {
+                    best_wx_type = wx_cloud;
+                }
+                // SUN
+            } else {
+                if (sun_up) {
+                    best_wx_type = wx_sun;
+                } else {
+                    best_wx_type = wx_clear;
+                }
+            }
+            return best_wx_type;
+        };
+
+
+    </script>
+</body>
+</html>

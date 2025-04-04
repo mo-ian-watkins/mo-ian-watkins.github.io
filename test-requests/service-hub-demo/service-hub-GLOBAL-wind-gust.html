@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>ServiceHub Demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <!-- Leaflet -->
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.4.0/leaflet.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.4.0/leaflet.js"></script>
+    <script src="leaflet-wms-header.js"></script>
+
+    <style>
+        html,
+        body,
+        #map {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+        }
+
+        #floating-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            background-color: #fff;
+            padding: 2px;
+            opacity: 0.85;
+        }
+
+        #floating-panel ul {
+            list-style-type: none;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        #floating-panel ul li>label {
+            display: block;
+            margin: 2px;
+        }
+
+        #floating-panel ul li {
+            margin-bottom: 10px;
+        }        
+    </style>
+
+</head>
+
+<body>
+
+    <div id="map"></div>
+
+    <div id="floating-panel">
+        <ul>
+            <li>
+                <label>Styles</label>
+                <select id="styles">
+                    <option>iso_fill_bk_pk_0_80_kt</option>
+                    <option>iso_fill_og_36_kt_or_greater</option>
+                    <option>iso_fill_wh_bu_0_120_mph</option>
+                    <option>iso_fill_yl_gn_og_0_80_kt</option>
+                    <option>iso_fill_rd_41_kt_or_greater</option>
+                    <option>iso_fill_bk_cross_hatched_41_kt_or_greater</option>
+                </select>
+            </li>
+        </ul>
+    </div>
+
+    <script>
+
+        // WMS Service: https://metoffice.sharepoint.com/sites/technologyservicehubservice/SitePages/Map%20Layers%20Template.aspx#4-0
+
+        let styles = document.getElementById('styles');
+
+        // Base map layer
+        var baseLayer = new L.tileLayer('https://api.mapbox.com/styles/v1/metoffice/ckawmymow0my71ipne2g3k0xt/tiles/256/{z}/{x}/{y}{r}?access_token=pk.eyJ1IjoibWV0b2ZmaWNlIiwiYSI6ImNrY2djc3Z1azBxdTQyem0yMnVveXBwZTgifQ.11MOmDoyuIkYrpPJsqHcdw');
+
+        // Tiled Layer
+        var wmsLayer = L.TileLayer.wmsHeader('https://dev.mdda.hub.metoffice.cloud/wms/glm/long', {
+            'service': 'WMS',
+            'version': '1.3.0',
+            'request': 'GetMap',
+            'layers': 'wind_gust_10m',
+            'styles': styles.value,
+            'format': 'image/png',
+            'transparent': 'TRUE',
+            //'dim_run': '2020-06-12T00:00:00Z',
+            //'dim_forecast': 'PT0S',
+            //'elevation': '1000',
+            'buffer': '256',
+            'uppercase': true,
+            'bounds': [[-90, -180],[90, 180]],
+            'opacity': '0.85'
+        },
+        [
+            { header: 'x-api-key', value: '1234' }
+        ]);
+
+        var mapCenter = new L.LatLng(55, -4);
+
+        var _map = new L.Map("map", {
+            center: mapCenter,
+            zoom: 4,
+            maxZoom: 10,
+            crs: L.CRS.EPSG3857,
+            layers: [baseLayer, wmsLayer]
+        });
+
+        styles.addEventListener('change', function () {
+            wmsLayer.setParams({styles: this.value});
+        });
+
+    </script>
+
+</body>
+
+</html>

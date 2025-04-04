@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Locations v3 Map</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="shortcut icon" type="image/x-icon" href="/resources/images/favicon.png" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.css"
+        integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.js"
+        integrity="sha256-fNoRrwkP2GuYPbNSJmMJOCyfRB2DhPQe0rGTgzRsyso=" crossorigin="anonymous"></script>
+    <script src='https://unpkg.com/@turf/turf/turf.min.js'></script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+
+    <style>
+        html,
+        body,
+        #map {
+            background-color: #fff;
+            font-family: Inter, Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div id="map"></div>
+
+    <script>
+
+        var map,
+            mapCenter,
+            baseLayer,
+            overlayLayer,
+            markerLayer,
+            locationsFC;
+
+        mapCenter = new L.LatLng(50.727, -3.474);
+
+        map = new L.Map("map", {
+            zoomControl: false,
+            center: mapCenter,
+            zoom: 10,
+            maxZoom: 10,
+            minZoom: 2,
+            crs: L.CRS.EPSG3857,
+            attributionControl: false
+        });
+
+        // Base map layer
+        baseLayer = new L.tileLayer('https://api.mapbox.com/styles/v1/metoffice/ckysmm61a2ffz14lh5dbr8yjm/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWV0b2ZmaWNlIiwiYSI6ImNrY2djc3Z1azBxdTQyem0yMnVveXBwZTgifQ.11MOmDoyuIkYrpPJsqHcdw', {
+            attribution: '<a href="http://mapbox.com">Mapbox</a>',
+            maxZoom: 10
+        }).addTo(map);
+
+        var getLocations = function (locationsURL) {
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open("GET", locationsURL);
+            xhr.onload = function () {
+                afterGetLocations(xhr);
+            };
+            xhr.send();
+
+        };
+
+        var afterGetLocations = function (xhr) {
+
+            if (xhr.status === 200) {
+                parseLocations(xhr.responseText);
+            } else {
+                console.error("Locations failed to load", xhr.responseURL);
+            }
+
+        };
+
+        var parseLocations = function (responseText) {
+
+            var locations,
+                tempLocations = [];
+
+            locations = JSON.parse(responseText);
+
+            // Turn into an array of Features
+            locations.forEach(function (element, index) {
+
+                var geometry;
+
+                geometry = {
+                    "type": "Point",
+                    "coordinates": [element.position[1], element.position[0]]
+                };
+
+                delete element.position;
+
+                element.style = defaultPointStyle;
+
+                tempLocations.push(turf.feature(geometry, element));
+
+            });
+
+            // Turn into a FeatureCollection
+            locationsFC = turf.featureCollection(tempLocations);
+
+            plotLocations(locationsFC);
+
+        };
+
+        var plotLocations = function (locations) {
+
+            var mapBounds = map.getBounds(),
+                mapBoundsPolygonFeature;
+
+            mapBoundsPolygonFeature = turf.polygon([
+                [
+                    [mapBounds._northEast.lng, mapBounds._northEast.lat],
+                    [mapBounds._southWest.lng, mapBounds._northEast.lat],
+                    [mapBounds._southWest.lng, mapBounds._southWest.lat],
+                    [mapBounds._northEast.lng, mapBounds._southWest.lat],
+                    [mapBounds._northEast.lng, mapBounds._northEast.lat]
+                ]
+            ]);
+
+            locations.features.forEach(function (location) {
+
+                // Test if within viewport
+                if (turf.booleanWithin(location, mapBoundsPolygonFeature)) {
+                    location.properties.visible = true;
+                } else {
+                    location.properties.visible = false;
+                }
+
+            });
+
+            // Clear if exists
+            if (markerLayer) {
+                markerLayer.clearLayers();
+            }
+
+            // Add all Points in within the viewport to the map
+            markerLayer = new L.geoJSON(locations, {
+                pointToLayer: function (feature) {
+
+                    return L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]]);
+
+                },
+                style: function (feature) {
+
+                    if (feature.properties.selected) {
+                        return selectedPointStyle;
+                    } else if (feature.properties.nearest) {
+                        return nearestPointsStyle;
+                    } else {
+                        return defaultPointStyle;
+                    }
+
+                },
+                onEachFeature: function (feature, layer) {
+
+                    var html,
+                        items = [];
+
+                    items.push("<pre>", "Name:     ", "<b>", feature.properties.name, "</b>", "<br>");
+                    items.push("Altitude: ", "<b>", feature.properties.locationMetadata.altitude, " m", "</b>", "<br>");
+
+                    if (feature.properties.domestic) {
+                        items.push("Type:     ", feature.properties.locationType, "<br>");
+                    }
+
+                    items.push("Geohash:  ", feature.properties.geohash, "<br>");
+                    items.push("SspaId:   ", feature.properties.sspaId);
+
+                    if (feature.properties.distance && Number(feature.properties.distance) >= 0) {
+                        items.push("<br>", "Distance: ", "<b>", Number(feature.properties.distance).toFixed(2), " miles", "</b>", "<br>");
+                    }
+
+                    items.push("</pre>");
+
+                    html = items.join("");
+
+                    layer.bindTooltip(html, {
+                        direction: "top",
+                        offset: L.point(0, -10)
+                    });
+
+                },
+                filter: function (feature, layer) {
+
+                    return feature.properties.visible;
+
+                }
+
+            }).addTo(map);
+
+            markerLayer.on("click", function (e) {
+
+                var numberOfNearest = 10,
+                    counter,
+                    point,
+                    featureCollection,
+                    closestFeatures = [];
+
+                // Dump record to console
+                console.log(e.layer.feature.properties);
+
+                // Link on second click
+                if (e.layer.feature.properties.selected === true) {
+
+                    if (e.layer.feature.properties.domestic && e.layer.feature.properties.locationType && e.layer.feature.properties.locationType === "Beaches") {
+
+                        // Navigate browser to beach forecast page in new tab
+                        window.open("https://www.metoffice.gov.uk/weather/specialist-forecasts/coast-and-sea/beach-forecast-and-tide-times/" + e.layer.feature.properties.geohash, '_blank');
+
+                    } else {
+
+                        // Navigate browser to forecast page in new tab
+                        window.open("https://www.metoffice.gov.uk/weather/forecast/" + e.layer.feature.properties.geohash, '_blank');
+
+                    }
+
+                }
+
+                // Reset state and styling
+                locationsFC.features.forEach(function (location) {
+
+                    location.properties.selected = false;
+                    location.properties.nearest = false;
+                    location.properties.distance = -1;
+
+                });
+
+                // Set selected state
+                locationsFC.features.forEach(function (location) {
+
+                    if (location.properties.sspaId === e.layer.feature.properties.sspsId)
+
+                        location.properties.selected = true;
+
+                });
+
+                // Deep copy
+                featureCollection = JSON.parse(JSON.stringify(locationsFC));
+
+                // Set selected
+                e.layer.feature.properties.selected = true;
+
+                // Get X nearest sites
+                for (i = 0; i <= numberOfNearest; i++) {
+
+                    var feature,
+                        itemIndex;
+
+                    feature = turf.nearestPoint(e.layer.feature.geometry, featureCollection);
+                    closestFeatures.push(feature);
+
+                    featureCollection.features.forEach(function (element, index) {
+
+                        if (element.properties.sspaId === feature.properties.sspaId) {
+                            itemIndex = index;
+                        }
+
+                    })
+
+                    featureCollection.features.splice(itemIndex, 1);
+
+                }
+
+                // Get distances
+                closestFeatures.forEach(function (nearestFeature) {
+
+                    nearestFeature.properties.distance = turf.distance(e.layer.feature.geometry, nearestFeature.geometry, { units: "miles" });
+
+                });
+
+                // Update main featureCollection with nearest
+                locationsFC.features.forEach(function (feature) {
+
+                    closestFeatures.forEach(function (nearestFeature) {
+
+                        if (feature.properties.sspaId === nearestFeature.properties.sspaId) {
+
+                            feature.properties.nearest = true;
+                            feature.properties.distance = nearestFeature.properties.distance;
+
+                        }
+
+                    });
+
+                })
+
+                plotLocations(locationsFC);
+
+            });
+
+        };
+
+        var defaultPointStyle = {
+            radius: 5,
+            weight: 1,
+            color: "white",
+            fillColor: "white",
+            fillOpacity: 0.3,
+        };
+        var nearestPointsStyle = {
+            radius: 10,
+            weight: 1,
+            color: "red",
+            fillColor: "red",
+            fillOpacity: 0.5,
+        };
+        var selectedPointStyle = {
+            radius: 15,
+            weight: 1,
+            color: "yellow",
+            fillColor: "yellow",
+            fillOpacity: 0.5,
+        };
+
+        // Get locations data
+        getLocations("locations.json");
+
+        // Event handler
+        map.on("moveend", function (e) {
+            plotLocations(locationsFC);
+        });
+
+    </script>
+
+</body>
+
+</html>

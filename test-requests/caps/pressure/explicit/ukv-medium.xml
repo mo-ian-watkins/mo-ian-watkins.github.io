@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WMS_Capabilities version="1.3.0" updateSequence="1697023632736" xmlns="http://www.opengis.net/wms" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <Service>
+    <Name>WMS</Name>
+    <Title>UKV 3-hourly runs (t+0 to t+54)</Title>
+    <OnlineResource xlink:type="simple" xlink:href="https://metoffice.sharepoint.com/sites/technologyservicehubservice/SitePages/Map%20Layers%20Template.aspx"/>
+    <Fees>none</Fees>
+    <AccessConstraints>none</AccessConstraints>
+    <LayerLimit>32</LayerLimit>
+    <MaxWidth>10000</MaxWidth>
+    <MaxHeight>10000</MaxHeight>
+  </Service>
+  <Capability>
+    <Request>
+      <GetCapabilities>
+        <Format>text/xml</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xlink:type="simple" xlink:href="https://mdda.hub.metoffice.cloud/wms/ukv/medium"/>
+            </Get>
+          </HTTP>
+        </DCPType>
+      </GetCapabilities>
+      <GetMap>
+        <Format>image/png</Format>
+        <Format>image/png; mode=8bit</Format>
+        <Format>image/png; mode=8bit-grayscale</Format>
+        <Format>image/jpeg</Format>
+        <Format>image/gif</Format>
+        <Format>image/jp2</Format>
+        <Format>image/tiff</Format>
+        <Format>image/tiff; mode=8bit-grayscale</Format>
+        <Format>image/geotiff; mode=8bit-grayscale</Format>
+        <Format>image/svg+xml</Format>
+        <Format>image/svgz+xml</Format>
+        <Format>application/x-shockwave-flash</Format>
+        <Format>application/pdf</Format>
+        <Format>image/x-eps</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xlink:type="simple" xlink:href="https://mdda.hub.metoffice.cloud/wms/ukv/medium"/>
+            </Get>
+          </HTTP>
+        </DCPType>
+      </GetMap>
+      <GetFeatureInfo>
+        <Format>text/xml</Format>
+        <Format>text/html</Format>
+        <Format>application/vnd.ogc.se_xml</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xlink:type="simple" xlink:href="https://mdda.hub.metoffice.cloud/wms/ukv/medium"/>
+            </Get>
+          </HTTP>
+        </DCPType>
+      </GetFeatureInfo>
+    </Request>
+    <Exception>
+      <Format>XML</Format>
+      <Format>INIMAGE</Format>
+      <Format>BLANK</Format>
+    </Exception>
+    <Layer>
+      <Title>All</Title>
+      <CRS>CRS:84</CRS>
+      <CRS>EGRR:UKV</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>-24.999999999999996</westBoundLongitude>
+        <eastBoundLongitude>15.999999999999996</eastBoundLongitude>
+        <southBoundLatitude>44</southBoundLatitude>
+        <northBoundLatitude>64</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:84" minx="-25" miny="44" maxx="16" maxy="64"/>
+      <BoundingBox CRS="EGRR:UKV" minx="-1780513.1242227075" miny="-1208353.2731481921" maxx="1472493.3948702067" maxy="1193210.9468965817"/>
+      <BoundingBox CRS="EPSG:3857" minx="-2782987.269831839" miny="5465442.1833227519" maxx="1781111.8526923768" maxy="9349764.1741469186"/>
+      <BoundingBox CRS="EPSG:4258" minx="44" miny="-24.999999999999996" maxx="64" maxy="15.999999999999996"/>
+      <BoundingBox CRS="EPSG:4326" minx="44" miny="-24.999999999999996" maxx="64" maxy="15.999999999999996"/>
+      <Layer queryable="1">
+        <Name>mean_sea_level_pressure</Name>
+        <Title>Pressure-Mean Sea Level</Title>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>-24.999999999999996</westBoundLongitude>
+          <eastBoundLongitude>15.999999999999996</eastBoundLongitude>
+          <southBoundLatitude>44</southBoundLatitude>
+          <northBoundLatitude>64</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <Dimension name="RUN" units="ISO8601" unitSymbol="" nearestValue="0" multipleValues="0" default="2023-10-11T09:00:00Z">2023-10-09T12:00:00Z,2023-10-09T15:00:00Z,2023-10-09T18:00:00Z,2023-10-09T21:00:00Z,2023-10-10T00:00:00Z,2023-10-10T03:00:00Z,2023-10-10T06:00:00Z,2023-10-10T09:00:00Z,2023-10-10T12:00:00Z,2023-10-10T15:00:00Z,2023-10-10T18:00:00Z,2023-10-10T21:00:00Z,2023-10-11T00:00:00Z,2023-10-11T03:00:00Z,2023-10-11T06:00:00Z,2023-10-11T09:00:00Z</Dimension>
+        <Dimension name="FORECAST" units="ISO8601" nearestValue="0" multipleValues="0" default="PT0S">PT0S,PT1H,PT2H,PT3H,PT4H,PT5H,PT6H,PT7H,PT8H,PT9H,PT10H,PT11H,PT12H,PT13H,PT14H,PT15H,PT16H,PT17H,PT18H,PT19H,PT20H,PT21H,PT22H,PT23H,PT24H,PT25H,PT26H,PT27H,PT28H,PT29H,PT30H,PT31H,PT32H,PT33H,PT34H,PT35H,PT36H,PT37H,PT38H,PT39H,PT40H,PT41H,PT42H,PT43H,PT44H,PT45H,PT46H,PT47H,PT48H,PT49H,PT50H,PT51H,PT52H,PT53H,PT54H</Dimension>
+        <Style>
+          <Name>iso_bk_2_hpa</Name>
+          <Title>Isobars Blk 2 hPa</Title>
+        </Style>
+        <Style>
+          <Name>iso_bk_large_label_2_hpa</Name>
+          <Title>Isobars Blk Large Label 2 hPa</Title>
+        </Style>
+        <Style>
+          <Name>iso_bk_4_hpa</Name>
+          <Title>Isobars Blk 4 hPa</Title>
+        </Style>
+        <Style>
+          <Name>iso_bk_large_label_4_hpa</Name>
+          <Title>Isobars Blk Large Label 4 hPa</Title>
+        </Style>
+      </Layer>
+    </Layer>
+  </Capability>
+</WMS_Capabilities>

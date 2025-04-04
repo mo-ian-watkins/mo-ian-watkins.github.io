@@ -1,0 +1,56 @@
+.warningsContainer {
+  width: 100%;
+  height: 1.1rem;
+  margin-top: 2.5rem;
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  display: grid;
+  display: -ms-grid;
+  -ms-grid-rows: 1fr 1fr 1fr;
+  overflow-x: hidden;
+  grid-template-areas: "redWarning" "amberWarning" "yellowWarning";
+}
+
+.warningsContainer__redWarnings {
+  grid-area: redWarning;
+  -ms-grid-row: 1;
+  margin-bottom: 0.075rem;
+  position: absolute;
+  width: 100%;
+}
+
+.warningsContainer__amberWarnings {
+  grid-area: amberWarning;
+  -ms-grid-row: 2;
+  margin-bottom: 0.075rem;
+  position: absolute;
+  width: 100%;
+}
+
+.warningsContainer__yellowWarnings {
+  -ms-grid-row: 3;
+  grid-area: yellowWarning;
+  margin-bottom: 0.075rem;
+  position: absolute;
+  width: 100%;
+}
+
+.warningsContainer__warning {
+  height: 4.5px;
+  position: absolute;
+  background-clip: content-box;
+  margin-bottom: 0.075rem;
+}
+
+#severityRED {
+  background-color: #CC0033;
+}
+
+#severityAMBER {
+  background-color: #FF9900;
+}
+
+#severityYELLOW {
+  background-color: #FFE923;
+}

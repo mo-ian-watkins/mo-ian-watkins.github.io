@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WMS_Capabilities version="1.3.0" updateSequence="1697033717172" xmlns="http://www.opengis.net/wms" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <Service>
+    <Name>WMS</Name>
+    <Title>Global 12-hourly runs (t+0 to t+168)</Title>
+    <OnlineResource xlink:type="simple" xlink:href="https://metoffice.sharepoint.com/sites/technologyservicehubservice/SitePages/Map%20Layers%20Template.aspx"/>
+    <Fees>none</Fees>
+    <AccessConstraints>none</AccessConstraints>
+    <LayerLimit>32</LayerLimit>
+    <MaxWidth>10000</MaxWidth>
+    <MaxHeight>10000</MaxHeight>
+  </Service>
+  <Capability>
+    <Request>
+      <GetCapabilities>
+        <Format>text/xml</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xlink:type="simple" xlink:href="https://mdda.hub.metoffice.cloud/wms/glm/long"/>
+            </Get>
+          </HTTP>
+        </DCPType>
+      </GetCapabilities>
+      <GetMap>
+        <Format>image/png</Format>
+        <Format>image/png; mode=8bit</Format>
+        <Format>image/png; mode=8bit-grayscale</Format>
+        <Format>image/jpeg</Format>
+        <Format>image/gif</Format>
+        <Format>image/jp2</Format>
+        <Format>image/tiff</Format>
+        <Format>image/tiff; mode=8bit-grayscale</Format>
+        <Format>image/geotiff; mode=8bit-grayscale</Format>
+        <Format>image/svg+xml</Format>
+        <Format>image/svgz+xml</Format>
+        <Format>application/x-shockwave-flash</Format>
+        <Format>application/pdf</Format>
+        <Format>image/x-eps</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xlink:type="simple" xlink:href="https://mdda.hub.metoffice.cloud/wms/glm/long"/>
+            </Get>
+          </HTTP>
+        </DCPType>
+      </GetMap>
+      <GetFeatureInfo>
+        <Format>text/xml</Format>
+        <Format>text/html</Format>
+        <Format>application/vnd.ogc.se_xml</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xlink:type="simple" xlink:href="https://mdda.hub.metoffice.cloud/wms/glm/long"/>
+            </Get>
+          </HTTP>
+        </DCPType>
+      </GetFeatureInfo>
+    </Request>
+    <Exception>
+      <Format>XML</Format>
+      <Format>INIMAGE</Format>
+      <Format>BLANK</Format>
+    </Exception>
+    <Layer>
+      <Title>All</Title>
+      <CRS>CRS:84</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>-180</westBoundLongitude>
+        <eastBoundLongitude>180</eastBoundLongitude>
+        <southBoundLatitude>-90</southBoundLatitude>
+        <northBoundLatitude>90</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:84" minx="-180" miny="-90" maxx="180" maxy="90"/>
+      <BoundingBox CRS="EPSG:3857" minx="-20037508.342789244" miny="-88385977.495947853" maxx="20037508.337348741" maxy="88385977.495947853"/>
+      <BoundingBox CRS="EPSG:4326" minx="-90" miny="-180" maxx="90" maxy="180"/>
+      <Layer queryable="1">
+        <Name>mean_sea_level_pressure</Name>
+        <Title>Pressure-Mean Sea Level</Title>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>-180</westBoundLongitude>
+          <eastBoundLongitude>180</eastBoundLongitude>
+          <southBoundLatitude>-90</southBoundLatitude>
+          <northBoundLatitude>90</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <Dimension name="RUN" units="ISO8601" unitSymbol="" nearestValue="0" multipleValues="0" default="2023-10-11T00:00:00Z">2023-10-09T12:00:00Z,2023-10-10T00:00:00Z,2023-10-10T12:00:00Z,2023-10-11T00:00:00Z</Dimension>
+        <Dimension name="FORECAST" units="ISO8601" nearestValue="0" multipleValues="0" default="PT0S">PT0S,PT1H,PT2H,PT3H,PT4H,PT5H,PT6H,PT7H,PT8H,PT9H,PT10H,PT11H,PT12H,PT13H,PT14H,PT15H,PT16H,PT17H,PT18H,PT19H,PT20H,PT21H,PT22H,PT23H,PT24H,PT25H,PT26H,PT27H,PT28H,PT29H,PT30H,PT31H,PT32H,PT33H,PT34H,PT35H,PT36H,PT37H,PT38H,PT39H,PT40H,PT41H,PT42H,PT43H,PT44H,PT45H,PT46H,PT47H,PT48H,PT49H,PT50H,PT51H,PT52H,PT53H,PT54H,PT57H,PT60H,PT63H,PT66H,PT69H,PT72H,PT75H,PT78H,PT81H,PT84H,PT87H,PT90H,PT93H,PT96H,PT99H,PT102H,PT105H,PT108H,PT111H,PT114H,PT117H,P5D,P5DT3H,P5DT6H,P5DT9H,P5DT12H,P5DT15H,P5DT18H,P5DT21H,P6D,P6DT6H,P6DT12H,P6DT18H,P7D</Dimension>
+        <Style>
+          <Name>iso_bk_2_hpa</Name>
+          <Title>Isobars Blk 2 hPa</Title>
+        </Style>
+        <Style>
+          <Name>iso_bk_large_label_2_hpa</Name>
+          <Title>Isobars Blk Large Label 2 hPa</Title>
+        </Style>
+        <Style>
+          <Name>iso_bk_4_hpa</Name>
+          <Title>Isobars Blk 4 hPa</Title>
+        </Style>
+        <Style>
+          <Name>iso_bk_large_label_4_hpa</Name>
+          <Title>Isobars Blk Large Label 4 hPa</Title>
+        </Style>
+      </Layer>
+    </Layer>
+  </Capability>
+</WMS_Capabilities>

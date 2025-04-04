@@ -1,0 +1,56 @@
+.container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.ms-container {
+  position: relative;
+  top: 50%;
+  width: 340px;
+  max-width: 100%;
+  margin: 0 auto;
+  overflow: hidden;
+  transform: translateY(-50%);
+}
+
+.ms-track {
+  position: relative;
+  left: calc(50% - 25px);
+  width: 340px;
+  white-space: nowrap;
+  font-size: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  will-change: transform;
+}
+
+.ms-slide {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 100%;
+  font-size: 50px;
+  font-family: "Roboto Mono", monospace;
+  color: #FFFFFF;
+  user-select: none;
+  will-change: transform;
+}
+
+.timestep {
+  width: 7px;
+  height: 30px;
+  border-radius: 30%;
+  background-color: #FFFFFF;
+}
+.timestep.selected {
+  background-color: #b9dc0c;
+}
+.timestep.selected.disabled {
+  background-color: #53676D;
+}
+.timestep.disabled {
+  background-color: #53676D;
+}

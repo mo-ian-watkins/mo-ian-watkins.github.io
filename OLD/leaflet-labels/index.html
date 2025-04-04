@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Leaflet Labels</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin=""></script>
+
+
+    <style>
+        @font-face {
+            font-family: FSEmericWeb-Regular;
+            src: url('FSEmericWeb-Regular.eot');
+            src: url('FSEmericWeb-Regular.woff') format('woff');
+        }
+        html {
+            font-family: FSEmericWeb-Regular, Arial, sans-serif;
+            max-width: 500px;
+        }
+        .leaflet-container {
+            font: 12px/1.5 FSEmericWeb-Regular, Arial, sans-serif;
+        }
+        .mapContainerUK {
+            width: 100%;
+            height: 500px;
+        }
+        .map {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ---------------------------------------------------- */
+        /* ORIGINAL */
+
+        .mapWarningDivIconOld {
+            cursor: pointer;
+        }
+        .mapWarningDivIconOld .mapWarningLabel {
+            display: inline-block;
+            padding: 4px 4px 3px 2px;
+            background: #2A2215;
+            opacity: 0.8;
+            color: #fff;
+            font-weight: 700;
+            font-size: 110%;
+            white-space: nowrap;
+            line-height: 1;
+        }
+        .mapWarningDivIconOld .mapWarningLabel abbr {
+            text-decoration: inherit;
+        }
+        .mapWarningDivIconOld .mapWarningLabel div {
+            padding: 0 4px;
+            margin-right: 3px;
+            display: inline;
+        }
+        .mapWarningLabel .redWarning {
+            color: #fff;
+            background-color: rgb(229, 36, 32);
+            opacity: 0.5;
+        }
+        .mapWarningLabel .amberWarning {
+            color: #2A2215;
+            background-color: rgb(255, 153, 0);
+            opacity: 0.5;
+        }
+        .mapWarningLabel .yellowWarning {
+            color: #2A2215;
+            background-color: rgb(255, 233, 35);
+            opacity: 0.5;
+        }
+        .mapWarningLabel .redWarning.selected {
+            color: #fff;
+            background-color: rgb(229, 36, 32);
+            opacity: 1;
+        }
+        .mapWarningLabel .amberWarning.selected {
+            color: #2A2215;
+            background-color: rgb(255, 153, 0);
+            opacity: 1;
+        }
+        .mapWarningLabel .yellowWarning.selected {
+            color: #2A2215;
+            background-color: rgb(255, 233, 35);
+            opacity: 1;
+        }
+
+        /* ---------------------------------------------------- */
+        /* NEW */
+
+        .mapWarningDivIcon {
+            cursor: pointer;
+        }
+        .mapWarningDivIcon .mapWarningContainer {
+            display: inline-block;
+            padding: 2px;
+            background: #2A2215;
+            opacity: 0.8;
+            white-space: nowrap;
+            font-weight: bold;
+            font-size: 1.1em;
+            line-height: 1.1em;
+        }
+        .mapWarningLevel {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2px 4px 1px 4px;
+            margin-right: 3px;
+        }
+        .mapWarningLevel.red {
+            background: rgb(229, 36, 32);
+            color: #fff;
+            opacity: 0.5;
+        }
+        .mapWarningLevel.amber {
+            background: rgb(255, 153, 0);
+            color: #2A2215;
+            opacity: 0.5;
+        }
+        .mapWarningLevel.yellow {
+            background: rgb(255, 233, 35);
+            color: #2A2215;
+            opacity: 0.5;
+        }
+        .mapWarningLevel.red.selected {
+            opacity: 1;
+        }
+        .mapWarningLevel.amber.selected {
+            opacity: 1;
+        }
+        .mapWarningLevel.yellow.selected {
+            opacity: 1;
+        }
+        .mapWarningWeather {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #2A2215;
+            color: #fff;
+            padding-right: 3px;
+        }
+        .mapWarningWeather abbr {
+            text-decoration: inherit;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div>
+        Wave faint sail move polite match young zoo rural card normal acidic probable rock level roll post things reaction subtract serve chubby knit treat tick pointless x-ray fearful mark laborer scientific need scorch base numerous undress society heal possible chalk first rush undesirable parallel prepare shade moldy ordinary sofa enormous
+    </div>
+
+    <hr>
+
+    <div id="mapContainer" class="mapContainerUK">
+        <div id="map" class="map"></div>
+    </div>
+
+    <hr>
+
+    <div id="google_translate_element"></div>
+
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'am,ar,bn,hy,ta,th,uk,zh-CN,zh-TW',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+    </script>
+
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <hr>
+
+    <div>
+        Thaw moon raspy run comfortable messy mindless wide sisters nauseating humdrum frame reward whimsical tense mountain trail report quirky domineering reaction grieving spiky oceanic debt oil tight comparison pigs degree arrest texture object force board remind classy wiry young alike able fear highfalutin flower sister fetch surround kick waggish brake
+    </div>
+
+    <hr>
+
+    <div>
+        Receptive wasteful assorted encourage protest ear possess swing towering snail elfin dance humorous spell square sleep kettle extra-large terrible therapeutic pricey butter nifty five beautiful hope baseball chicken insidious tent fragile scent parched madly spotty synonymous judicious collect fold wobble wicked pancake tart tongue stitch strengthen average prefer spectacular substantial
+    </div>
+
+    <script>
+
+        var map,
+            zoomControl,
+            config = {};
+
+        config.initialMapCentreLatitude = 56.5;
+        config.initialMapCentreLongitude = -3.340;
+        config.initialMapZoomLevel = 5;
+
+        map = L.map('map', {
+            attributionControl: false,
+            zoomControl: false,
+            boxZoom: true,
+            doubleClickZoom: true,
+            dragging: true,
+            scrollWheelZoom: true,
+            tap: true,
+            touchZoom: true
+        });
+
+        if (!L.Browser.mobile) {
+            zoomControl = L.control.zoom().addTo(map);
+        }
+
+        L.tileLayer('https://wwwpre.metoffice.gov.uk/public/tiles/nswws/v1/{z}/{x}/{y}.png', {
+            maxZoom: 9,
+            id: 'B&W Basemap'
+        }).addTo(map);
+
+        // Set initial UK view
+        map.setView(new L.LatLng(config.initialMapCentreLatitude, config.initialMapCentreLongitude), config.initialMapZoomLevel);
+
+        // -----------------------------------------------------------------------------------------------
+
+        // Add divIcons - New
+
+        L.marker([60, -3], {
+            icon: new L.divIcon({
+                iconAnchor: [0, 0],
+                className: "mapWarningDivIcon",
+                html: "<div class='mapWarningContainer'>" +
+                          "<div class='mapWarningWeather'>" +
+                              "<div class='mapWarningLevel " + "red" + " selected" + "'>" +
+                                  "Red" +
+                              "</div>" + "Fog" +
+                          "</div>" +
+                      "</div>"
+            })
+        }).addTo(map);
+
+        L.marker([59.4, -3], {
+            icon: new L.divIcon({
+                iconAnchor: [0, 0],
+                className: "mapWarningDivIcon",
+                html: "<div class='mapWarningContainer'>" +
+                          "<div class='mapWarningWeather'>" +
+                              "<div class='mapWarningLevel " + "amber" + " selected"+ "'>" +
+                                  "Amber" +
+                              "</div>" + "Ice" +
+                          "</div>" +
+                      "</div>"
+            })
+        }).addTo(map);
+
+        L.marker([58.8, -3], {
+            icon: new L.divIcon({
+                iconAnchor: [0, 0],
+                className: "mapWarningDivIcon",
+                html: "<div class='mapWarningContainer'>" +
+                          "<div class='mapWarningWeather'>" +
+                              "<div class='mapWarningLevel " + "yellow" + " selected"+ "'>" +
+                                  "Yellow" +
+                              "</div>" + "Rain" +
+                          "</div>" +
+                      "</div>"
+            })
+        }).addTo(map);
+
+        L.marker([58.2, -3], {
+            icon: new L.divIcon({
+                iconAnchor: [0, 0],
+                className: "mapWarningDivIcon",
+                html: "<div class='mapWarningContainer'>" +
+                          "<div class='mapWarningWeather'>" +
+                              "<div class='mapWarningLevel " + "red" + "'>" +
+                                  "Red" +
+                              "</div>" + "Snow" +
+                          "</div>" +
+                      "</div>"
+            })
+        }).addTo(map);
+
+        L.marker([57.6, -3], {
+            icon: new L.divIcon({
+                iconAnchor: [0, 0],
+                className: "mapWarningDivIcon",
+                html: "<div class='mapWarningContainer'>" +
+                          "<div class='mapWarningWeather'>" +
+                              "<div class='mapWarningLevel " + "amber" + "'>" +
+                                  "Amber" +
+                              "</div>" + "Wind" +
+                          "</div>" +
+                      "</div>"
+            })
+        }).addTo(map);
+
+        L.marker([57, -3], {
+            icon: new L.divIcon({
+                iconAnchor: [0, 0],
+                className: "mapWarningDivIcon",
+                html: "<div class='mapWarningContainer'>" +
+                          "<div class='mapWarningWeather'>" +
+                              "<div class='mapWarningLevel " + "yellow" + "'>" +
+                                  "Yellow" +
+                              "</div>" + "Lightning" +
+                          "</div>" +
+                      "</div>"
+            })
+        }).addTo(map);
+
+        L.marker([56.4, -3], {
+            icon: new L.divIcon({
+                iconAnchor: [0, 0],
+                className: "mapWarningDivIcon",
+                html: "<div class='mapWarningContainer'>" +
+                          "<div class='mapWarningWeather'>" +
+                              "<div class='mapWarningLevel " + "red" + " selected" + "'>" +
+                                  "Red" +
+                              "</div>" + "Thunderstorm" +
+                          "</div>" +
+                      "</div>"
+            })
+        }).addTo(map);
+
+        // ---------------------------------------------------
+
+        L.marker([55.4, -3], {
+            icon: new L.divIcon({
+                iconAnchor: [0, 0],
+                className: "mapWarningDivIcon",
+                html: "<div class='mapWarningContainer'>" +
+                          "<div class='mapWarningWeather'>" +
+                              "<div class='mapWarningLevel " + "red" + " selected" + "'>" +
+                                  "Red" +
+                              "</div>" + "Fog&nbsp;<abbr title=\"and\">&amp;</abbr>&nbsp;snow" +
+                          "</div>" +
+                      "</div>"
+            })
+        }).addTo(map);
+
+        L.marker([54.8, -3], {
+            icon: new L.divIcon({
+                iconAnchor: [0, 0],
+                className: "mapWarningDivIcon",
+                html: "<div class='mapWarningContainer'>" +
+                          "<div class='mapWarningWeather'>" +
+                              "<div class='mapWarningLevel " + "amber" + " selected" + "'>" +
+                                  "Amber" +
+                              "</div>" + "Wind&nbsp;<abbr title=\"and\">&amp;</abbr>&nbsp;lightning" +
+                          "</div>" +
+                      "</div>"
+            })
+        }).addTo(map);
+
+        L.marker([54.2, -3], {
+            icon: new L.divIcon({
+                iconAnchor: [0, 0],
+                className: "mapWarningDivIcon",
+                html: "<div class='mapWarningContainer'>" +
+                          "<div class='mapWarningWeather'>" +
+                              "<div class='mapWarningLevel " + "yellow" + " selected" + "'>" +
+                                  "Yellow" +
+                              "</div>" + "Rain&nbsp;<abbr title=\"and\">&amp;</abbr>&nbsp;wind" +
+                          "</div>" +
+                      "</div>"
+            })
+        }).addTo(map);
+
+        // -----------------------------------------------------------------------------------------------
+
+        // Add divIcons - Original
+
+        L.marker([60, -13], {
+            icon: new L.divIcon({
+                iconAnchor: [0, 0],
+                className: "mapWarningDivIconOld",
+                html: "<div class='mapWarningLabel'>" +
+                    "<div class='" + "red" + "Warning selected'>" +
+                    "Red" +
+                    "</div>" +
+                    "Fog" +
+                    "</div>"
+            })
+        }).addTo(map);
+
+        L.marker([59.4, -13], {
+            icon: new L.divIcon({
+                iconAnchor: [0, 0],
+                className: "mapWarningDivIconOld",
+                html: "<div class='mapWarningLabel'>" +
+                    "<div class='" + "amber" + "Warning selected'>" +
+                    "Amber" +
+                    "</div>" +
+                    "Ice" +
+                    "</div>"
+            })
+        }).addTo(map);
+
+        L.marker([58.8, -13], {
+            icon: new L.divIcon({
+                iconAnchor: [0, 0],
+                className: "mapWarningDivIconOld",
+                html: "<div class='mapWarningLabel'>" +
+                    "<div class='" + "yellow" + "Warning selected'>" +
+                    "Yellow" +
+                    "</div>" +
+                    "Rain" +
+                    "</div>"
+            })
+        }).addTo(map);
+
+        L.marker([58.2, -13], {
+            icon: new L.divIcon({
+                iconAnchor: [0, 0],
+                className: "mapWarningDivIconOld",
+                html: "<div class='mapWarningLabel'>" +
+                    "<div class='" + "red" + "Warning'>" +
+                    "Red" +
+                    "</div>" +
+                    "Snow" +
+                    "</div>"
+            })
+        }).addTo(map);
+
+        L.marker([57.6, -13], {
+            icon: new L.divIcon({
+                iconAnchor: [0, 0],
+                className: "mapWarningDivIconOld",
+                html: "<div class='mapWarningLabel'>" +
+                    "<div class='" + "amber" + "Warning'>" +
+                    "Amber" +
+                    "</div>" +
+                    "Wind" +
+                    "</div>"
+            })
+        }).addTo(map);
+
+        L.marker([57, -13], {
+            icon: new L.divIcon({
+                iconAnchor: [0, 0],
+                className: "mapWarningDivIconOld",
+                html: "<div class='mapWarningLabel'>" +
+                    "<div class='" + "yellow" + "Warning'>" +
+                    "Yellow" +
+                    "</div>" +
+                    "Lightning" +
+                    "</div>"
+            })
+        }).addTo(map);
+
+        L.marker([56.4, -13], {
+            icon: new L.divIcon({
+                iconAnchor: [0, 0],
+                className: "mapWarningDivIconOld",
+                html: "<div class='mapWarningLabel'>" +
+                    "<div class='" + "red" + "Warning selected'>" +
+                    "Red" +
+                    "</div>" +
+                    "Thunderstorm" +
+                    "</div>"
+            })
+        }).addTo(map);
+
+        // ---------------------------------------------------
+
+        L.marker([55.4, -13], {
+            icon: new L.divIcon({
+                iconAnchor: [0, 0],
+                className: "mapWarningDivIconOld",
+                html: "<div class='mapWarningLabel'>" +
+                    "<div class='" + "red" + "Warning selected'>" +
+                    "Red" +
+                    "</div>" +
+                    "Fog <abbr title=\"and\">&amp;</abbr> snow" +
+                    "</div>"
+            })
+        }).addTo(map);
+
+        L.marker([54.8, -13], {
+            icon: new L.divIcon({
+                iconAnchor: [0, 0],
+                className: "mapWarningDivIconOld",
+                html: "<div class='mapWarningLabel'>" +
+                    "<div class='" + "amber" + "Warning selected'>" +
+                    "Amber" +
+                    "</div>" +
+                    "Wind <abbr title=\"and\">&amp;</abbr> Lightning" +
+                    "</div>"
+            })
+        }).addTo(map);
+
+        L.marker([54.2, -13], {
+            icon: new L.divIcon({
+                iconAnchor: [0, 0],
+                className: "mapWarningDivIconOld",
+                html: "<div class='mapWarningLabel'>" +
+                    "<div class='" + "yellow" + "Warning selected'>" +
+                    "Yellow" +
+                    "</div>" +
+                    "Rain <abbr title=\"and\">&amp;</abbr> Wind" +
+                    "</div>"
+            })
+        }).addTo(map);
+
+    </script>
+
+</body>
+
+</html>
