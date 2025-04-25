@@ -2,12 +2,14 @@
 <html>
 
 <head>
-    <title>Elevation Demo</title>
+    <title>Elevation Demo - Colour Scale</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <!-- MapTiler SDK CSS and JS -->
-    <link href="https://cdn.maptiler.com/maptiler-sdk-js/v3.0.1/maptiler-sdk.css" rel="stylesheet" />
     <script src="https://cdn.maptiler.com/maptiler-sdk-js/v3.0.1/maptiler-sdk.umd.min.js"></script>
+    <link href="https://cdn.maptiler.com/maptiler-sdk-js/v3.0.1/maptiler-sdk.css" rel="stylesheet" />
+    <!-- Chroma JS : https://github.com/gka/chroma.js / https://www.vis4.net/chromajs/#quick-start -->
+    <script src="https://unpkg.com/chroma-js@3.1.2/dist/chroma.min.cjs"></script>
     <style>
         html,
         body,
@@ -60,13 +62,27 @@
     </div>
 
     <script>
+        //const colourScale1 = chroma.scale(chroma.brewer.OrRd).domain([0, 1400]);
+        //const colourScale1 = chroma.scale(chroma.brewer.BuPu).domain([0, 1400]);
+        //const colourScale1 = chroma.scale(['black', 'red', 'yellow', 'white']).correctLightness().domain([0, 1400]);
+        //const colourScale1 = chroma.scale(chroma.brewer.Spectral).domain([0, 1400]);
+        //const colourScale1 = chroma.scale(['#004c6d', '#045377', '#085b80', '#0d638a', '#126b94', '#17739f', '#1c7ba9', '#2083b3', '#248bbe', '#2993c8', '#2d9cd3', '#32a4de', '#36ade9', '#3bb5f4', '#3fbeff']).domain([0, 1400]);
+        const colourScale1 = chroma.scale(['#003f5b', '#005c69', '#00786b', '#009161', '#00a34b', '#75ac29', '#bea800', '#ff9913']).domain([0, 1400]);
+
+        // array of 1401 entries with RGB values from colourScale1
+        /*         const colourScale1RGB = new Array(1401);
+                for (let i = 0; i <= 1400; i++) {
+                    const colour = colourScale1(i).rgb();
+                    colourScale1RGB[i] = [colour[0], colour[1], colour[2]];
+                } */
+
         // Set your MapTiler API key 
-        maptilersdk.config.apiKey = 'F65ZCbIb7laWEQAxKmVZ';
+        maptilersdk.config.apiKey = 'A9cHvpwa5D2TGACJxv7T';
 
         // Initialize the MapTiler map
         const map = new maptilersdk.Map({
             container: 'map',
-            style: `e17909d7-9393-4287-bea0-027985fd4786`,
+            style: 'dc4fadac-8812-46f5-8b13-56f1178b4b84',
             center: [-3, 55], // [lng, lat] 
             zoom: 6,
             terrain: false,
@@ -100,29 +116,63 @@
         // and draw the processed result onto the provided canvas. 
         function processTileCanvas(canvas, originalImgData, threshold) {
             const ctx = canvas.getContext("2d");
-            const processedData = new ImageData(originalImgData.width, originalImgData.height);
-            for (let i = 0; i < originalImgData.data.length; i += 4) {
-                const r = originalImgData.data[i];
-                const g = originalImgData.data[i + 1];
-                const b = originalImgData.data[i + 2];
-                // Decode elevation using the provided formula: 
-                const elevation = -10000 + ((r * 256 * 256 + g * 256 + b) * 0.1);
+            const processedData = ctx.createImageData(originalImgData.width, originalImgData.height); // Reuse canvas context for ImageData creation
+            const data = originalImgData.data; // Cache data reference for faster access
+            const processed = processedData.data; // Cache processed data reference
+
+            // Precompute constants for efficiency
+            const alphaValue = 192; // Transparency for visible pixels
+            const elevationOffset = -10000;
+            const elevationScale = 0.1;
+
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i];
+                const g = data[i + 1];
+                const b = data[i + 2];
+
+                // Decode elevation
+                const elevation = elevationOffset + ((r * 65536 + g * 256 + b) * elevationScale);
+
                 if (elevation > threshold) {
-                    // Color pixel blue (with some transparency) 
-                    processedData.data[i] = 0;
-                    processedData.data[i + 1] = 0;
-                    processedData.data[i + 2] = 0;
-                    processedData.data[i + 3] = 96;
+                    // Cache RGBA values to avoid redundant function calls
+                    const [rVal, gVal, bVal] = colourScale1(elevation).rgb(); // TODO - Faster lookup
+                    processed.set([rVal, gVal, bVal, alphaValue], i); // Set RGB values and alpha value
                 } else {
-                    // Otherwise, leave it transparent 
-                    processedData.data[i] = 0;
-                    processedData.data[i + 1] = 0;
-                    processedData.data[i + 2] = 0;
-                    processedData.data[i + 3] = 0;
+                    // Set transparent pixel
+                    processed[i + 3] = 0; // Only set alpha channel for transparency
                 }
             }
-            ctx.putImageData(processedData, 0, 0);
+
+            ctx.putImageData(processedData, 0, 0); // Apply processed data to canvas
         }
+
+        /*         function processTileCanvas(canvas, originalImgData, threshold) {
+                    const ctx = canvas.getContext("2d");
+                    const processedData = new ImageData(originalImgData.width, originalImgData.height);
+                    for (let i = 0; i < originalImgData.data.length; i += 4) {
+                        const r = originalImgData.data[i];
+                        const g = originalImgData.data[i + 1];
+                        const b = originalImgData.data[i + 2];
+        
+                        // Decode elevation using the provided formula: 
+                        const elevation = -10000 + ((r * 256 * 256 + g * 256 + b) * 0.1);
+                        if (elevation > threshold) {
+                            // Color the pixel (with some transparency)
+                            colourFromScale = colourScale1(elevation).rgba();
+                            processedData.data[i] = colourFromScale[0];
+                            processedData.data[i + 1] = colourFromScale[1];
+                            processedData.data[i + 2] = colourFromScale[2];
+                            processedData.data[i + 3] = 192;  // Alpha value for transparency
+                        } else {
+                            // Otherwise, leave it transparent 
+                            processedData.data[i] = 0;
+                            processedData.data[i + 1] = 0;
+                            processedData.data[i + 2] = 0;
+                            processedData.data[i + 3] = 0;
+                        }
+                    }
+                    ctx.putImageData(processedData, 0, 0);
+                } */
 
         // Create a canvas for a specific tile and load/process its image. 
         function createTileCanvas(z, x, y) {
@@ -238,7 +288,8 @@
         });
 
         // Initialize the tile overlay once the map loads. 
-        map.on('load', updateTiles); 
+        map.on('load', updateTiles);
+
     </script>
 </body>
 
