@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 
+<!-- https://mo-ian-watkins.github.io/NEW/terrain-map/newSlider/indexScale.html -->
+
 <head>
     <title>Elevation Demo - Colour Scale</title>
     <meta charset="utf-8">
@@ -54,6 +56,10 @@
         }
 
         #elevation-slider {
+            width: 200px;
+        }
+
+        #opacity-slider {
             width: 200px;
         }
     </style>
@@ -126,6 +132,8 @@
                 </select>
             </li>
         </ul>
+        <label>Opacity</label><br>
+        <input id="opacity-slider" type="range" min="0" max="100" step="10" value="75">
     </div>
 
     <script>
@@ -133,6 +141,7 @@
         let currentThreshold = parseFloat(document.getElementById('elevation-slider').value);
         let masked = false;
         let style = document.getElementById('styles').value;
+        let currentOpacity = parseFloat(document.getElementById('opacity-slider').value);
 
         const minHeight = 0;
         const maxHeight = 1400;  // Update slider min and max values to match this range
@@ -176,7 +185,7 @@
             const data = originalImgData.data;
             const processed = processedData.data;
 
-            const alphaValue = 192; // Transparency for visible pixels
+            const alphaValue = (255 / 100) * currentOpacity; // Transparency for visible pixels
             const elevationOffset = -10000;
             const elevationScale = 0.1;
 
@@ -318,8 +327,8 @@
         map.on('move', updateTilePositions);
 
         // Update threshold when the slider value changes. 
-        const slider = document.getElementById('elevation-slider');
-        slider.addEventListener('input', function (e) {
+        const elevationSlider = document.getElementById('elevation-slider');
+        elevationSlider.addEventListener('input', function (e) {
             currentThreshold = parseFloat(e.target.value);
             document.getElementById('elevation-slider-value').innerText = currentThreshold + 'm';
             updateAllTiles();
@@ -336,6 +345,13 @@
         styles.addEventListener('change', function (event) {
             style = event.target.value;
             console.log(style);
+            updateAllTiles();
+        });
+
+        // Update opacity when the slider value changes.
+        const opacitySlider = document.getElementById('opacity-slider');
+        opacitySlider.addEventListener('input', function (e) {
+            currentOpacity = parseFloat(e.target.value);
             updateAllTiles();
         });
 
