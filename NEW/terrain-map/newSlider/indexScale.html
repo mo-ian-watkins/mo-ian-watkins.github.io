@@ -8,8 +8,6 @@
     <!-- MapTiler SDK CSS and JS -->
     <script src="https://cdn.maptiler.com/maptiler-sdk-js/v3.0.1/maptiler-sdk.umd.min.js"></script>
     <link href="https://cdn.maptiler.com/maptiler-sdk-js/v3.0.1/maptiler-sdk.css" rel="stylesheet" />
-    <!-- Chroma JS : https://github.com/gka/chroma.js / https://www.vis4.net/chromajs/#quick-start -->
-    <script src="https://unpkg.com/chroma-js@3.1.2/dist/chroma.min.cjs"></script>
     <style>
         html,
         body,
@@ -18,7 +16,7 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            background-color: #fff;
+            background-color: rgba(red, green, blue, 255)
         }
 
         #tileOverlayContainer {
@@ -41,8 +39,21 @@
             opacity: 0.85;
         }
 
+        #floating-panel ul {
+            list-style-type: none;
+            padding-inline-start: unset;
+        }
+
+        #floating-panel ul li>label {
+            display: block;
+            margin: 2px;
+        }
+
+        #floating-panel ul li {
+            margin-bottom: 10px;
+        }
+
         #elevation-slider {
-            padding: 10px;
             width: 200px;
         }
     </style>
@@ -55,26 +66,76 @@
     <div id="tileOverlayContainer"></div>
 
     <div id="floating-panel">
+
         <label>Elevation: <span id="elevation-slider-value">200m</span></label><br>
-        <input id="elevation-slider" type="range" min="0" max="1400" step="10" value="200">
-        <!--         <input type="checkbox" name="inverted" id="mask">
-        <label for="inverted">Mask?</label> -->
+        <input id="elevation-slider" type="range" min="0" max="1400" step="10" value="200"><br>
+
+        <input type="checkbox" id="mask" name="inverted"><label for="mask">Invert</label>
+        <hr>
+        <ul>
+            <li>
+                <label>Styles</label>
+                <select id="styles">
+                    <option>JET</option>
+                    <option>HSV</option>
+                    <option>HOT</option>
+                    <option>SPRING</option>
+                    <option>SUMMER</option>
+                    <option>AUTOMN</option>
+                    <option>WINTER</option>
+                    <option>BONE</option>
+                    <option>COPPER</option>
+                    <option>GREYS</option>
+                    <option>YIGNBU</option>
+                    <option>GREENS</option>
+                    <option>YIORRD</option>
+                    <option>BLUERED</option>
+                    <option>RDBU</option>
+                    <option>PICNIC</option>
+                    <option>RAINBOW</option>
+                    <option>PORTLAND</option>
+                    <option>BLACKBODY</option>
+                    <option>EARTH</option>
+                    <option>ELECTRIC</option>
+                    <option>VIRIDIS</option>
+                    <option>INFERNO</option>
+                    <option>MAGMA</option>
+                    <option>PLASMA</option>
+                    <option>WARM</option>
+                    <option>COOL</option>
+                    <option>RAINBOW_SOFT</option>
+                    <option>BATHYMETRY</option>
+                    <option>CDOM</option>
+                    <option>CHLOROPHYLL</option>
+                    <option>DENSITY</option>
+                    <option>FREESURFACE_BLUE</option>
+                    <option>FREESURFACE_RED</option>
+                    <option>OXYGEN</option>
+                    <option>PAR</option>
+                    <option>PHASE</option>
+                    <option>SALINITY</option>
+                    <option>TEMPERATURE</option>
+                    <option>TURBIDITY</option>
+                    <option>VELOCITY_BLUE</option>
+                    <option>VELOCITY_GREEN</option>
+                    <option>CUBEHELIX</option>
+                    <option>CIVIDIS</option>
+                    <option>TURBO</option>
+                    <option>ROCKET</option>
+                    <option>MAKO</option>
+                </select>
+            </li>
+        </ul>
     </div>
 
     <script>
-        //const colourScale1 = chroma.scale(chroma.brewer.OrRd).domain([0, 1400]);
-        //const colourScale1 = chroma.scale(chroma.brewer.BuPu).domain([0, 1400]);
-        //const colourScale1 = chroma.scale(['black', 'red', 'yellow', 'white']).correctLightness().domain([0, 1400]);
-        //const colourScale1 = chroma.scale(chroma.brewer.Spectral).domain([0, 1400]);
-        //const colourScale1 = chroma.scale(['#004c6d', '#045377', '#085b80', '#0d638a', '#126b94', '#17739f', '#1c7ba9', '#2083b3', '#248bbe', '#2993c8', '#2d9cd3', '#32a4de', '#36ade9', '#3bb5f4', '#3fbeff']).domain([0, 1400]);
-        const colourScale1 = chroma.scale(['#003f5b', '#005c69', '#00786b', '#009161', '#00a34b', '#75ac29', '#bea800', '#ff9913']).domain([0, 1400]);
+        // Global variables 
+        let currentThreshold = parseFloat(document.getElementById('elevation-slider').value);
+        let masked = false;
+        let style = document.getElementById('styles').value;
 
-        // array of 1401 entries with RGB values from colourScale1
-        /*         const colourScale1RGB = new Array(1401);
-                for (let i = 0; i <= 1400; i++) {
-                    const colour = colourScale1(i).rgb();
-                    colourScale1RGB[i] = [colour[0], colour[1], colour[2]];
-                } */
+        const minHeight = 0;
+        const maxHeight = 1400;  // Update slider min and max values to match this range
 
         // Set your MapTiler API key 
         maptilersdk.config.apiKey = 'A9cHvpwa5D2TGACJxv7T';
@@ -82,48 +143,53 @@
         // Initialize the MapTiler map
         const map = new maptilersdk.Map({
             container: 'map',
-            style: 'dc4fadac-8812-46f5-8b13-56f1178b4b84',
-            center: [-3, 55], // [lng, lat] 
-            zoom: 6,
+            style: '01967bc0-75ff-719a-82b1-f8e2d469d47b',
+            center: [-2.3, 54.5], // [lng, lat] 
+            zoom: 9,
             terrain: false,
             terrainControl: false
         });
 
-        // Global variables 
-        let currentThreshold = parseFloat(document.getElementById('elevation-slider').value);
         // tileCache stores data for each tile keyed by "z/x/y" 
         let tileCache = {};
         const tileSize = 512;
         const tileOverlayContainer = document.getElementById('tileOverlayContainer');
 
-        // Utility functions to convert between geographic coordinates and tile numbers 
-        function lon2tileX(lon, zoom) {
-            return Math.floor((lon + 180) / 360 * Math.pow(2, zoom));
-        }
-        function lat2tileY(lat, zoom) {
-            const rad = lat * Math.PI / 180;
-            return Math.floor((1 - Math.log(Math.tan(rad) + 1 / Math.cos(rad)) / Math.PI) / 2 * Math.pow(2, zoom));
-        }
-        function tile2lon(x, zoom) {
-            return x / Math.pow(2, zoom) * 360 - 180;
-        }
-        function tile2lat(y, zoom) {
-            const n = Math.PI - 2 * Math.PI * y / Math.pow(2, zoom);
-            return (180 / Math.PI) * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)));
-        }
+        // Utility functions to convert between geographic coordinates and tile numbers
+        const lon2tileX = (lon, zoom) => Math.floor((lon + 180) / 360 * (1 << zoom));
 
-        // Process a tile’s original image data with the given threshold, 
-        // and draw the processed result onto the provided canvas. 
+        const lat2tileY = (lat, zoom) => {
+            const rad = lat * Math.PI / 180;
+            return Math.floor((1 - Math.log(Math.tan(rad) + 1 / Math.cos(rad)) / Math.PI) / 2 * (1 << zoom));
+        };
+
+        const tile2lon = (x, zoom) => (x / (1 << zoom)) * 360 - 180;
+
+        const tile2lat = (y, zoom) => {
+            const n = Math.PI - 2 * Math.PI * y / (1 << zoom);
+            return (180 / Math.PI) * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)));
+        };
+
         function processTileCanvas(canvas, originalImgData, threshold) {
             const ctx = canvas.getContext("2d");
-            const processedData = ctx.createImageData(originalImgData.width, originalImgData.height); // Reuse canvas context for ImageData creation
-            const data = originalImgData.data; // Cache data reference for faster access
-            const processed = processedData.data; // Cache processed data reference
+            const processedData = ctx.createImageData(originalImgData.width, originalImgData.height);
+            const data = originalImgData.data;
+            const processed = processedData.data;
 
-            // Precompute constants for efficiency
             const alphaValue = 192; // Transparency for visible pixels
             const elevationOffset = -10000;
             const elevationScale = 0.1;
+
+            // https://docs.maptiler.com/sdk-js/api/color-ramp/
+            const colourScale = maptilersdk.ColorRampCollection[style].scale(minHeight, maxHeight);
+
+            // Precompute RGB values for all elevations
+            const elevationRange = maxHeight - minHeight + 1;
+            const precomputedColors = new Array(elevationRange);
+
+            for (let i = 0; i < elevationRange; i++) {
+                precomputedColors[i] = colourScale.getColor(i);
+            }
 
             for (let i = 0; i < data.length; i += 4) {
                 const r = data[i];
@@ -133,112 +199,93 @@
                 // Decode elevation
                 const elevation = elevationOffset + ((r * 65536 + g * 256 + b) * elevationScale);
 
-                if (elevation > threshold) {
-                    // Cache RGBA values to avoid redundant function calls
-                    const [rVal, gVal, bVal] = colourScale1(elevation).rgb(); // TODO - Faster lookup
-                    processed.set([rVal, gVal, bVal, alphaValue], i); // Set RGB values and alpha value
+                // Determine if the pixel should be visible or transparent
+                const isVisible = masked ? elevation < threshold : elevation > threshold;
+
+                if (isVisible) {
+                    const [rVal, gVal, bVal] = precomputedColors[Math.round(elevation)] || [0, 0, 0];
+                    processed.set([rVal, gVal, bVal, alphaValue], i);
                 } else {
-                    // Set transparent pixel
-                    processed[i + 3] = 0; // Only set alpha channel for transparency
+                    processed[i + 3] = 0; // Set alpha channel for transparency
                 }
             }
 
-            ctx.putImageData(processedData, 0, 0); // Apply processed data to canvas
+            ctx.putImageData(processedData, 0, 0);
         }
 
-        /*         function processTileCanvas(canvas, originalImgData, threshold) {
-                    const ctx = canvas.getContext("2d");
-                    const processedData = new ImageData(originalImgData.width, originalImgData.height);
-                    for (let i = 0; i < originalImgData.data.length; i += 4) {
-                        const r = originalImgData.data[i];
-                        const g = originalImgData.data[i + 1];
-                        const b = originalImgData.data[i + 2];
-        
-                        // Decode elevation using the provided formula: 
-                        const elevation = -10000 + ((r * 256 * 256 + g * 256 + b) * 0.1);
-                        if (elevation > threshold) {
-                            // Color the pixel (with some transparency)
-                            colourFromScale = colourScale1(elevation).rgba();
-                            processedData.data[i] = colourFromScale[0];
-                            processedData.data[i + 1] = colourFromScale[1];
-                            processedData.data[i + 2] = colourFromScale[2];
-                            processedData.data[i + 3] = 192;  // Alpha value for transparency
-                        } else {
-                            // Otherwise, leave it transparent 
-                            processedData.data[i] = 0;
-                            processedData.data[i + 1] = 0;
-                            processedData.data[i + 2] = 0;
-                            processedData.data[i + 3] = 0;
-                        }
-                    }
-                    ctx.putImageData(processedData, 0, 0);
-                } */
-
-        // Create a canvas for a specific tile and load/process its image. 
         function createTileCanvas(z, x, y) {
             const tileKey = `${z}/${x}/${y}`;
-            // Create a canvas element for this tile 
+
+            // Create and configure the canvas
             const canvas = document.createElement("canvas");
             canvas.width = tileSize;
             canvas.height = tileSize;
             canvas.style.position = "absolute";
             tileOverlayContainer.appendChild(canvas);
-            // Store the canvas in the cache; the original imageData will be set after loading. 
-            tileCache[tileKey] = { canvas: canvas, original: null };
-            // Build the tile URL using your API key 
+
+            // Cache the canvas and initialize the original image data as null
+            tileCache[tileKey] = { canvas, original: null };
+
+            // Build the tile URL
             const tileUrl = `https://api.maptiler.com/tiles/terrain-rgb-v2/${z}/${x}/${y}.webp?key=F65ZCbIb7laWEQAxKmVZ`;
+
+            // Load the tile image
             const img = new Image();
             img.crossOrigin = "Anonymous";
             img.src = tileUrl;
-            img.onload = function () {
-                // Create an offscreen canvas to extract pixel data from the loaded tile image. 
+
+            img.onload = () => {
+                // Use an offscreen canvas to extract pixel data
                 const offscreen = document.createElement("canvas");
                 offscreen.width = tileSize;
                 offscreen.height = tileSize;
+
                 const offCtx = offscreen.getContext("2d");
                 offCtx.drawImage(img, 0, 0);
+
+                // Cache the image data and process the tile
                 const imgData = offCtx.getImageData(0, 0, tileSize, tileSize);
                 tileCache[tileKey].original = imgData;
-                // Process this tile using the current sea level threshold. 
                 processTileCanvas(canvas, imgData, currentThreshold);
             };
-            // Set the canvas position on the map. 
+
+            // Set the canvas position on the map
             updateTileCanvasPosition(z, x, y, canvas);
         }
 
         // Update the CSS position and size of a tile canvas so it aligns with the map. 
         function updateTileCanvasPosition(z, x, y, canvas) {
-            const nwLon = tile2lon(x, z);
-            const nwLat = tile2lat(y, z);
-            const seLon = tile2lon(x + 1, z);
-            const seLat = tile2lat(y + 1, z);
-            const nwPoint = map.project([nwLon, nwLat]);
-            const sePoint = map.project([seLon, seLat]);
-            canvas.style.left = nwPoint.x + "px";
-            canvas.style.top = nwPoint.y + "px";
-            canvas.style.width = (sePoint.x - nwPoint.x) + "px";
-            canvas.style.height = (sePoint.y - nwPoint.y) + "px";
+            const [nwLon, nwLat] = [tile2lon(x, z), tile2lat(y, z)];
+            const [seLon, seLat] = [tile2lon(x + 1, z), tile2lat(y + 1, z)];
+            const [nwPoint, sePoint] = [map.project([nwLon, nwLat]), map.project([seLon, seLat])];
+
+            Object.assign(canvas.style, {
+                left: `${nwPoint.x}px`,
+                top: `${nwPoint.y}px`,
+                width: `${sePoint.x - nwPoint.x}px`,
+                height: `${sePoint.y - nwPoint.y}px`,
+            });
         }
 
         // Rebuild all visible tile canvases based on the current map bounds and zoom. 
         function updateTiles() {
-            // Clear previous tiles. 
+            // Clear previous tiles
             tileOverlayContainer.innerHTML = "";
             tileCache = {};
 
-            // Use the integer zoom level for tile addressing. 
+            // Use the integer zoom level for tile addressing
             const zoomInt = Math.floor(map.getZoom());
             const bounds = map.getBounds();
             const west = bounds.getWest();
             const east = bounds.getEast();
             const north = bounds.getNorth();
             const south = bounds.getSouth();
-            const minX = lon2tileX(west, zoomInt);
-            const maxX = lon2tileX(east, zoomInt);
-            const minY = lat2tileY(north, zoomInt);
-            const maxY = lat2tileY(south, zoomInt);
 
-            // Loop through the visible tile range and create canvases. 
+            // Calculate visible tile range
+            const [minX, maxX] = [lon2tileX(west, zoomInt), lon2tileX(east, zoomInt)];
+            const [minY, maxY] = [lat2tileY(north, zoomInt), lat2tileY(south, zoomInt)];
+
+            // Loop through the visible tile range and create canvases
             for (let x = minX; x <= maxX; x++) {
                 for (let y = minY; y <= maxY; y++) {
                     createTileCanvas(zoomInt, x, y);
@@ -248,28 +295,19 @@
 
         // Update the overlay (re-process each tile) using the current threshold. 
         function updateAllTiles() {
-            for (const key in tileCache) {
-                if (tileCache.hasOwnProperty(key)) {
-                    const entry = tileCache[key];
-                    if (entry.original) {
-                        processTileCanvas(entry.canvas, entry.original, currentThreshold);
-                    }
+            Object.values(tileCache).forEach(({ canvas, original }) => {
+                if (original) {
+                    processTileCanvas(canvas, original, currentThreshold);
                 }
-            }
+            });
         }
 
         // Update positions of all tile canvases (e.g., on map move/zoom). 
         function updateTilePositions() {
-            const zoomInt = Math.floor(map.getZoom());
-            for (const key in tileCache) {
-                if (tileCache.hasOwnProperty(key)) {
-                    const parts = key.split("/");
-                    const z = parseInt(parts[0]);
-                    const x = parseInt(parts[1]);
-                    const y = parseInt(parts[2]);
-                    updateTileCanvasPosition(z, x, y, tileCache[key].canvas);
-                }
-            }
+            Object.entries(tileCache).forEach(([key, { canvas }]) => {
+                const [z, x, y] = key.split("/").map(Number);
+                updateTileCanvasPosition(z, x, y, canvas);
+            });
         }
 
         // When the map finishes moving or zooming, rebuild the tile overlay. 
@@ -279,11 +317,25 @@
         // Also update tile positions continuously when the map is moving. 
         map.on('move', updateTilePositions);
 
-        // Update sea level threshold when the slider value changes. 
+        // Update threshold when the slider value changes. 
         const slider = document.getElementById('elevation-slider');
         slider.addEventListener('input', function (e) {
             currentThreshold = parseFloat(e.target.value);
             document.getElementById('elevation-slider-value').innerText = currentThreshold + 'm';
+            updateAllTiles();
+        });
+
+        // Masking
+        const checkbox = document.getElementById('mask');
+        checkbox.addEventListener("change", (event) => {
+            masked = event.target.checked;
+            updateAllTiles();
+        });
+
+        // Styles
+        styles.addEventListener('change', function (event) {
+            style = event.target.value;
+            console.log(style);
             updateAllTiles();
         });
 
