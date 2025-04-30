@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>map with overlay</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <!-- MapTiler SDK CSS and JS -->
+    <script src="https://cdn.maptiler.com/maptiler-sdk-js/v3.0.1/maptiler-sdk.umd.min.js"></script>
+    <link href="https://cdn.maptiler.com/maptiler-sdk-js/v3.0.1/maptiler-sdk.css" rel="stylesheet" />
+    <style>
+        html,
+        body,
+        #map {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0)
+        }
+    </style>
+    <!-- Favicon ––––––––––––––––––––––––––––––––––––––––––– -->
+    <link rel="icon" type="image/png" href="/resources/images/favicon.png">
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <script>
+        // Set your MapTiler API key 
+        maptilersdk.config.apiKey = 'A9cHvpwa5D2TGACJxv7T';
+
+        // Initialize the MapTiler map
+        const map = new maptilersdk.Map({
+            container: 'map',
+            // Basemap style: '019686fd-83df-7025-b160-5a5577544c46', // MapTiler Basemap style
+            // Overlay style: '019686fd-d129-7e67-93b9-63dc3d7a2a93', // MapTiler Overlay style
+            style: '019686fd-d129-7e67-93b9-63dc3d7a2a93',
+            center: [-2.3, 54.5], // [lng, lat] 
+            zoom: 9,
+            terrain: false,
+            terrainControl: false,
+            projectionControl: true
+        });
+
+        map.on('load', function () {
+
+            map.addSource('contours', {
+                type: 'vector',
+                url:
+                    `https://api.maptiler.com/tiles/contours/tiles.json`
+            });
+
+            map.addLayer({
+                'id': 'terrain-data',
+                'type': 'line',
+                'source': 'contours',
+                'source-layer': 'contour',
+                'layout': {
+                    'line-join': 'round',
+                    'line-cap': 'round'
+                },
+                'paint': {
+                    'line-color': '#ff69b4',
+                    'line-width': 1
+                }
+            });
+
+        });
+
+
+    </script>
+</body>
+
+</html>
